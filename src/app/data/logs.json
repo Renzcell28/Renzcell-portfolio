@@ -1,0 +1,20 @@
+{
+  "logs": [
+    {
+      "slug": "week-1-onboarding",
+      "title": "Week 1: The Beginning of the Journey",
+      "date": "2023-12-01",
+      "excerpt": "My first week interning at MIH. Onboarding, setting up tools, and diving into the legacy codebase.",
+      "content": "This week was primarily focused on onboarding and getting to know the team. I set up my development environment and spent several hours reading through documentation for our primary stack: Next.js and Firebase. \n\nKey takeaways:\n- Communication is vital in a remote setting.\n- Standardizing linting across the team saves hours of PR back-and-forth.\n- I need to brush up on my advanced TypeScript generics.",
+      "tags": ["Internship", "Onboarding", "Next.js"]
+    },
+    {
+      "slug": "week-4-deep-dive-seo",
+      "title": "Week 4: Mastering Technical SEO",
+      "date": "2023-12-22",
+      "excerpt": "A deep dive into Core Web Vitals and how to optimize them for real-world performance.",
+      "content": "Spent the week working closely with the SEO team. I learned that technical SEO is far more than just meta tags. We focused on optimizing LCP (Largest Contentful Paint) by preloading critical assets and implementing better image optimization strategies.\n\nTechniques used:\n- Image priority flags in Next.js.\n- Critical CSS extraction.\n- Reducing third-party script bloat.",
+      "tags": ["SEO", "Performance", "Optimization"]
+    }
+  ]
+}

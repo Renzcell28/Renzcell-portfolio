@@ -1,0 +1,28 @@
+{
+  "placeholderImages": [
+    {
+      "id": "hero-bg",
+      "description": "Abstract technology background",
+      "imageUrl": "https://picsum.photos/seed/tech-1/1200/600",
+      "imageHint": "technology abstract"
+    },
+    {
+      "id": "project-seo",
+      "description": "SEO Audit dashboard concept",
+      "imageUrl": "https://picsum.photos/seed/seo/600/400",
+      "imageHint": "data analysis"
+    },
+    {
+      "id": "project-frontend",
+      "description": "Clean UI design mockup",
+      "imageUrl": "https://picsum.photos/seed/ui/600/400",
+      "imageHint": "modern interface"
+    },
+    {
+      "id": "project-research",
+      "description": "Documentation and research",
+      "imageUrl": "https://picsum.photos/seed/research/600/400",
+      "imageHint": "research library"
+    }
+  ]
+}

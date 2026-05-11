@@ -1,0 +1,44 @@
+{
+  "projects": [
+    {
+      "id": "1",
+      "title": "Comprehensive SEO Audit",
+      "description": "Conducted an in-depth SEO audit for a multi-page enterprise site, identifying 40+ technical issues and improving lighthouse scores by 25%.",
+      "techStack": ["Screaming Frog", "Ahrefs", "Google Search Console"],
+      "completionDate": "2024-01-15",
+      "category": "SEO Audit",
+      "imageUrl": "https://picsum.photos/seed/seo/600/400",
+      "featured": true
+    },
+    {
+      "id": "2",
+      "title": "Internal Tooling Portal",
+      "description": "Developed a custom internal dashboard using Next.js and Tailwind CSS for the marketing team to track campaign performance in real-time.",
+      "techStack": ["Next.js", "TypeScript", "Tailwind CSS", "Recharts"],
+      "completionDate": "2024-02-10",
+      "category": "Frontend",
+      "imageUrl": "https://picsum.photos/seed/ui/600/400",
+      "featured": true
+    },
+    {
+      "id": "3",
+      "title": "User Behavior Research",
+      "description": "Synthesized over 500 session recordings to identify friction points in the checkout flow, leading to a redesigned UI that increased conversion by 5%.",
+      "techStack": ["Hotjar", "Figma", "Excel"],
+      "completionDate": "2024-03-05",
+      "category": "Research",
+      "imageUrl": "https://picsum.photos/seed/research/600/400",
+      "featured": false
+    },
+    {
+      "id": "4",
+      "title": "Workflow Automation Script",
+      "description": "Built a Python-based automation script that condensed a 4-hour manual data entry task into a 10-minute automated process.",
+      "techStack": ["Python", "Pandas", "YAML"],
+      "completionDate": "2024-03-20",
+      "category": "Automation",
+      "imageUrl": "https://picsum.photos/seed/script/600/400",
+      "featured": false
+    }
+  ]
+}
