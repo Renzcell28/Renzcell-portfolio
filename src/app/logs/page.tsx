@@ -115,7 +115,7 @@ export default function LogsPage() {
     setCurrentPage(Math.max(1, Math.min(page, totalPages)));
   };
 
-  // Handle date change - FIXED: no timezone issues
+  // Handle date change
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const dateValue = e.target.value;
     if (dateValue) {
@@ -252,7 +252,7 @@ export default function LogsPage() {
       
       // Show success message
       const toast = document.createElement('div');
-      toast.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-in slide-in-from-bottom-4';
+      toast.className = 'fixed bottom-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-in slide-in-from-bottom-4';
       toast.textContent = `✅ Activity log added successfully! ${selectedImages.length > 0 ? `(${selectedImages.length} image${selectedImages.length > 1 ? 's' : ''} uploaded)` : ''}`;
       document.body.appendChild(toast);
       setTimeout(() => toast.remove(), 3000);
@@ -264,7 +264,7 @@ export default function LogsPage() {
       deleteLogFromDB(id);
       loadLogs();
       const toast = document.createElement('div');
-      toast.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-in slide-in-from-bottom-4';
+      toast.className = 'fixed bottom-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-in slide-in-from-bottom-4';
       toast.textContent = '🗑️ Activity log deleted!';
       document.body.appendChild(toast);
       setTimeout(() => toast.remove(), 3000);
@@ -278,7 +278,7 @@ export default function LogsPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-16 min-h-screen relative pb-32">
+    <div className="container mx-auto px-4 py-16 min-h-screen relative pb-32 bg-black">
       {/* Header Section with Company Info - Red Theme */}
       <div className="max-w-4xl mx-auto mb-10 space-y-6">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 text-red-500 text-xs font-bold mb-2">
@@ -287,19 +287,19 @@ export default function LogsPage() {
         </div>
 
         <div className="space-y-6">
-          <h1 className="font-headline font-black text-4xl md:text-5xl lg:text-6xl tracking-tight">
+          <h1 className="font-headline font-black text-4xl md:text-5xl lg:text-6xl tracking-tight text-white">
             Activity Logs
           </h1>
-          <p className="text-muted-foreground text-lg md:text-xl max-w-2xl">
+          <p className="text-gray-400 text-lg md:text-xl max-w-2xl">
             Add, manage, and track your daily activities and accomplishments during OJT.
           </p>
         </div>
 
         {/* MakerSpace Innohub Company Card - Red Theme */}
-        <div className="mt-6 p-5 rounded-xl bg-gradient-to-r from-red-500/5 via-rose-500/5 to-transparent border border-red-500/10 backdrop-blur-sm">
+        <div className="mt-6 p-5 rounded-xl bg-gradient-to-r from-red-500/5 via-red-600/5 to-transparent border border-red-500/20 backdrop-blur-sm">
           <div className="flex flex-col md:flex-row items-start md:items-center gap-5">
             <div className="flex-shrink-0">
-              <div className="w-16 h-16 md:w-20 md:h-20 rounded-xl bg-white dark:bg-gray-800 flex items-center justify-center shadow-md border border-gray-100 dark:border-gray-700 p-2">
+              <div className="w-16 h-16 md:w-20 md:h-20 rounded-xl bg-gray-800 flex items-center justify-center shadow-md border border-gray-700 p-2">
                 <img 
                   src="/Makespace.png"
                   alt="MakerSpace Innohub Logo"
@@ -309,25 +309,25 @@ export default function LogsPage() {
             </div>
             <div className="flex-1 space-y-2">
               <div className="flex flex-wrap items-center gap-3">
-                <h2 className="font-headline font-bold text-xl md:text-2xl">
+                <h2 className="font-headline font-bold text-xl md:text-2xl text-white">
                   MakerSpace Innohub
                 </h2>
-                <Badge variant="secondary" className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
+                <Badge variant="secondary" className="bg-green-900/30 text-green-400">
                   Active
                 </Badge>
               </div>
               
-              <p className="text-muted-foreground text-sm md:text-base leading-relaxed">
+              <p className="text-gray-400 text-sm md:text-base leading-relaxed">
                 Building the Future of Digital Business with AI & Expert Marketing. We combine Custom Software Development, 
                 SEO Authority, and Business Automation to turn your vision into a market leader.
               </p>
               
               <div className="flex flex-wrap items-center gap-4 pt-1">
-                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <div className="flex items-center gap-1.5 text-xs text-gray-500">
                   <MapPin className="w-3.5 h-3.5" />
                   <span>001 Zinnia St., Nilombot, Mapandan, Pangasinan</span>
                 </div>
-                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <div className="flex items-center gap-1.5 text-xs text-gray-500">
                   <CalendarDays className="w-3.5 h-3.5" />
                   <span>OJT Period: February - May 2026</span>
                 </div>
@@ -335,7 +335,7 @@ export default function LogsPage() {
                   href="https://www.makerspace.ph/#" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 text-xs text-red-500 hover:text-red-500/80 transition-colors group"
+                  className="flex items-center gap-1.5 text-xs text-red-500 hover:text-red-400 transition-colors group"
                 >
                   <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.66 0 3-4 3-9s-1.34-9-3-9m0 18c-1.66 0-3-4-3-9s1.34-9 3-9m-9 9a9 9 0 019-9" />
@@ -349,21 +349,21 @@ export default function LogsPage() {
 
         {/* Stats Section - Red Theme */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-2">
-          <div className="text-center p-3 rounded-lg bg-card/50 border border-border">
+          <div className="text-center p-3 rounded-lg bg-gray-900/50 border border-gray-800">
             <p className="text-2xl font-bold text-red-500">{logs.length}</p>
-            <p className="text-xs text-muted-foreground">Total Logs</p>
+            <p className="text-xs text-gray-500">Total Logs</p>
           </div>
-          <div className="text-center p-3 rounded-lg bg-card/50 border border-border">
+          <div className="text-center p-3 rounded-lg bg-gray-900/50 border border-gray-800">
             <p className="text-2xl font-bold text-red-500">{allTags.length}</p>
-            <p className="text-xs text-muted-foreground">Unique Tags</p>
+            <p className="text-xs text-gray-500">Unique Tags</p>
           </div>
-          <div className="text-center p-3 rounded-lg bg-card/50 border border-border">
+          <div className="text-center p-3 rounded-lg bg-gray-900/50 border border-gray-800">
             <p className="text-2xl font-bold text-red-500">🏅</p>
-            <p className="text-xs text-muted-foreground">NCII Certified</p>
+            <p className="text-xs text-gray-500">NCII Certified</p>
           </div>
-          <div className="text-center p-3 rounded-lg bg-card/50 border border-border">
+          <div className="text-center p-3 rounded-lg bg-gray-900/50 border border-gray-800">
             <p className="text-2xl font-bold text-red-500">{totalPages}</p>
-            <p className="text-xs text-muted-foreground">Total Pages</p>
+            <p className="text-xs text-gray-500">Total Pages</p>
           </div>
         </div>
       </div>
@@ -373,17 +373,17 @@ export default function LogsPage() {
         <div className="flex flex-wrap gap-3 items-center justify-between">
           <div className="flex-1 min-w-[200px]">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500" />
               <input
                 type="text"
                 placeholder="Search logs..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm"
+                className="w-full pl-9 pr-4 py-2 rounded-lg border border-gray-800 bg-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm text-white"
               />
             </div>
           </div>
-          <button onClick={() => setShowFilters(!showFilters)} className={`px-4 py-2 rounded-lg border transition-colors flex items-center gap-2 text-sm ${showFilters || selectedTag || selectedMonth ? 'bg-red-500 text-white border-red-500' : 'bg-background border-border hover:border-red-500/50'}`}>
+          <button onClick={() => setShowFilters(!showFilters)} className={`px-4 py-2 rounded-lg border transition-colors flex items-center gap-2 text-sm ${showFilters || selectedTag || selectedMonth ? 'bg-red-500 text-white border-red-500' : 'bg-gray-900 border-gray-800 hover:border-red-500/50'}`}>
             <Filter className="w-4 h-4" />
             Filters
             {(selectedTag || selectedMonth) && <span className="ml-1 w-5 h-5 rounded-full bg-white/20 text-xs flex items-center justify-center">{(selectedTag ? 1 : 0) + (selectedMonth ? 1 : 0)}</span>}
@@ -391,40 +391,40 @@ export default function LogsPage() {
         </div>
 
         {showFilters && (
-          <div className="mt-4 p-4 rounded-lg bg-card border border-border animate-in slide-in-from-top-2">
+          <div className="mt-4 p-4 rounded-lg bg-gray-900 border border-gray-800 animate-in slide-in-from-top-2">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="text-xs font-medium text-muted-foreground mb-2 block">Filter by Tag</label>
-                <select value={selectedTag} onChange={(e) => setSelectedTag(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm">
+                <label className="text-xs font-medium text-gray-500 mb-2 block">Filter by Tag</label>
+                <select value={selectedTag} onChange={(e) => setSelectedTag(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-gray-800 bg-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm text-white">
                   <option value="">All Tags</option>
                   {allTags.map(tag => <option key={tag} value={tag}>{tag}</option>)}
                 </select>
               </div>
               <div>
-                <label className="text-xs font-medium text-muted-foreground mb-2 block">Filter by Month</label>
-                <select value={selectedMonth} onChange={(e) => setSelectedMonth(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm">
+                <label className="text-xs font-medium text-gray-500 mb-2 block">Filter by Month</label>
+                <select value={selectedMonth} onChange={(e) => setSelectedMonth(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-gray-800 bg-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm text-white">
                   <option value="">All Months</option>
                   {months.map(month => <option key={month} value={month}>{month}</option>)}
                 </select>
               </div>
             </div>
             <div className="flex justify-end gap-2 mt-4">
-              <button onClick={clearFilters} className="px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">Clear Filters</button>
+              <button onClick={clearFilters} className="px-3 py-1.5 text-sm text-gray-500 hover:text-white transition-colors">Clear Filters</button>
             </div>
           </div>
         )}
 
         {(selectedTag || selectedMonth || searchTerm) && (
           <div className="flex flex-wrap gap-2 mt-3">
-            {searchTerm && <Badge variant="secondary" className="flex items-center gap-1">Search: {searchTerm}<X className="w-3 h-3 cursor-pointer" onClick={() => setSearchTerm("")} /></Badge>}
-            {selectedTag && <Badge variant="secondary" className="flex items-center gap-1 bg-red-500/20">Tag: {selectedTag}<X className="w-3 h-3 cursor-pointer" onClick={() => setSelectedTag("")} /></Badge>}
-            {selectedMonth && <Badge variant="secondary" className="flex items-center gap-1">Month: {selectedMonth}<X className="w-3 h-3 cursor-pointer" onClick={() => setSelectedMonth("")} /></Badge>}
+            {searchTerm && <Badge variant="secondary" className="flex items-center gap-1 bg-gray-800">Search: {searchTerm}<X className="w-3 h-3 cursor-pointer" onClick={() => setSearchTerm("")} /></Badge>}
+            {selectedTag && <Badge variant="secondary" className="flex items-center gap-1 bg-red-500/20 text-red-400">Tag: {selectedTag}<X className="w-3 h-3 cursor-pointer" onClick={() => setSelectedTag("")} /></Badge>}
+            {selectedMonth && <Badge variant="secondary" className="flex items-center gap-1 bg-gray-800">Month: {selectedMonth}<X className="w-3 h-3 cursor-pointer" onClick={() => setSelectedMonth("")} /></Badge>}
           </div>
         )}
       </div>
 
       <div className="max-w-4xl mx-auto mb-4 flex justify-between items-center">
-        <p className="text-sm text-muted-foreground">Showing {startIndex + 1}-{Math.min(endIndex, filteredLogs.length)} of {filteredLogs.length} activity logs</p>
+        <p className="text-sm text-gray-500">Showing {startIndex + 1}-{Math.min(endIndex, filteredLogs.length)} of {filteredLogs.length} activity logs</p>
       </div>
 
       {/* Activity Logs List - Red Theme */}
@@ -432,42 +432,42 @@ export default function LogsPage() {
         {currentLogs.length === 0 && !logs.length ? (
           <div className="text-center py-20">
             <div className="text-6xl mb-4">📝</div>
-            <h3 className="text-xl font-semibold mb-2">No activity logs yet</h3>
-            <p className="text-muted-foreground">Click the + button to add your first activity log!</p>
+            <h3 className="text-xl font-semibold mb-2 text-white">No activity logs yet</h3>
+            <p className="text-gray-500">Click the + button to add your first activity log!</p>
           </div>
         ) : currentLogs.length === 0 && logs.length > 0 ? (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">🔍</div>
-            <h3 className="text-xl font-semibold mb-2">No logs found</h3>
-            <p className="text-muted-foreground">Try adjusting your search or filters</p>
-            <button onClick={clearFilters} className="mt-4 px-4 py-2 text-sm bg-red-500/10 hover:bg-red-500/20 rounded-lg transition-colors">Clear all filters</button>
+            <h3 className="text-xl font-semibold mb-2 text-white">No logs found</h3>
+            <p className="text-gray-500">Try adjusting your search or filters</p>
+            <button onClick={clearFilters} className="mt-4 px-4 py-2 text-sm bg-red-500/10 hover:bg-red-500/20 rounded-lg transition-colors text-red-400">Clear all filters</button>
           </div>
         ) : (
           currentLogs.map((log) => (
             <Link key={log.id} href={`/logs/${log.slug}`} className="block group">
-              <Card className="hover:shadow-md transition-all border-border/50 hover:border-red-500/50 overflow-hidden cursor-pointer">
+              <Card className="hover:shadow-md transition-all border-gray-800 hover:border-red-500/50 overflow-hidden cursor-pointer bg-gray-900/80 backdrop-blur-sm">
                 <CardContent className="p-5">
                   <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                     <div className="space-y-2 flex-1">
-                      <div className="flex items-center gap-3 text-xs font-code text-muted-foreground flex-wrap">
+                      <div className="flex items-center gap-3 text-xs font-code text-gray-500 flex-wrap">
                         <span className="text-xl">{log.icon}</span>
-                        <div className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" />{log.date}</div>
-                        <div className="flex items-center gap-1.5"><BookOpen className="w-3.5 h-3.5" />2 min read</div>
+                        <div className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5 text-red-400" />{log.date}</div>
+                        <div className="flex items-center gap-1.5"><BookOpen className="w-3.5 h-3.5 text-red-400" />2 min read</div>
                       </div>
-                      <h2 className="font-headline font-bold text-lg md:text-xl group-hover:text-red-500 transition-colors">
+                      <h2 className="font-headline font-bold text-lg md:text-xl group-hover:text-red-500 transition-colors text-white">
                         {log.title}
                       </h2>
-                      <p className="text-muted-foreground text-sm md:text-base leading-relaxed">{log.description}</p>
+                      <p className="text-gray-400 text-sm md:text-base leading-relaxed">{log.description}</p>
                       <div className="flex flex-wrap gap-2 pt-2">
                         {log.tags.map(tag => (
-                          <Badge key={tag} variant="secondary" className="text-[10px] uppercase font-bold tracking-wider px-2 cursor-pointer hover:bg-red-500/20 transition-colors" onClick={(e) => { e.preventDefault(); setSelectedTag(tag); }}>
+                          <Badge key={tag} variant="secondary" className="text-[10px] uppercase font-bold tracking-wider px-2 cursor-pointer hover:bg-red-500/20 transition-colors bg-red-500/10 text-red-400" onClick={(e) => { e.preventDefault(); setSelectedTag(tag); }}>
                             {tag}
                           </Badge>
                         ))}
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <button onClick={(e) => { e.preventDefault(); handleDeleteLog(log.id); }} className="opacity-0 group-hover:opacity-100 transition-opacity p-2 rounded-full hover:bg-red-100 dark:hover:bg-red-900/30 text-red-500 hover:text-red-700">
+                      <button onClick={(e) => { e.preventDefault(); handleDeleteLog(log.id); }} className="opacity-0 group-hover:opacity-100 transition-opacity p-2 rounded-full hover:bg-red-900/30 text-red-500 hover:text-red-400">
                         <Trash2 className="w-4 h-4" />
                       </button>
                       <div className="w-10 h-10 rounded-full bg-red-500/5 flex items-center justify-center text-red-500 group-hover:bg-red-500 group-hover:text-white transition-all duration-300 group-hover:scale-110">
@@ -485,8 +485,8 @@ export default function LogsPage() {
       {/* Pagination Controls - Red Theme */}
       {totalPages > 1 && (
         <div className="max-w-4xl mx-auto mt-8 flex justify-center items-center gap-2">
-          <button onClick={() => goToPage(1)} disabled={currentPage === 1} className="p-2 rounded-lg border border-border hover:border-red-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"><ChevronsLeft className="w-4 h-4" /></button>
-          <button onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1} className="p-2 rounded-lg border border-border hover:border-red-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"><ChevronLeft className="w-4 h-4" /></button>
+          <button onClick={() => goToPage(1)} disabled={currentPage === 1} className="p-2 rounded-lg border border-gray-800 hover:border-red-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"><ChevronsLeft className="w-4 h-4" /></button>
+          <button onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1} className="p-2 rounded-lg border border-gray-800 hover:border-red-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"><ChevronLeft className="w-4 h-4" /></button>
           <div className="flex gap-1">
             {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
               let pageNum;
@@ -495,14 +495,14 @@ export default function LogsPage() {
               else if (currentPage >= totalPages - 2) pageNum = totalPages - 4 + i;
               else pageNum = currentPage - 2 + i;
               return (
-                <button key={pageNum} onClick={() => goToPage(pageNum)} className={`w-10 h-10 rounded-lg border transition-colors ${currentPage === pageNum ? 'bg-red-500 text-white border-red-500' : 'border-border hover:border-red-500/50'}`}>
+                <button key={pageNum} onClick={() => goToPage(pageNum)} className={`w-10 h-10 rounded-lg border transition-colors ${currentPage === pageNum ? 'bg-red-500 text-white border-red-500' : 'border-gray-800 hover:border-red-500/50'}`}>
                   {pageNum}
                 </button>
               );
             })}
           </div>
-          <button onClick={() => goToPage(currentPage + 1)} disabled={currentPage === totalPages} className="p-2 rounded-lg border border-border hover:border-red-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"><ChevronRight className="w-4 h-4" /></button>
-          <button onClick={() => goToPage(totalPages)} disabled={currentPage === totalPages} className="p-2 rounded-lg border border-border hover:border-red-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"><ChevronsRight className="w-4 h-4" /></button>
+          <button onClick={() => goToPage(currentPage + 1)} disabled={currentPage === totalPages} className="p-2 rounded-lg border border-gray-800 hover:border-red-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"><ChevronRight className="w-4 h-4" /></button>
+          <button onClick={() => goToPage(totalPages)} disabled={currentPage === totalPages} className="p-2 rounded-lg border border-gray-800 hover:border-red-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"><ChevronsRight className="w-4 h-4" /></button>
         </div>
       )}
 
@@ -511,7 +511,7 @@ export default function LogsPage() {
         {!showForm ? (
           <button 
             onClick={() => setShowForm(true)} 
-            className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-r from-red-600 to-rose-500 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 flex items-center justify-center group"
+            className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-r from-red-600 to-red-500 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 flex items-center justify-center group"
           >
             <Plus className="w-5 h-5 sm:w-6 sm:h-6 group-hover:rotate-90 transition-transform duration-300" />
             <span className="absolute right-full mr-3 px-2 py-1 text-xs bg-gray-900 text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap hidden sm:block">
@@ -521,14 +521,14 @@ export default function LogsPage() {
         ) : (
           <>
             <div 
-              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 animate-fade-in"
+              className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 animate-fade-in"
               onClick={() => setShowForm(false)}
             />
             
-            <div className="fixed inset-x-4 bottom-0 sm:inset-auto sm:bottom-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 bg-card rounded-t-2xl sm:rounded-2xl shadow-2xl border border-red-500/20 w-auto sm:w-[550px] max-h-[90vh] overflow-y-auto z-50 animate-slide-up">
-              <div className="sticky top-0 bg-card/95 backdrop-blur-sm border-b border-red-500/20 p-4 sm:p-5 flex justify-between items-center">
-                <h3 className="font-bold text-base sm:text-lg">Add Activity Log</h3>
-                <button onClick={() => setShowForm(false)} className="p-1.5 rounded-full hover:bg-secondary transition-colors">
+            <div className="fixed inset-x-4 bottom-0 sm:inset-auto sm:bottom-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 bg-gray-900 rounded-t-2xl sm:rounded-2xl shadow-2xl border border-red-500/20 w-auto sm:w-[550px] max-h-[90vh] overflow-y-auto z-50 animate-slide-up">
+              <div className="sticky top-0 bg-gray-900/95 backdrop-blur-sm border-b border-red-500/20 p-4 sm:p-5 flex justify-between items-center">
+                <h3 className="font-bold text-base sm:text-lg text-white">Add Activity Log</h3>
+                <button onClick={() => setShowForm(false)} className="p-1.5 rounded-full hover:bg-gray-800 transition-colors">
                   <X className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
               </div>
@@ -537,7 +537,7 @@ export default function LogsPage() {
                 <div className="space-y-4 sm:space-y-3">
                   {/* Date Picker */}
                   <div className="space-y-1">
-                    <label className="text-xs sm:text-sm font-medium text-muted-foreground flex items-center gap-2">
+                    <label className="text-xs sm:text-sm font-medium text-gray-400 flex items-center gap-2">
                       <Calendar className="w-4 h-4 text-red-500" />
                       Date
                     </label>
@@ -545,23 +545,23 @@ export default function LogsPage() {
                       type="date" 
                       value={newLog.dateValue}
                       onChange={handleDateChange}
-                      className="w-full px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm" 
+                      className="w-full px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg border border-gray-800 bg-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm text-white" 
                     />
-                    <p className="text-[10px] text-muted-foreground mt-1">
+                    <p className="text-[10px] text-gray-500 mt-1">
                       Selected: {newLog.date}
                     </p>
                   </div>
 
                   {/* Icon Picker */}
                   <div className="space-y-1">
-                    <label className="text-xs sm:text-sm font-medium text-muted-foreground">Icon (Emoji)</label>
+                    <label className="text-xs sm:text-sm font-medium text-gray-400">Icon (Emoji)</label>
                     <div className="flex items-center gap-2">
                       <input 
                         type="text" 
                         placeholder="📝" 
                         value={newLog.icon} 
                         onChange={(e) => setNewLog({...newLog, icon: e.target.value})} 
-                        className="flex-1 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm" 
+                        className="flex-1 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg border border-gray-800 bg-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm text-white" 
                         maxLength={2} 
                       />
                       <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-red-500/10 flex items-center justify-center text-2xl">
@@ -572,7 +572,7 @@ export default function LogsPage() {
 
                   {/* Title */}
                   <div className="space-y-1">
-                    <label className="text-xs sm:text-sm font-medium text-muted-foreground">
+                    <label className="text-xs sm:text-sm font-medium text-gray-400">
                       Title <span className="text-red-500">*</span>
                     </label>
                     <input 
@@ -580,13 +580,13 @@ export default function LogsPage() {
                       placeholder="Enter title" 
                       value={newLog.title} 
                       onChange={(e) => setNewLog({...newLog, title: e.target.value})} 
-                      className="w-full px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm" 
+                      className="w-full px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg border border-gray-800 bg-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm text-white" 
                     />
                   </div>
 
                   {/* Description */}
                   <div className="space-y-1">
-                    <label className="text-xs sm:text-sm font-medium text-muted-foreground">
+                    <label className="text-xs sm:text-sm font-medium text-gray-400">
                       Description <span className="text-red-500">*</span>
                     </label>
                     <textarea 
@@ -594,10 +594,10 @@ export default function LogsPage() {
                       value={newLog.description} 
                       onChange={(e) => setNewLog({...newLog, description: e.target.value})} 
                       rows={2} 
-                      className="w-full px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm resize-none" 
+                      className="w-full px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg border border-gray-800 bg-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm resize-none text-white" 
                     />
                     <div className="text-right">
-                      <span className="text-[10px] text-muted-foreground">
+                      <span className="text-[10px] text-gray-500">
                         {newLog.description.length} / 500 characters
                       </span>
                     </div>
@@ -605,16 +605,16 @@ export default function LogsPage() {
 
                   {/* Full Content */}
                   <div className="space-y-1">
-                    <label className="text-xs sm:text-sm font-medium text-muted-foreground">Full Content (Markdown)</label>
+                    <label className="text-xs sm:text-sm font-medium text-gray-400">Full Content (Markdown)</label>
                     <div className="relative">
                       <textarea 
                         placeholder="Enter detailed content in markdown... Use ## for headings, - for lists, etc." 
                         value={newLog.content} 
                         onChange={(e) => setNewLog({...newLog, content: e.target.value})} 
                         rows={5} 
-                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm resize-y font-mono" 
+                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg border border-gray-800 bg-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm resize-y font-mono text-white" 
                       />
-                      <div className="absolute bottom-2 right-2 text-[10px] text-muted-foreground">
+                      <div className="absolute bottom-2 right-2 text-[10px] text-gray-500">
                         Markdown supported
                       </div>
                     </div>
@@ -622,19 +622,19 @@ export default function LogsPage() {
 
                   {/* Tags */}
                   <div className="space-y-1">
-                    <label className="text-xs sm:text-sm font-medium text-muted-foreground">Tags (comma separated)</label>
+                    <label className="text-xs sm:text-sm font-medium text-gray-400">Tags (comma separated)</label>
                     <div className="space-y-2">
                       <input 
                         type="text" 
                         placeholder="Learning, Development, Bug Fix" 
                         value={newLog.tags} 
                         onChange={(e) => setNewLog({...newLog, tags: e.target.value})} 
-                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm" 
+                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg border border-gray-800 bg-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm text-white" 
                       />
                       {newLog.tags && (
                         <div className="flex flex-wrap gap-1.5">
                           {newLog.tags.split(',').map((tag, i) => tag.trim() && (
-                            <span key={i} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-500/10 text-red-500 text-xs">
+                            <span key={i} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-500/10 text-red-400 text-xs">
                               {tag.trim()}
                             </span>
                           ))}
@@ -645,7 +645,7 @@ export default function LogsPage() {
 
                   {/* Image Upload Section */}
                   <div className="space-y-2">
-                    <label className="text-xs sm:text-sm font-medium text-muted-foreground">Upload Images (Optional)</label>
+                    <label className="text-xs sm:text-sm font-medium text-gray-400">Upload Images (Optional)</label>
                     
                     <div className="flex items-center gap-3">
                       <input
@@ -664,7 +664,7 @@ export default function LogsPage() {
                         <Upload className="w-4 h-4 text-red-500" />
                         <span className="text-sm text-red-500">Select Images</span>
                       </button>
-                      <span className="text-xs text-muted-foreground">
+                      <span className="text-xs text-gray-500">
                         {selectedImages.length} file{selectedImages.length !== 1 ? 's' : ''} selected
                       </span>
                     </div>
@@ -677,7 +677,7 @@ export default function LogsPage() {
                             <img
                               src={preview}
                               alt={`Preview ${index + 1}`}
-                              className="w-full h-20 object-cover rounded-lg border border-border"
+                              className="w-full h-20 object-cover rounded-lg border border-gray-800"
                             />
                             <button
                               type="button"
@@ -695,15 +695,15 @@ export default function LogsPage() {
                     {Object.keys(uploadProgress).length > 0 && (
                       <div className="mt-2 space-y-1.5">
                         {Object.entries(uploadProgress).map(([filename, progress]) => (
-                          <div key={filename} className="bg-secondary/20 rounded p-1.5">
+                          <div key={filename} className="bg-gray-800/20 rounded p-1.5">
                             <div className="flex justify-between text-xs mb-0.5">
-                              <span className="truncate text-[10px]">{filename}</span>
-                              <span className="text-[10px]">{progress === 100 ? '✓' : progress === -1 ? '✗' : `${progress}%`}</span>
+                              <span className="truncate text-[10px] text-gray-400">{filename}</span>
+                              <span className="text-[10px] text-gray-400">{progress === 100 ? '✓' : progress === -1 ? '✗' : `${progress}%`}</span>
                             </div>
-                            <div className="h-1 bg-secondary rounded-full overflow-hidden">
+                            <div className="h-1 bg-gray-800 rounded-full overflow-hidden">
                               <div 
                                 className={`h-full transition-all duration-300 ${
-                                  progress === 100 ? 'bg-green-500' : progress === -1 ? 'bg-red-500' : 'bg-red-500'
+                                  progress === 100 ? 'bg-red-500' : progress === -1 ? 'bg-red-700' : 'bg-red-500'
                                 }`}
                                 style={{ width: `${progress === -1 ? 100 : progress}%` }}
                               />
@@ -718,7 +718,7 @@ export default function LogsPage() {
                   <button 
                     onClick={handleAddLog} 
                     disabled={!newLog.title || !newLog.description || isUploadingImages} 
-                    className="w-full mt-3 sm:mt-4 px-4 py-2.5 sm:py-3 bg-gradient-to-r from-red-600 to-rose-500 rounded-lg text-white text-sm sm:text-base font-medium hover:opacity-90 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98]"
+                    className="w-full mt-3 sm:mt-4 px-4 py-2.5 sm:py-3 bg-gradient-to-r from-red-600 to-red-500 rounded-lg text-white text-sm sm:text-base font-medium hover:opacity-90 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98]"
                   >
                     {isUploadingImages ? (
                       <>
@@ -735,7 +735,7 @@ export default function LogsPage() {
 
                   <button 
                     onClick={() => setShowForm(false)} 
-                    className="w-full mt-2 px-4 py-2 rounded-lg border border-border text-muted-foreground text-sm font-medium hover:bg-secondary/50 transition-colors sm:hidden"
+                    className="w-full mt-2 px-4 py-2 rounded-lg border border-gray-800 text-gray-500 text-sm font-medium hover:bg-gray-800/50 transition-colors sm:hidden"
                   >
                     Cancel
                   </button>

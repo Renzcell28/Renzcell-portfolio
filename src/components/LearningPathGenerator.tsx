@@ -221,14 +221,14 @@ export default function LearningPathGenerator() {
     <div className="space-y-6">
       {/* Goal Selection */}
       <div className="text-center mb-8">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold mb-4">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 text-red-500 text-xs font-bold mb-4">
           <Target className="w-3 h-3" />
           <span>CAREER GOAL SELECTOR</span>
         </div>
-        <h2 className="font-headline font-bold text-2xl md:text-3xl lg:text-4xl mb-3">
-          Choose Your <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Career Path</span>
+        <h2 className="font-headline font-bold text-2xl md:text-3xl lg:text-4xl mb-3 text-white">
+          Choose Your <span className="bg-gradient-to-r from-red-600 to-red-500 bg-clip-text text-transparent">Career Path</span>
         </h2>
-        <p className="text-muted-foreground max-w-2xl mx-auto">
+        <p className="text-gray-400 max-w-2xl mx-auto">
           Select your desired career goal and get a personalized AI-generated learning roadmap
         </p>
       </div>
@@ -240,8 +240,8 @@ export default function LearningPathGenerator() {
             onClick={() => setSelectedGoal(goal.id)}
             className={`relative p-4 rounded-xl border-2 transition-all duration-300 text-left group ${
               selectedGoal === goal.id
-                ? `border-primary bg-gradient-to-r ${goal.color} bg-opacity-10 shadow-lg shadow-primary/20`
-                : 'border-border hover:border-primary/50 bg-card/50'
+                ? `border-red-500 bg-gradient-to-r ${goal.color} bg-opacity-10 shadow-lg shadow-red-500/20`
+                : 'border-gray-800 hover:border-red-500/50 bg-gray-900/50'
             }`}
           >
             <div className="flex items-start gap-3">
@@ -249,16 +249,16 @@ export default function LearningPathGenerator() {
                 {goal.icon}
               </div>
               <div className="flex-1">
-                <h3 className="font-bold text-foreground">{goal.title}</h3>
-                <p className="text-xs text-muted-foreground mt-1">{goal.description}</p>
+                <h3 className="font-bold text-white">{goal.title}</h3>
+                <p className="text-xs text-gray-400 mt-1">{goal.description}</p>
                 <div className="flex flex-wrap gap-1 mt-2">
                   {goal.skills.slice(0, 3).map((skill) => (
-                    <span key={skill} className="text-xs px-1.5 py-0.5 rounded bg-secondary/50">
+                    <span key={skill} className="text-xs px-1.5 py-0.5 rounded bg-gray-800 text-gray-300">
                       {skill}
                     </span>
                   ))}
                   {goal.skills.length > 3 && (
-                    <span className="text-xs text-muted-foreground">+{goal.skills.length - 3}</span>
+                    <span className="text-xs text-gray-500">+{goal.skills.length - 3}</span>
                   )}
                 </div>
               </div>
@@ -276,7 +276,7 @@ export default function LearningPathGenerator() {
           <Button
             onClick={generateLearningPath}
             disabled={loading}
-            className="px-8 py-6 bg-gradient-to-r from-primary to-accent rounded-full text-white font-bold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+            className="px-8 py-6 bg-gradient-to-r from-red-600 to-red-500 rounded-full text-white font-bold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
           >
             {loading ? (
               <>
@@ -299,7 +299,7 @@ export default function LearningPathGenerator() {
           <p className="text-red-500">{error}</p>
           <button
             onClick={generateLearningPath}
-            className="mt-2 text-sm text-primary hover:underline"
+            className="mt-2 text-sm text-red-500 hover:underline"
           >
             Try Again
           </button>
@@ -310,27 +310,27 @@ export default function LearningPathGenerator() {
       {learningPath && learningPath.steps && learningPath.steps.length > 0 && (
         <div className="mt-8 animate-fade-in-up">
           {/* Header */}
-          <div className="bg-gradient-to-r from-primary/10 to-accent/10 rounded-2xl p-6 mb-6">
+          <div className="bg-gradient-to-r from-red-500/10 to-red-600/10 rounded-2xl p-6 mb-6">
             <div className="flex flex-wrap justify-between items-start gap-4">
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
-                  <h3 className="text-2xl font-bold">{learningPath.title}</h3>
+                  <h3 className="text-2xl font-bold text-white">{learningPath.title}</h3>
                   <button
                     onClick={regenerateLearningPath}
                     disabled={loading}
-                    className="p-1.5 rounded-lg hover:bg-primary/10 transition-colors group"
+                    className="p-1.5 rounded-lg hover:bg-gray-800 transition-colors group"
                     title="Generate different roadmap"
                   >
-                    <RefreshCw className={`w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors ${loading ? 'animate-spin' : ''}`} />
+                    <RefreshCw className={`w-4 h-4 text-gray-400 group-hover:text-red-500 transition-colors ${loading ? 'animate-spin' : ''}`} />
                   </button>
                 </div>
-                <p className="text-muted-foreground">{learningPath.description}</p>
+                <p className="text-gray-400">{learningPath.description}</p>
                 <div className="flex flex-wrap items-center gap-3 mt-3">
-                  <Badge variant="secondary" className="flex items-center gap-1">
+                  <Badge variant="secondary" className="flex items-center gap-1 bg-gray-800 text-gray-300">
                     <Clock className="w-3 h-3" />
                     {learningPath.totalDuration}
                   </Badge>
-                  <Badge variant="secondary" className="flex items-center gap-1">
+                  <Badge variant="secondary" className="flex items-center gap-1 bg-gray-800 text-gray-300">
                     <BookOpen className="w-3 h-3" />
                     {learningPath.steps.length} Steps
                   </Badge>
@@ -346,7 +346,7 @@ export default function LearningPathGenerator() {
                       stroke="currentColor"
                       strokeWidth="4"
                       fill="none"
-                      className="text-muted-foreground/20"
+                      className="text-gray-800"
                     />
                     <circle
                       cx="40"
@@ -357,42 +357,42 @@ export default function LearningPathGenerator() {
                       fill="none"
                       strokeDasharray={`${2 * Math.PI * 32}`}
                       strokeDashoffset={`${2 * Math.PI * 32 * (1 - calculateOverallProgress() / 100)}`}
-                      className="text-primary transition-all duration-500"
+                      className="text-red-500 transition-all duration-500"
                     />
                   </svg>
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-sm font-bold">{Math.round(calculateOverallProgress())}%</span>
+                    <span className="text-sm font-bold text-white">{Math.round(calculateOverallProgress())}%</span>
                   </div>
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">Progress</p>
+                <p className="text-xs text-gray-500 mt-1">Progress</p>
               </div>
             </div>
           </div>
 
           {/* Dynamic Text Summary - 3 Unique Paragraphs */}
-          <div className="mb-6 p-5 rounded-xl bg-gradient-to-r from-primary/5 via-accent/5 to-transparent border border-primary/10">
+          <div className="mb-6 p-5 rounded-xl bg-gradient-to-r from-red-500/5 via-red-600/5 to-transparent border border-red-500/10">
             <div className="flex items-center gap-2 mb-3">
-              <TrendingUp className="w-4 h-4 text-primary" />
-              <h4 className="font-semibold text-sm uppercase tracking-wide text-muted-foreground">Roadmap Summary</h4>
-              <Badge variant="outline" className="text-[10px] ml-auto">
+              <TrendingUp className="w-4 h-4 text-red-500" />
+              <h4 className="font-semibold text-sm uppercase tracking-wide text-gray-400">Roadmap Summary</h4>
+              <Badge variant="outline" className="text-[10px] ml-auto border-gray-700 text-gray-400">
                 AI Generated • Version {generationCount + 1}
               </Badge>
             </div>
             <div className="space-y-3 text-sm leading-relaxed">
-              <p className="text-foreground/80">{learningPath.summary?.paragraph1 || generateUniqueSummary(learningPath, selectedGoal, Date.now()).paragraph1}</p>
-              <p className="text-foreground/80">{learningPath.summary?.paragraph2 || generateUniqueSummary(learningPath, selectedGoal, Date.now()).paragraph2}</p>
-              <p className="text-foreground/80">{learningPath.summary?.paragraph3 || generateUniqueSummary(learningPath, selectedGoal, Date.now()).paragraph3}</p>
+              <p className="text-gray-300">{learningPath.summary?.paragraph1 || generateUniqueSummary(learningPath, selectedGoal, Date.now()).paragraph1}</p>
+              <p className="text-gray-300">{learningPath.summary?.paragraph2 || generateUniqueSummary(learningPath, selectedGoal, Date.now()).paragraph2}</p>
+              <p className="text-gray-300">{learningPath.summary?.paragraph3 || generateUniqueSummary(learningPath, selectedGoal, Date.now()).paragraph3}</p>
             </div>
           </div>
 
           {/* Learning Steps */}
           <div className="space-y-4">
             <div className="flex justify-between items-center">
-              <h4 className="font-bold text-lg flex items-center gap-2">
-                <Zap className="w-4 h-4 text-primary" />
+              <h4 className="font-bold text-lg flex items-center gap-2 text-white">
+                <Zap className="w-4 h-4 text-red-500" />
                 Learning Path Steps
               </h4>
-              <Badge variant="outline" className="text-xs">
+              <Badge variant="outline" className="text-xs border-gray-700 text-gray-400">
                 AI Generated • {new Date().toLocaleDateString()}
               </Badge>
             </div>
@@ -403,7 +403,7 @@ export default function LearningPathGenerator() {
                   className={`relative p-4 rounded-xl border transition-all duration-300 cursor-pointer ${
                     progress[step.id]
                       ? 'bg-green-500/5 border-green-500/30'
-                      : 'bg-card/50 border-border hover:border-primary/30'
+                      : 'bg-gray-900/50 border-gray-800 hover:border-red-500/30'
                   }`}
                   onClick={() => toggleStepComplete(step.id)}
                 >
@@ -412,7 +412,7 @@ export default function LearningPathGenerator() {
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
                         progress[step.id]
                           ? 'bg-green-500 text-white'
-                          : 'bg-primary/10 text-primary'
+                          : 'bg-red-500/10 text-red-500'
                       }`}>
                         {progress[step.id] ? (
                           <CheckCircle className="w-5 h-5" />
@@ -423,18 +423,18 @@ export default function LearningPathGenerator() {
                     </div>
                     <div className="flex-1">
                       <div className="flex flex-wrap justify-between items-start gap-2">
-                        <h5 className="font-semibold">{step.title}</h5>
-                        <Badge variant="outline" className="text-xs">
+                        <h5 className="font-semibold text-white">{step.title}</h5>
+                        <Badge variant="outline" className="text-xs border-gray-700 text-gray-400">
                           <Clock className="w-3 h-3 mr-1" />
                           {step.duration}
                         </Badge>
                       </div>
-                      <p className="text-sm text-muted-foreground mt-1">{step.description}</p>
+                      <p className="text-sm text-gray-400 mt-1">{step.description}</p>
                       
                       {step.skills && step.skills.length > 0 && (
                         <div className="flex flex-wrap gap-1 mt-2">
                           {step.skills.map((skill) => (
-                            <span key={skill} className="text-xs px-2 py-0.5 rounded-full bg-secondary/50">
+                            <span key={skill} className="text-xs px-2 py-0.5 rounded-full bg-gray-800 text-gray-300">
                               {skill}
                             </span>
                           ))}
@@ -443,10 +443,10 @@ export default function LearningPathGenerator() {
                       
                       {step.resources && step.resources.length > 0 && (
                         <div className="mt-2">
-                          <p className="text-xs text-muted-foreground mb-1">Resources:</p>
+                          <p className="text-xs text-gray-500 mb-1">Resources:</p>
                           <div className="flex flex-wrap gap-2">
                             {step.resources.map((resource, i) => (
-                              <span key={i} className="text-xs px-2 py-0.5 rounded bg-primary/5 text-primary">
+                              <span key={i} className="text-xs px-2 py-0.5 rounded bg-red-500/5 text-red-400">
                                 {resource}
                               </span>
                             ))}
@@ -454,7 +454,7 @@ export default function LearningPathGenerator() {
                         </div>
                       )}
                     </div>
-                    <ChevronRight className={`w-4 h-4 text-muted-foreground transition-transform ${
+                    <ChevronRight className={`w-4 h-4 text-gray-600 transition-transform ${
                       progress[step.id] ? 'opacity-0' : 'group-hover:translate-x-1'
                     }`} />
                   </div>
@@ -465,14 +465,14 @@ export default function LearningPathGenerator() {
 
           {/* Recommended Technologies */}
           {learningPath.recommendedTech && learningPath.recommendedTech.length > 0 && (
-            <div className="mt-6 p-4 rounded-xl bg-gradient-to-r from-primary/5 to-accent/5 border border-primary/10">
-              <h4 className="font-bold text-lg flex items-center gap-2 mb-3">
-                <Cpu className="w-4 h-4 text-primary" />
+            <div className="mt-6 p-4 rounded-xl bg-gradient-to-r from-red-500/5 to-red-600/5 border border-red-500/10">
+              <h4 className="font-bold text-lg flex items-center gap-2 mb-3 text-white">
+                <Cpu className="w-4 h-4 text-red-500" />
                 Recommended Tech Stack
               </h4>
               <div className="flex flex-wrap gap-2">
                 {learningPath.recommendedTech.map((tech) => (
-                  <Badge key={tech} variant="secondary" className="px-3 py-1">
+                  <Badge key={tech} variant="secondary" className="px-3 py-1 bg-gray-800 text-gray-300">
                     {tech}
                   </Badge>
                 ))}
@@ -482,14 +482,14 @@ export default function LearningPathGenerator() {
 
           {/* Career Opportunities */}
           {learningPath.careerOpportunities && learningPath.careerOpportunities.length > 0 && (
-            <div className="mt-4 p-4 rounded-xl bg-primary/5 border border-primary/10">
-              <h4 className="font-bold text-lg flex items-center gap-2 mb-3">
-                <Trophy className="w-4 h-4 text-primary" />
+            <div className="mt-4 p-4 rounded-xl bg-red-500/5 border border-red-500/10">
+              <h4 className="font-bold text-lg flex items-center gap-2 mb-3 text-white">
+                <Trophy className="w-4 h-4 text-red-500" />
                 Career Opportunities
               </h4>
               <div className="flex flex-wrap gap-2">
                 {learningPath.careerOpportunities.map((job) => (
-                  <Badge key={job} variant="outline" className="px-3 py-1">
+                  <Badge key={job} variant="outline" className="px-3 py-1 border-gray-700 text-gray-300">
                     {job}
                   </Badge>
                 ))}
@@ -503,7 +503,7 @@ export default function LearningPathGenerator() {
               onClick={regenerateLearningPath}
               disabled={loading}
               variant="outline"
-              className="rounded-full gap-2"
+              className="rounded-full gap-2 border-gray-700 text-gray-300 hover:bg-gray-800"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
               Generate Different Roadmap
@@ -515,14 +515,14 @@ export default function LearningPathGenerator() {
                 setProgress({});
               }}
               variant="outline"
-              className="rounded-full"
+              className="rounded-full border-gray-700 text-gray-300 hover:bg-gray-800"
             >
               Start Over
             </Button>
           </div>
           
           {/* AI Attribution */}
-          <p className="text-center text-[10px] text-muted-foreground mt-4">
+          <p className="text-center text-[10px] text-gray-600 mt-4">
             🤖 Generated by AI • Each generation creates a unique learning path with different summary text • Refresh for completely new content
           </p>
         </div>

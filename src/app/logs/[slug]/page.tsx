@@ -9,8 +9,6 @@ import { Button } from '@/components/ui/button';
 import { useState, useEffect, useRef, use, useCallback } from 'react';
 import { getLogBySlugFromDB, updateLogInDB, generateSlug, ActivityLog, getImagesForLog, addImageToLog, deleteImageFromDB, UploadedImage } from '@/lib/db';
 
-const IMAGES_STORAGE_KEY = 'activity_log_images';
-
 // Helper function to format date for input (YYYY-MM-DD)
 const formatDateForInput = (formattedDate: string): string => {
   try {
@@ -82,7 +80,7 @@ export default function LogDetailPage({ params }: { params: Promise<{ slug: stri
     loadImages();
   }, [loadImages]);
 
-  // Initialize edit form when editing starts - FIXED
+  // Initialize edit form when editing starts
   const startEditing = () => {
     if (log) {
       setEditedLog({
@@ -132,7 +130,7 @@ export default function LogDetailPage({ params }: { params: Promise<{ slug: stri
       updateLogInDB(log.id, updatedLog);
 
       const toast = document.createElement('div');
-      toast.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-in slide-in-from-bottom-4';
+      toast.className = 'fixed bottom-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-in slide-in-from-bottom-4';
       toast.textContent = '✅ Log updated successfully!';
       document.body.appendChild(toast);
       setTimeout(() => toast.remove(), 3000);
@@ -150,7 +148,7 @@ export default function LogDetailPage({ params }: { params: Promise<{ slug: stri
     }
   };
 
-  // Handle date change - FIXED
+  // Handle date change
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const dateValue = e.target.value;
     if (dateValue) {
@@ -232,7 +230,7 @@ export default function LogDetailPage({ params }: { params: Promise<{ slug: stri
     const successCount = uploadedImagesList.length;
     if (successCount > 0) {
       const toast = document.createElement('div');
-      toast.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-in slide-in-from-bottom-4';
+      toast.className = 'fixed bottom-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-in slide-in-from-bottom-4';
       toast.textContent = `✅ ${successCount} image${successCount > 1 ? 's' : ''} uploaded successfully!`;
       document.body.appendChild(toast);
       setTimeout(() => toast.remove(), 3000);
@@ -248,7 +246,7 @@ export default function LogDetailPage({ params }: { params: Promise<{ slug: stri
       setUploadedImages(prev => prev.filter(img => img.id !== imageId));
       
       const toast = document.createElement('div');
-      toast.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-in slide-in-from-bottom-4';
+      toast.className = 'fixed bottom-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-in slide-in-from-bottom-4';
       toast.textContent = '🗑️ Image deleted!';
       document.body.appendChild(toast);
       setTimeout(() => toast.remove(), 3000);
@@ -344,7 +342,7 @@ export default function LogDetailPage({ params }: { params: Promise<{ slug: stri
         sections.push(
           <div key={`header-${i}`} className="mb-4 mt-6 first:mt-0">
             <div className="flex items-center gap-2">
-              <div className="w-1 h-6 bg-gradient-to-b from-primary to-accent rounded-full"></div>
+              <div className="w-1 h-6 bg-gradient-to-b from-red-500 to-red-600 rounded-full"></div>
               <h2 className="text-xl md:text-2xl font-bold text-foreground">{line.replace('## ', '')}</h2>
             </div>
           </div>
@@ -380,8 +378,8 @@ export default function LogDetailPage({ params }: { params: Promise<{ slug: stri
         sections.push(
           <div key={`bullet-list-${i}`} className="mb-6 space-y-2">
             {bulletItems.map((item, idx) => (
-              <div key={idx} className="flex items-start gap-3 p-3 rounded-lg bg-primary/5 border border-primary/10 hover:bg-primary/10 transition-colors">
-                <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2"></div>
+              <div key={idx} className="flex items-start gap-3 p-3 rounded-lg bg-red-500/5 border border-red-500/10 hover:bg-red-500/10 transition-colors">
+                <div className="w-1.5 h-1.5 rounded-full bg-red-500 mt-2"></div>
                 <span className="text-muted-foreground">{item}</span>
               </div>
             ))}
@@ -415,8 +413,8 @@ export default function LogDetailPage({ params }: { params: Promise<{ slug: stri
       sections.push(
         <div key="bullet-list-final" className="mb-6 space-y-2">
           {bulletItems.map((item, idx) => (
-            <div key={idx} className="flex items-start gap-3 p-3 rounded-lg bg-primary/5 border border-primary/10">
-              <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2"></div>
+            <div key={idx} className="flex items-start gap-3 p-3 rounded-lg bg-red-500/5 border border-red-500/10">
+              <div className="w-1.5 h-1.5 rounded-full bg-red-500 mt-2"></div>
               <span className="text-muted-foreground">{item}</span>
             </div>
           ))}
@@ -432,26 +430,26 @@ export default function LogDetailPage({ params }: { params: Promise<{ slug: stri
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden">
+    <div className="relative min-h-screen overflow-hidden bg-black">
       <div className="absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5" />
-        <div className="absolute top-20 left-10 w-72 h-72 bg-primary/10 rounded-full blur-[100px] animate-pulse" />
-        <div className="absolute bottom-20 right-10 w-80 h-80 bg-accent/10 rounded-full blur-[100px] animate-pulse delay-1000" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-r from-primary/5 to-accent/5 rounded-full blur-[120px]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 via-transparent to-red-600/5" />
+        <div className="absolute top-20 left-10 w-72 h-72 bg-red-500/10 rounded-full blur-[100px] animate-pulse" />
+        <div className="absolute bottom-20 right-10 w-80 h-80 bg-red-600/10 rounded-full blur-[100px] animate-pulse delay-1000" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-r from-red-500/5 to-red-600/5 rounded-full blur-[120px]" />
       </div>
 
       <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
-        <div className="absolute top-[10%] left-[5%] w-2 h-2 bg-primary/30 rounded-full animate-float" />
-        <div className="absolute top-[30%] right-[10%] w-3 h-3 bg-accent/30 rounded-full animate-float-delay" />
-        <div className="absolute bottom-[20%] left-[15%] w-2 h-2 bg-primary/20 rounded-full animate-float-slow" />
-        <div className="absolute bottom-[40%] right-[20%] w-1.5 h-1.5 bg-accent/25 rounded-full animate-float" />
-        <div className="absolute top-[60%] left-[80%] w-2.5 h-2.5 bg-primary/15 rounded-full animate-float-delay" />
+        <div className="absolute top-[10%] left-[5%] w-2 h-2 bg-red-500/30 rounded-full animate-float" />
+        <div className="absolute top-[30%] right-[10%] w-3 h-3 bg-red-600/30 rounded-full animate-float-delay" />
+        <div className="absolute bottom-[20%] left-[15%] w-2 h-2 bg-red-500/20 rounded-full animate-float-slow" />
+        <div className="absolute bottom-[40%] right-[20%] w-1.5 h-1.5 bg-red-600/25 rounded-full animate-float" />
+        <div className="absolute top-[60%] left-[80%] w-2.5 h-2.5 bg-red-500/15 rounded-full animate-float-delay" />
       </div>
 
       <div className="container mx-auto px-4 py-16 relative z-10">
         <div className="max-w-4xl mx-auto">
           <div className="mb-8 animate-fade-in-up">
-            <Button variant="ghost" asChild className="p-0 hover:bg-transparent text-muted-foreground hover:text-primary group">
+            <Button variant="ghost" asChild className="p-0 hover:bg-transparent text-muted-foreground hover:text-red-500 group">
               <Link href="/logs" className="flex items-center gap-2">
                 <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
                 <span className="text-sm font-medium">Back to All Logs</span>
@@ -459,29 +457,28 @@ export default function LogDetailPage({ params }: { params: Promise<{ slug: stri
             </Button>
           </div>
 
-          <div className="bg-card/80 backdrop-blur-sm rounded-2xl border border-primary/10 overflow-hidden shadow-2xl animate-fade-in-up animation-delay-200">
+          <div className="bg-gray-900/80 backdrop-blur-sm rounded-2xl border border-red-500/20 overflow-hidden shadow-2xl animate-fade-in-up animation-delay-200">
             {isEditing ? (
               // Edit Mode
               <div className="p-6 md:p-8">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-bold">Edit Activity Log</h2>
-                  <button onClick={cancelEditing} className="p-2 rounded-full hover:bg-secondary transition-colors">
+                  <button onClick={cancelEditing} className="p-2 rounded-full hover:bg-gray-800 transition-colors">
                     <XCircle className="w-5 h-5" />
                   </button>
                 </div>
 
                 <div className="space-y-4">
-                  {/* Date Picker - FIXED */}
                   <div>
                     <label className="text-sm font-medium mb-1 block flex items-center gap-2">
-                      <CalendarIcon className="w-4 h-4 text-primary" />
+                      <CalendarIcon className="w-4 h-4 text-red-500" />
                       Date
                     </label>
                     <input
                       type="date"
                       value={editedLog.dateValue || ''}
                       onChange={handleDateChange}
-                      className="w-full px-3 py-2 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
+                      className="w-full px-3 py-2 rounded-lg border border-gray-800 bg-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm"
                     />
                     <p className="text-xs text-muted-foreground mt-1">
                       Current: {editedLog.date}
@@ -495,10 +492,10 @@ export default function LogDetailPage({ params }: { params: Promise<{ slug: stri
                         type="text"
                         value={editedLog.icon || ""}
                         onChange={(e) => setEditedLog({...editedLog, icon: e.target.value})}
-                        className="flex-1 px-3 py-2 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
+                        className="flex-1 px-3 py-2 rounded-lg border border-gray-800 bg-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm"
                         maxLength={2}
                       />
-                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-2xl">
+                      <div className="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center text-2xl">
                         {editedLog.icon || "📝"}
                       </div>
                     </div>
@@ -510,7 +507,7 @@ export default function LogDetailPage({ params }: { params: Promise<{ slug: stri
                       type="text"
                       value={editedLog.title || ""}
                       onChange={(e) => setEditedLog({...editedLog, title: e.target.value})}
-                      className="w-full px-3 py-2 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
+                      className="w-full px-3 py-2 rounded-lg border border-gray-800 bg-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm"
                     />
                   </div>
 
@@ -520,7 +517,7 @@ export default function LogDetailPage({ params }: { params: Promise<{ slug: stri
                       value={editedLog.description || ""}
                       onChange={(e) => setEditedLog({...editedLog, description: e.target.value})}
                       rows={3}
-                      className="w-full px-3 py-2 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
+                      className="w-full px-3 py-2 rounded-lg border border-gray-800 bg-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm"
                     />
                   </div>
 
@@ -530,7 +527,7 @@ export default function LogDetailPage({ params }: { params: Promise<{ slug: stri
                       value={editedLog.content || ""}
                       onChange={(e) => setEditedLog({...editedLog, content: e.target.value})}
                       rows={8}
-                      className="w-full px-3 py-2 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm font-mono"
+                      className="w-full px-3 py-2 rounded-lg border border-gray-800 bg-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm font-mono"
                     />
                   </div>
 
@@ -541,19 +538,19 @@ export default function LogDetailPage({ params }: { params: Promise<{ slug: stri
                       value={Array.isArray(editedLog.tags) ? editedLog.tags.join(', ') : editedLog.tags || ""}
                       onChange={handleTagChange}
                       placeholder="Learning, Development, Bug Fix"
-                      className="w-full px-3 py-2 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
+                      className="w-full px-3 py-2 rounded-lg border border-gray-800 bg-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm"
                     />
                     {editedLog.tags && Array.isArray(editedLog.tags) && editedLog.tags.length > 0 && (
                       <div className="flex flex-wrap gap-1.5 mt-2">
                         {editedLog.tags.map((tag, i) => (
-                          <span key={i} className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs">{tag}</span>
+                          <span key={i} className="px-2 py-0.5 rounded-full bg-red-500/10 text-red-400 text-xs">{tag}</span>
                         ))}
                       </div>
                     )}
                   </div>
 
                   <div className="flex gap-3 pt-4">
-                    <Button onClick={saveEdit} disabled={isSaving} className="flex-1 bg-gradient-to-r from-primary to-accent">
+                    <Button onClick={saveEdit} disabled={isSaving} className="flex-1 bg-gradient-to-r from-red-600 to-red-500">
                       {isSaving ? <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />Saving...</> : <><Save className="w-4 h-4 mr-2" />Save Changes</>}
                     </Button>
                     <Button onClick={cancelEditing} variant="outline" className="flex-1">Cancel</Button>
@@ -564,35 +561,35 @@ export default function LogDetailPage({ params }: { params: Promise<{ slug: stri
               // View Mode
               <>
                 <div className="relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-accent/5 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-red-500/10 via-red-600/5 to-transparent" />
                   <div className="relative p-6 md:p-8">
                     <div className="flex flex-wrap gap-2 mb-4">
                       {log.tags.map((tag: string) => (
-                        <Badge key={tag} variant="secondary" className="px-3 py-1 text-xs font-medium bg-primary/10 hover:bg-primary/20 transition-colors">
+                        <Badge key={tag} variant="secondary" className="px-3 py-1 text-xs font-medium bg-red-500/10 hover:bg-red-500/20 transition-colors text-red-400">
                           {tag}
                         </Badge>
                       ))}
                     </div>
 
-                    <h1 className="font-headline font-black text-3xl md:text-4xl lg:text-5xl tracking-tight leading-tight mb-4 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                    <h1 className="font-headline font-black text-3xl md:text-4xl lg:text-5xl tracking-tight leading-tight mb-4 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
                       {log.title}
                     </h1>
 
                     <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground pt-2">
                       <div className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4" />
+                        <Calendar className="w-4 h-4 text-red-400" />
                         <span>{log.date}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <User className="w-4 h-4" />
+                        <User className="w-4 h-4 text-red-400" />
                         <span>Renzcell Rick Loresco</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Clock className="w-4 h-4" />
+                        <Clock className="w-4 h-4 text-red-400" />
                         <span>5 min read</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <BookOpen className="w-4 h-4" />
+                        <BookOpen className="w-4 h-4 text-red-400" />
                         <span>Activity Log</span>
                       </div>
                     </div>
@@ -605,11 +602,11 @@ export default function LogDetailPage({ params }: { params: Promise<{ slug: stri
                   </div>
 
                   <div className="relative my-8">
-                    <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-border"></div></div>
-                    <div className="relative flex justify-center"><span className="bg-card px-4 text-xs text-muted-foreground">DETAILED LOG</span></div>
+                    <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-800"></div></div>
+                    <div className="relative flex justify-center"><span className="bg-gray-900 px-4 text-xs text-muted-foreground">DETAILED LOG</span></div>
                   </div>
 
-                  <article className="prose prose-lg max-w-none dark:prose-invert animate-fade-in animation-delay-400">
+                  <article className="prose prose-lg max-w-none prose-invert animate-fade-in animation-delay-400">
                     {renderFormattedContent(log.content)}
                   </article>
 
@@ -617,13 +614,13 @@ export default function LogDetailPage({ params }: { params: Promise<{ slug: stri
                   {Object.keys(uploadProgress).length > 0 && (
                     <div className="mt-6 space-y-2">
                       {Object.entries(uploadProgress).map(([filename, progress]) => (
-                        <div key={filename} className="bg-secondary/20 rounded-lg p-2">
+                        <div key={filename} className="bg-gray-800/20 rounded-lg p-2">
                           <div className="flex justify-between text-xs mb-1">
                             <span className="truncate flex-1">{filename}</span>
                             <span>{progress === 100 ? '✓' : progress === -1 ? '✗' : `${progress}%`}</span>
                           </div>
-                          <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
-                            <div className={`h-full transition-all duration-300 ${progress === 100 ? 'bg-green-500' : progress === -1 ? 'bg-red-500' : 'bg-primary'}`} style={{ width: `${progress === -1 ? 100 : progress}%` }} />
+                          <div className="h-1.5 bg-gray-800 rounded-full overflow-hidden">
+                            <div className={`h-full transition-all duration-300 ${progress === 100 ? 'bg-red-500' : progress === -1 ? 'bg-red-700' : 'bg-red-500'}`} style={{ width: `${progress === -1 ? 100 : progress}%` }} />
                           </div>
                         </div>
                       ))}
@@ -632,16 +629,16 @@ export default function LogDetailPage({ params }: { params: Promise<{ slug: stri
 
                   {/* Uploaded Images Gallery */}
                   {isLoadingImages ? (
-                    <div className="mt-8 flex justify-center py-8"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" /></div>
+                    <div className="mt-8 flex justify-center py-8"><div className="w-8 h-8 border-4 border-red-500 border-t-transparent rounded-full animate-spin" /></div>
                   ) : uploadedImages.length > 0 && (
                     <div className="mt-8 animate-fade-in animation-delay-400">
                       <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                        <ImageIcon className="w-5 h-5 text-primary" />
+                        <ImageIcon className="w-5 h-5 text-red-500" />
                         Attached Images ({uploadedImages.length})
                       </h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {uploadedImages.map((image) => (
-                          <div key={image.id} className="relative group rounded-xl overflow-hidden border border-border hover:border-primary/40 transition-all">
+                          <div key={image.id} className="relative group rounded-xl overflow-hidden border border-gray-800 hover:border-red-500/40 transition-all">
                             <img src={image.url} alt={image.filename} className="w-full h-48 object-cover cursor-pointer hover:scale-105 transition-transform duration-300" onClick={() => setSelectedImage(image)} />
                             <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                               <button onClick={() => setSelectedImage(image)} className="p-1.5 rounded-lg bg-black/50 hover:bg-black/70 text-white transition-colors"><ZoomIn className="w-4 h-4" /></button>
@@ -658,24 +655,24 @@ export default function LogDetailPage({ params }: { params: Promise<{ slug: stri
                   )}
                 </div>
 
-                <div className="border-t border-border p-6 md:p-8">
+                <div className="border-t border-gray-800 p-6 md:p-8">
                   <div className="flex flex-wrap items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
-                      <button onClick={() => setIsLiked(!isLiked)} className={`p-2 rounded-full transition-all duration-300 hover:scale-110 ${isLiked ? 'bg-primary/20 text-primary' : 'hover:bg-primary/10 text-muted-foreground'}`}><ThumbsUp className="w-4 h-4" /></button>
-                      <button onClick={() => setIsBookmarked(!isBookmarked)} className={`p-2 rounded-full transition-all duration-300 hover:scale-110 ${isBookmarked ? 'bg-primary/20 text-primary' : 'hover:bg-primary/10 text-muted-foreground'}`}><Bookmark className="w-4 h-4" /></button>
-                      <button className="p-2 rounded-full hover:bg-primary/10 transition-all duration-300 hover:scale-110 group"><Share2 className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" /></button>
-                      <button onClick={startEditing} className="p-2 rounded-full hover:bg-primary/10 transition-all duration-300 hover:scale-110 group"><Edit2 className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" /></button>
+                      <button onClick={() => setIsLiked(!isLiked)} className={`p-2 rounded-full transition-all duration-300 hover:scale-110 ${isLiked ? 'bg-red-500/20 text-red-500' : 'hover:bg-red-500/10 text-muted-foreground'}`}><ThumbsUp className="w-4 h-4" /></button>
+                      <button onClick={() => setIsBookmarked(!isBookmarked)} className={`p-2 rounded-full transition-all duration-300 hover:scale-110 ${isBookmarked ? 'bg-red-500/20 text-red-500' : 'hover:bg-red-500/10 text-muted-foreground'}`}><Bookmark className="w-4 h-4" /></button>
+                      <button className="p-2 rounded-full hover:bg-red-500/10 transition-all duration-300 hover:scale-110 group"><Share2 className="w-4 h-4 text-muted-foreground group-hover:text-red-500 transition-colors" /></button>
+                      <button onClick={startEditing} className="p-2 rounded-full hover:bg-red-500/10 transition-all duration-300 hover:scale-110 group"><Edit2 className="w-4 h-4 text-muted-foreground group-hover:text-red-500 transition-colors" /></button>
                       <div className="relative">
                         <input ref={fileInputRef} type="file" accept="image/*" multiple onChange={handleMultipleImageUpload} className="hidden" />
-                        <button onClick={() => fileInputRef.current?.click()} disabled={isUploading} className="p-2 rounded-full hover:bg-primary/10 transition-all duration-300 hover:scale-110 group flex items-center gap-2">
-                          {isUploading ? <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" /> : <Upload className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />}
-                          <span className="text-xs text-muted-foreground group-hover:text-primary transition-colors hidden sm:inline">Add Pictures</span>
+                        <button onClick={() => fileInputRef.current?.click()} disabled={isUploading} className="p-2 rounded-full hover:bg-red-500/10 transition-all duration-300 hover:scale-110 group flex items-center gap-2">
+                          {isUploading ? <div className="w-4 h-4 border-2 border-red-500 border-t-transparent rounded-full animate-spin" /> : <Upload className="w-4 h-4 text-muted-foreground group-hover:text-red-500 transition-colors" />}
+                          <span className="text-xs text-muted-foreground group-hover:text-red-500 transition-colors hidden sm:inline">Add Pictures</span>
                         </button>
                       </div>
                     </div>
                     <div className="text-xs text-muted-foreground">Last updated: {log.date}</div>
                   </div>
-                  <div onDragOver={handleDragOver} onDrop={handleDrop} className="mt-4 border-2 border-dashed border-border rounded-lg p-4 text-center hover:border-primary/40 transition-colors">
+                  <div onDragOver={handleDragOver} onDrop={handleDrop} className="mt-4 border-2 border-dashed border-gray-800 rounded-lg p-4 text-center hover:border-red-500/40 transition-colors">
                     <p className="text-xs text-muted-foreground">📷 Drag & drop multiple images here to upload (max 5MB each)</p>
                     <p className="text-[10px] text-muted-foreground mt-1">Supports: JPG, PNG, WEBP, GIF</p>
                   </div>
@@ -686,7 +683,7 @@ export default function LogDetailPage({ params }: { params: Promise<{ slug: stri
 
           {/* Lightbox Modal */}
           {selectedImage && (
-            <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 animate-fade-in" onClick={() => setSelectedImage(null)}>
+            <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4 animate-fade-in" onClick={() => setSelectedImage(null)}>
               <div className="relative max-w-4xl max-h-[90vh]">
                 <img src={selectedImage.url} alt={selectedImage.filename} className="max-w-full max-h-[90vh] object-contain rounded-lg" />
                 <button onClick={() => setSelectedImage(null)} className="absolute top-4 right-4 p-2 rounded-full bg-black/50 hover:bg-black/70 text-white transition-colors"><X className="w-5 h-5" /></button>
@@ -699,13 +696,13 @@ export default function LogDetailPage({ params }: { params: Promise<{ slug: stri
           )}
 
           <div className="mt-12 animate-fade-in-up animation-delay-500">
-            <div className="bg-gradient-to-br from-primary/10 via-accent/5 to-transparent rounded-2xl p-8 border border-primary/10">
+            <div className="bg-gradient-to-br from-red-500/10 via-red-600/5 to-transparent rounded-2xl p-8 border border-red-500/20">
               <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                 <div className="space-y-2 text-center md:text-left">
                   <h4 className="font-bold text-lg flex items-center gap-2 justify-center md:justify-start"><span className="text-2xl">📖</span>Thanks for reading!</h4>
                   <p className="text-muted-foreground text-sm">Check out more of my daily activity logs and internship journey.</p>
                 </div>
-                <Button asChild className="rounded-full h-12 px-8 font-bold bg-gradient-to-r from-primary to-accent hover:shadow-lg transition-all duration-300 hover:scale-105">
+                <Button asChild className="rounded-full h-12 px-8 font-bold bg-gradient-to-r from-red-600 to-red-500 hover:shadow-lg transition-all duration-300 hover:scale-105">
                   <Link href="/logs">Explore More Logs<ArrowLeft className="w-4 h-4 ml-2 rotate-180" /></Link>
                 </Button>
               </div>

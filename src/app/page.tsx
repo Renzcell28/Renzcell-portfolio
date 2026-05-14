@@ -14,23 +14,23 @@ export default async function Home() {
   const timelineEvents = await getTimeline();
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
+    <div className="min-h-screen relative overflow-hidden bg-black">
       {/* ================= ANIMATED BACKGROUND (Red Theme) ================= */}
       <div className="fixed inset-0">
         <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03]" />
         <div className="absolute top-0 -left-4 w-72 h-72 bg-red-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob" />
-        <div className="absolute top-0 -right-4 w-72 h-72 bg-rose-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000" />
-        <div className="absolute -bottom-8 left-20 w-72 h-72 bg-red-600/50 rounded-full mix-blend-multiply filter blur-xl opacity-10 animate-blob animation-delay-4000" />
+        <div className="absolute top-0 -right-4 w-72 h-72 bg-red-600 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000" />
+        <div className="absolute -bottom-8 left-20 w-72 h-72 bg-red-700/50 rounded-full mix-blend-multiply filter blur-xl opacity-10 animate-blob animation-delay-4000" />
       </div>
 
       <div className="flex flex-col gap-16 md:gap-20 lg:gap-24 pb-20 relative z-10">
         {/* Hero Section - Red Theme */}
         <section className="relative pt-12 md:pt-16 pb-10 md:pb-12 overflow-hidden">
           <div className="absolute inset-0 -z-10">
-            <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 via-transparent to-rose-500/5" />
+            <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 via-transparent to-red-600/5" />
             <div className="absolute top-0 left-1/4 w-72 md:w-96 h-72 md:h-96 bg-red-500/10 rounded-full blur-[100px] animate-pulse-slow" />
-            <div className="absolute bottom-0 right-1/4 w-60 md:w-80 h-60 md:h-80 bg-rose-500/10 rounded-full blur-[100px] animate-pulse-slower" />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] md:w-[600px] h-[400px] md:h-[600px] bg-gradient-to-r from-red-500/5 to-rose-500/5 rounded-full blur-[120px] animate-spin-slow" />
+            <div className="absolute bottom-0 right-1/4 w-60 md:w-80 h-60 md:h-80 bg-red-600/10 rounded-full blur-[100px] animate-pulse-slower" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] md:w-[600px] h-[400px] md:h-[600px] bg-gradient-to-r from-red-500/5 to-red-600/5 rounded-full blur-[120px] animate-spin-slow" />
           </div>
           
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
@@ -47,34 +47,34 @@ export default async function Home() {
                 
                 {/* Name with gradient animation - Red Theme */}
                 <h1 className="font-headline font-black text-3xl sm:text-4xl md:text-5xl lg:text-6xl tracking-tight mb-3 leading-[1.2] animate-slide-in-left">
-                  <span className="text-foreground">Renzcell Rick V.</span>{' '}
-                  <span className="bg-gradient-to-r from-red-600 via-red-500 to-rose-500 bg-clip-text text-transparent animate-gradient-x">
+                  <span className="text-white">Renzcell Rick V.</span>{' '}
+                  <span className="bg-gradient-to-r from-red-600 via-red-500 to-red-600 bg-clip-text text-transparent animate-gradient-x">
                     Loresco
                   </span>
                 </h1>
                 
                 {/* BSIT Student */}
-                <div className="text-xl sm:text-2xl md:text-3xl font-semibold text-foreground/90 mb-4 animate-fade-in-up animation-delay-200">
+                <div className="text-xl sm:text-2xl md:text-3xl font-semibold text-gray-300 mb-4 animate-fade-in-up animation-delay-200">
                   BSIT Student{' '}
-                  <span className="text-muted-foreground text-base sm:text-lg md:text-xl">@ Universidad De Dagupan</span>
+                  <span className="text-gray-500 text-base sm:text-lg md:text-xl">@ Universidad De Dagupan</span>
                 </div>
                 
                 {/* Career Objective */}
                 <div className="relative max-w-2xl lg:max-w-full mx-auto lg:mx-0 mb-6 animate-fade-in-up animation-delay-400">
-                  <p className="text-muted-foreground text-base sm:text-lg leading-relaxed">
+                  <p className="text-gray-400 text-base sm:text-lg leading-relaxed">
                     To get an IT position where I can use my skills to contribute, learn, and grow while helping the organization succeed.
                   </p>
                 </div>
                 
                 {/* Call to Action Buttons - Red Theme */}
                 <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mt-6 md:mt-8 animate-fade-in-up animation-delay-600">
-                  <Button asChild size="default" className="h-9 md:h-10 px-4 md:px-6 rounded-full font-bold shadow-xl shadow-red-500/25 hover:shadow-red-500/40 hover:scale-105 transition-all duration-300 text-xs md:text-sm bg-gradient-to-r from-red-600 to-rose-500 text-white">
+                  <Button asChild size="default" className="h-9 md:h-10 px-4 md:px-6 rounded-full font-bold shadow-xl shadow-red-500/25 hover:shadow-red-500/40 hover:scale-105 transition-all duration-300 text-xs md:text-sm bg-gradient-to-r from-red-600 to-red-500 text-white">
                     <Link href="/work">
                       View My Projects
                       <ArrowRight className="ml-2 w-3 h-3 md:w-3.5 md:h-3.5 transition-transform group-hover:translate-x-1" />
                     </Link>
                   </Button>
-                  <Button variant="outline" asChild size="default" className="h-9 md:h-10 px-4 md:px-6 rounded-full font-bold backdrop-blur-sm bg-background/50 hover:bg-background/80 hover:scale-105 transition-all duration-300 text-xs md:text-sm border-red-500/30 hover:border-red-500">
+                  <Button variant="outline" asChild size="default" className="h-9 md:h-10 px-4 md:px-6 rounded-full font-bold backdrop-blur-sm bg-gray-900/50 hover:bg-gray-900/80 hover:scale-105 transition-all duration-300 text-xs md:text-sm border-red-500/30 hover:border-red-500 text-white">
                     <Link href="/logs">
                       Read Learning Logs
                     </Link>
@@ -86,11 +86,11 @@ export default async function Home() {
               <div className="flex-1 flex justify-center mb-6 lg:mb-0 animate-float">
                 <div className="relative group">
                   {/* Decorative Ring Behind Image - Red Theme */}
-                  <div className="absolute inset-0 rounded-full bg-gradient-to-r from-red-500/20 to-rose-500/20 blur-xl -z-10 animate-spin-slow" />
+                  <div className="absolute inset-0 rounded-full bg-gradient-to-r from-red-500/20 to-red-600/20 blur-xl -z-10 animate-spin-slow" />
                   <div className="absolute inset-0 rounded-full bg-red-500/10 blur-2xl -z-10 animate-pulse-slow" />
                   
                   {/* Image Container - Red Theme Border */}
-                  <div className="relative w-48 h-48 sm:w-56 sm:h-56 md:w-72 md:h-72 lg:w-80 lg:h-80 xl:w-96 xl:h-96 rounded-full overflow-hidden border-4 border-red-500/30 shadow-2xl bg-gradient-to-br from-red-500/20 to-rose-500/20 group-hover:scale-105 transition-transform duration-500">
+                  <div className="relative w-48 h-48 sm:w-56 sm:h-56 md:w-72 md:h-72 lg:w-80 lg:h-80 xl:w-96 xl:h-96 rounded-full overflow-hidden border-4 border-red-500/30 shadow-2xl bg-gradient-to-br from-red-500/20 to-red-600/20 group-hover:scale-105 transition-transform duration-500">
                     <img 
                       src="/renzcell-profile.png"
                       alt="Renzcell Rick V. Loresco"
@@ -99,7 +99,7 @@ export default async function Home() {
                   </div>
                   
                   {/* Decorative Badge on Image - Red Theme */}
-                  <div className="absolute -bottom-2 -right-2 bg-gradient-to-r from-red-600 to-rose-500 rounded-full p-1.5 md:p-2 shadow-lg animate-bounce-slow">
+                  <div className="absolute -bottom-2 -right-2 bg-gradient-to-r from-red-600 to-red-500 rounded-full p-1.5 md:p-2 shadow-lg animate-bounce-slow">
                     <Code2 className="w-4 h-4 md:w-5 md:h-5 text-white" />
                   </div>
                 </div>
@@ -116,11 +116,11 @@ export default async function Home() {
               <Sparkles className="w-3 h-3 md:w-4 md:h-4" />
               About Me
             </div>
-            <p className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto px-4">
+            <p className="text-base md:text-lg lg:text-xl text-gray-400 max-w-2xl mx-auto px-4">
               Aspiring full-stack developer with expertise in{' '}
-              <span className="text-foreground font-medium">HTML, CSS, Java, JavaScript, and PHP</span>, 
+              <span className="text-white font-medium">HTML, CSS, Java, JavaScript, and PHP</span>, 
               specializing in modern frameworks like{' '}
-              <span className="text-foreground font-medium">React Native and Laravel</span>.
+              <span className="text-white font-medium">React Native and Laravel</span>.
             </p>
           </div>
         </section>
@@ -136,7 +136,7 @@ export default async function Home() {
                 <Code2 className="w-4 h-4" />
                 Selected Work
               </div>
-              <h2 className="font-headline font-bold text-2xl md:text-3xl lg:text-4xl">Featured Highlights</h2>
+              <h2 className="font-headline font-bold text-2xl md:text-3xl lg:text-4xl text-white">Featured Highlights</h2>
             </div>
             <Button variant="link" asChild className="p-0 text-red-500 h-auto font-bold group animate-slide-in-right">
               <Link href="/work" className="flex items-center text-sm md:text-base">
@@ -165,8 +165,8 @@ export default async function Home() {
 
         {/* Personal Information Section - Red Theme */}
         <section className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="relative overflow-hidden rounded-2xl md:rounded-3xl bg-gradient-to-br from-red-600 via-red-700 to-rose-600 transition-all duration-500 hover:scale-[1.01] hover:shadow-2xl">
-            <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-72 md:w-96 h-72 md:h-96 bg-rose-400/20 rounded-full blur-3xl animate-blob" />
+          <div className="relative overflow-hidden rounded-2xl md:rounded-3xl bg-gradient-to-br from-red-600 via-red-700 to-red-800 transition-all duration-500 hover:scale-[1.01] hover:shadow-2xl">
+            <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-72 md:w-96 h-72 md:h-96 bg-red-400/20 rounded-full blur-3xl animate-blob" />
             <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 w-72 md:w-96 h-72 md:h-96 bg-black/10 rounded-full blur-3xl animate-blob animation-delay-2000" />
             
             <div className="relative z-10 px-6 md:px-8 py-12 md:py-16">

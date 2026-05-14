@@ -138,17 +138,17 @@ const categories = {
 
 export default function TechStackSection() {
   return (
-    <section className="py-12 md:py-16 bg-gradient-to-b from-background to-card/30">
+    <section className="py-12 md:py-16 bg-gradient-to-b from-black to-gray-900/30">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-10 md:mb-14">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold mb-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 text-red-500 text-xs font-bold mb-4">
             <Code2 className="w-3 h-3" />
             <span>TECHNICAL ARSENAL</span>
           </div>
-          <h2 className="font-headline font-bold text-2xl md:text-3xl lg:text-4xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-3">
+          <h2 className="font-headline font-bold text-2xl md:text-3xl lg:text-4xl bg-gradient-to-r from-red-600 to-red-500 bg-clip-text text-transparent mb-3">
             Technologies I Work With
           </h2>
-          <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto">
+          <p className="text-gray-400 text-sm md:text-base max-w-2xl mx-auto">
             A comprehensive toolkit of programming languages, frameworks, databases, and design tools
           </p>
         </div>
@@ -158,18 +158,18 @@ export default function TechStackSection() {
             items.length > 0 && (
               <div key={category}>
                 <div className="flex items-center gap-3 mb-5 md:mb-6">
-                  <div className="w-8 h-0.5 bg-primary/30 rounded-full"></div>
-                  <h3 className="font-headline font-bold text-lg md:text-xl text-foreground">
+                  <div className="w-8 h-0.5 bg-red-500/30 rounded-full"></div>
+                  <h3 className="font-headline font-bold text-lg md:text-xl text-white">
                     {category}
                   </h3>
-                  <div className="flex-1 h-0.5 bg-gradient-to-r from-primary/30 to-transparent rounded-full"></div>
+                  <div className="flex-1 h-0.5 bg-gradient-to-r from-red-500/30 to-transparent rounded-full"></div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-5">
                   {items.map((tech, idx) => (
                     <div
                       key={idx}
-                      className="group relative bg-card rounded-xl border border-border overflow-hidden hover:border-primary/40 hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                      className="group relative bg-gray-900/80 rounded-xl border border-gray-800 overflow-hidden hover:border-red-500/40 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 backdrop-blur-sm"
                     >
                       <div className={`h-1 bg-gradient-to-r ${tech.color}`}></div>
                       <div className="p-4 md:p-5">
@@ -182,18 +182,18 @@ export default function TechStackSection() {
                             />
                           </div>
                           <div>
-                            <h4 className="font-bold text-foreground text-base md:text-lg">
+                            <h4 className="font-bold text-white text-base md:text-lg">
                               {tech.name}
                             </h4>
-                            <span className="text-xs text-muted-foreground">{tech.category}</span>
+                            <span className="text-xs text-gray-500">{tech.category}</span>
                           </div>
                         </div>
-                        <p className="text-muted-foreground text-xs md:text-sm leading-relaxed">
+                        <p className="text-gray-400 text-xs md:text-sm leading-relaxed">
                           {tech.description}
                         </p>
                         <div className="mt-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <span className="text-xs text-primary/70 flex items-center gap-1">
-                            <span className="w-2 h-2 rounded-full bg-primary/50"></span>
+                          <span className="text-xs text-red-500/70 flex items-center gap-1">
+                            <span className="w-2 h-2 rounded-full bg-red-500/50"></span>
                             Proficient
                           </span>
                         </div>
@@ -207,13 +207,13 @@ export default function TechStackSection() {
         </div>
 
         <div className="flex justify-center mt-10 md:mt-12">
-          <div className="inline-flex items-center gap-3 px-5 py-2.5 bg-primary/5 rounded-full border border-primary/10 backdrop-blur-sm">
-            <Cpu className="w-4 h-4 text-primary" />
-            <span className="text-sm text-muted-foreground">
-              <span className="font-bold text-primary">{techStackData.length}+</span> Technologies & Tools
+          <div className="inline-flex items-center gap-3 px-5 py-2.5 bg-red-500/5 rounded-full border border-red-500/10 backdrop-blur-sm">
+            <Cpu className="w-4 h-4 text-red-500" />
+            <span className="text-sm text-gray-400">
+              <span className="font-bold text-red-500">{techStackData.length}+</span> Technologies & Tools
             </span>
-            <div className="w-1 h-1 rounded-full bg-primary/30"></div>
-            <span className="text-xs text-muted-foreground">Always learning 📚</span>
+            <div className="w-1 h-1 rounded-full bg-red-500/30"></div>
+            <span className="text-xs text-gray-500">Always learning 📚</span>
           </div>
         </div>
       </div>

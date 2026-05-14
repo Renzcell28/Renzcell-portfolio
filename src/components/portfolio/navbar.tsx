@@ -16,15 +16,15 @@ export function Navbar() {
   const pathname = usePathname();
 
   return (
-    <nav className="sticky top-0 z-50 w-full bg-background/80 backdrop-blur-md border-b">
+    <nav className="sticky top-0 z-50 w-full bg-black/80 backdrop-blur-md border-b border-red-500/20">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-8 h-8 bg-gradient-to-r from-primary to-accent rounded-lg flex items-center justify-center text-primary-foreground font-headline font-bold text-lg shadow-lg group-hover:scale-105 transition-transform duration-300">
-            D
+          <div className="w-8 h-8 bg-gradient-to-r from-red-600 to-red-500 rounded-lg flex items-center justify-center text-white font-headline font-bold text-lg shadow-lg shadow-red-500/25 group-hover:scale-105 transition-transform duration-300">
+            R
           </div>
-          <span className="font-headline font-bold text-xl tracking-tight hidden sm:inline-block">
-            DevVault <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Portfolio</span>
+          <span className="font-headline font-bold text-xl tracking-tight hidden sm:inline-block text-white">
+            DevVault <span className="bg-gradient-to-r from-red-600 to-red-500 bg-clip-text text-transparent">Portfolio</span>
           </span>
         </Link>
 
@@ -41,21 +41,21 @@ export function Navbar() {
                 className={cn(
                   "flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 min-h-[44px] relative group",
                   isActive 
-                    ? "bg-gradient-to-r from-primary/10 to-accent/10 text-primary shadow-sm" 
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    ? "bg-gradient-to-r from-red-500/10 to-red-600/10 text-red-500 shadow-sm" 
+                    : "text-gray-400 hover:bg-gray-800/50 hover:text-white"
                 )}
               >
-                <Icon className={cn("w-4 h-4", isActive && "text-primary")} />
+                <Icon className={cn("w-4 h-4", isActive && "text-red-500")} />
                 <span className="hidden xs:inline">{item.name}</span>
                 
                 {/* Active indicator dot */}
                 {isActive && (
-                  <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-6 h-0.5 bg-gradient-to-r from-primary to-accent rounded-full"></div>
+                  <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-6 h-0.5 bg-gradient-to-r from-red-600 to-red-500 rounded-full"></div>
                 )}
                 
                 {/* Hover effect */}
                 {!isActive && (
-                  <div className="absolute inset-0 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-r from-primary/5 to-accent/5"></div>
+                  <div className="absolute inset-0 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-r from-red-500/5 to-red-600/5"></div>
                 )}
               </Link>
             );

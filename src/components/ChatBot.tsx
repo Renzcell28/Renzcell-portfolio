@@ -169,17 +169,17 @@ export default function ChatBot() {
         {/* Animated Robot Floating Button */}
         <div className="relative">
           {/* Pulsing ring effect */}
-          <div className="absolute inset-0 rounded-full bg-primary/30 animate-ping opacity-75"></div>
+          <div className="absolute inset-0 rounded-full bg-red-500/30 animate-ping opacity-75"></div>
           
           {/* Robot icon floating animation */}
-          <div className="relative w-16 h-16 rounded-full bg-gradient-to-r from-primary to-accent shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 flex items-center justify-center animate-float-robot">
+          <div className="relative w-16 h-16 rounded-full bg-gradient-to-r from-red-600 to-red-500 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 flex items-center justify-center animate-float-robot">
             <Bot className="w-8 h-8 text-white" />
           </div>
           
           {/* Moving antenna */}
           <div className="absolute -top-3 left-1/2 -translate-x-1/2 animate-antenna">
-            <div className="w-1 h-4 bg-primary rounded-full"></div>
-            <div className="w-3 h-3 rounded-full bg-accent -mt-1"></div>
+            <div className="w-1 h-4 bg-red-500 rounded-full"></div>
+            <div className="w-3 h-3 rounded-full bg-red-600 -mt-1"></div>
           </div>
           
           {/* Moving eyes */}
@@ -204,7 +204,7 @@ export default function ChatBot() {
     <>
       {!isMinimized && (
         <div 
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 animate-fade-in"
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 animate-fade-in"
           onClick={() => setIsOpen(false)}
         />
       )}
@@ -214,24 +214,24 @@ export default function ChatBot() {
           ? 'bottom-6 right-6 w-80 h-14' 
           : 'bottom-6 right-6 w-[90vw] sm:w-96 h-[550px] sm:h-[650px]'
       }`}>
-        <div className="bg-gradient-to-br from-card to-card/95 backdrop-blur-sm rounded-2xl shadow-2xl border border-primary/20 overflow-hidden flex flex-col h-full animate-slide-up">
+        <div className="bg-gradient-to-br from-gray-900 to-gray-900/95 backdrop-blur-sm rounded-2xl shadow-2xl border border-red-500/20 overflow-hidden flex flex-col h-full animate-slide-up">
           {/* Header with Animated Robot */}
-          <div className="bg-gradient-to-r from-primary/10 to-accent/10 p-4 border-b border-primary/20">
+          <div className="bg-gradient-to-r from-red-500/10 to-red-600/10 p-4 border-b border-red-500/20">
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-3">
                 {/* Animated robot in header */}
                 <div className="relative">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-r from-primary to-accent flex items-center justify-center animate-float-small">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-r from-red-600 to-red-500 flex items-center justify-center animate-float-small">
                     <Bot className="w-5 h-5 text-white" />
                   </div>
                   <div className="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                 </div>
                 <div>
-                  <h3 className="font-bold text-sm flex items-center gap-1">
+                  <h3 className="font-bold text-sm flex items-center gap-1 text-white">
                     Renzcell Bot
                     <Sparkles className="w-3 h-3 text-yellow-500 animate-pulse" />
                   </h3>
-                  <p className="text-xs text-muted-foreground flex items-center gap-1">
+                  <p className="text-xs text-gray-400 flex items-center gap-1">
                     <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
                     Online • AI Assistant
                   </p>
@@ -240,25 +240,25 @@ export default function ChatBot() {
               <div className="flex gap-1">
                 <button
                   onClick={() => setIsMinimized(!isMinimized)}
-                  className="p-1.5 rounded-lg hover:bg-primary/10 transition-colors"
+                  className="p-1.5 rounded-lg hover:bg-gray-800 transition-colors"
                 >
-                  {isMinimized ? <Maximize2 className="w-3.5 h-3.5" /> : <Minimize2 className="w-3.5 h-3.5" />}
+                  {isMinimized ? <Maximize2 className="w-3.5 h-3.5 text-gray-400" /> : <Minimize2 className="w-3.5 h-3.5 text-gray-400" />}
                 </button>
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="p-1.5 rounded-lg hover:bg-primary/10 transition-colors"
+                  className="p-1.5 rounded-lg hover:bg-gray-800 transition-colors"
                 >
-                  <X className="w-3.5 h-3.5" />
+                  <X className="w-3.5 h-3.5 text-gray-400" />
                 </button>
               </div>
             </div>
             
             {/* Animated robot message */}
-            <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
+            <div className="mt-2 flex items-center gap-2 text-xs text-gray-500">
               <div className="flex gap-0.5">
-                <span className="w-1 h-1 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
-                <span className="w-1 h-1 bg-primary rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
-                <span className="w-1 h-1 bg-primary rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                <span className="w-1 h-1 bg-red-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                <span className="w-1 h-1 bg-red-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                <span className="w-1 h-1 bg-red-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
               </div>
               <span>Ready to help you!</span>
             </div>
@@ -275,14 +275,14 @@ export default function ChatBot() {
                     <div
                       className={`max-w-[80%] rounded-2xl px-4 py-2.5 ${
                         message.sender === 'user'
-                          ? 'bg-gradient-to-r from-primary to-accent text-white'
-                          : 'bg-secondary/50 border border-primary/10'
+                          ? 'bg-gradient-to-r from-red-600 to-red-500 text-white'
+                          : 'bg-gray-800/50 border border-red-500/10'
                       }`}
                     >
                       <div className="flex items-center gap-2 mb-1">
                         {message.sender === 'bot' ? (
-                          <div className="w-4 h-4 rounded-full bg-primary/20 flex items-center justify-center">
-                            <Bot className="w-2.5 h-2.5 text-primary" />
+                          <div className="w-4 h-4 rounded-full bg-red-500/20 flex items-center justify-center">
+                            <Bot className="w-2.5 h-2.5 text-red-500" />
                           </div>
                         ) : (
                           <User className="w-3 h-3 text-white/70" />
@@ -291,22 +291,22 @@ export default function ChatBot() {
                           {message.sender === 'bot' ? 'Renzcell Bot' : 'You'} • {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </span>
                       </div>
-                      <p className="text-sm whitespace-pre-wrap">{message.text}</p>
+                      <p className="text-sm whitespace-pre-wrap text-white">{message.text}</p>
                     </div>
                   </div>
                 ))}
                 
                 {isTyping && (
                   <div className="flex justify-start animate-fade-in-up">
-                    <div className="bg-secondary/50 border border-primary/10 rounded-2xl px-4 py-2.5">
+                    <div className="bg-gray-800/50 border border-red-500/10 rounded-2xl px-4 py-2.5">
                       <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 rounded-full bg-primary/20 flex items-center justify-center animate-pulse">
-                          <Bot className="w-2.5 h-2.5 text-primary" />
+                        <div className="w-4 h-4 rounded-full bg-red-500/20 flex items-center justify-center animate-pulse">
+                          <Bot className="w-2.5 h-2.5 text-red-500" />
                         </div>
                         <div className="flex gap-1">
-                          <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                          <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                          <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                          <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                          <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                          <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                         </div>
                       </div>
                     </div>
@@ -316,7 +316,7 @@ export default function ChatBot() {
                 <div ref={messagesEndRef} />
               </div>
 
-              <div className="border-t border-border p-4">
+              <div className="border-t border-gray-800 p-4">
                 <div className="flex gap-2">
                   <input
                     ref={inputRef}
@@ -325,24 +325,24 @@ export default function ChatBot() {
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyPress={handleKeyPress}
                     placeholder="Ask me about Renzcell..."
-                    className="flex-1 px-4 py-2 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
+                    className="flex-1 px-4 py-2 rounded-lg border border-gray-800 bg-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm text-white"
                   />
                   <button
                     onClick={handleSendMessage}
                     disabled={!inputValue.trim()}
-                    className="p-2 rounded-lg bg-gradient-to-r from-primary to-accent text-white hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="p-2 rounded-lg bg-gradient-to-r from-red-600 to-red-500 text-white hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Send className="w-4 h-4" />
                   </button>
                 </div>
                 <div className="flex justify-between items-center mt-2">
-                  <p className="text-[10px] text-muted-foreground flex items-center gap-1">
+                  <p className="text-[10px] text-gray-500 flex items-center gap-1">
                     <span className="animate-wave">🤖</span>
                     Ask about skills, projects, experience
                   </p>
                   <button
                     onClick={clearChat}
-                    className="text-[10px] text-muted-foreground hover:text-primary transition-colors"
+                    className="text-[10px] text-gray-500 hover:text-red-500 transition-colors"
                   >
                     Clear chat
                   </button>

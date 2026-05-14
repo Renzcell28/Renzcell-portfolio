@@ -140,11 +140,14 @@ export default function AutoSlidingRoadmap() {
         );
       }, 4000);
     }
-    return () => clearInterval(autoPlayRef.current);
-  }, [isAutoPlaying, visibleCards, ojtTimeline.length]);
+    return () => {
+      if (autoPlayRef.current) clearInterval(autoPlayRef.current);
+    };
+  }, [isAutoPlaying, visibleCards]);
 
   useEffect(() => {
     if (scrollRef.current && scrollRef.current.children[0]) {
+      // Removed the "as HTMLElement" type assertion
       const cardWidth = scrollRef.current.children[0].offsetWidth;
       scrollRef.current.scrollTo({
         left: currentIndex * (cardWidth + 24),
@@ -174,16 +177,16 @@ export default function AutoSlidingRoadmap() {
   };
 
   return (
-    <section className="py-16 md:py-24 bg-gradient-to-b from-background to-card/50 overflow-hidden">
+    <section className="py-16 md:py-24 bg-gradient-to-b from-black to-gray-900/30 overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto text-center mb-10 md:mb-14 space-y-4">
-          <div className="flex items-center justify-center gap-2 text-primary font-bold tracking-widest text-xs uppercase">
+          <div className="flex items-center justify-center gap-2 text-red-500 font-bold tracking-widest text-xs uppercase">
             <Rocket className="w-4 h-4" />
             My OJT Journey
           </div>
           
           <div className="flex justify-center mb-4">
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-3 md:p-4 shadow-lg border border-gray-100 dark:border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-3 md:p-4 shadow-lg border border-gray-700">
               <img 
                 src="/Makespace.png"
                 alt="MakerSpace Innohub Logo"
@@ -192,48 +195,62 @@ export default function AutoSlidingRoadmap() {
             </div>
           </div>
           
-          <h2 className="font-headline font-bold text-2xl md:text-3xl lg:text-4xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+          <h2 className="font-headline font-bold text-2xl md:text-3xl lg:text-4xl bg-gradient-to-r from-red-600 to-red-500 bg-clip-text text-transparent">
             Internship Roadmap
           </h2>
-          <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto">
+          <p className="text-gray-400 text-sm md:text-base max-w-2xl mx-auto">
             A visual timeline of my accomplishments and growth during OJT at{' '}
-            <span className="font-semibold text-primary">MakerSpace Innohub</span>
+            <span className="font-semibold text-red-500">MakerSpace Innohub</span>
           </p>
           
           <div className="inline-flex items-center gap-2 mt-2 p-2 md:p-3 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-full border border-yellow-500/30 backdrop-blur-sm">
             <Award className="w-4 h-4 text-yellow-500" />
-            <span className="text-xs md:text-sm font-medium">NCII CSS Certified ✅</span>
-            <span className="text-xs text-muted-foreground">| Passed: <span className="font-bold text-yellow-600">May 6, 2026</span></span>
+            <span className="text-xs md:text-sm font-medium text-yellow-400">NCII CSS Certified ✅</span>
+            <span className="text-xs text-gray-500">| Passed: <span className="font-bold text-yellow-600">May 6, 2026</span></span>
           </div>
         </div>
 
         <div className="flex justify-end items-center gap-2 mb-6 max-w-6xl mx-auto">
-          <button onClick={toggleAutoPlay} className="p-2 rounded-full bg-secondary/50 hover:bg-secondary transition-colors" title={isAutoPlaying ? "Pause Auto-Slide" : "Play Auto-Slide"}>
-            {isAutoPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+          <button 
+            onClick={toggleAutoPlay} 
+            className="p-2 rounded-full bg-gray-800/50 hover:bg-gray-800 transition-colors"
+            title={isAutoPlaying ? "Pause Auto-Slide" : "Play Auto-Slide"}
+          >
+            {isAutoPlaying ? <Pause className="w-4 h-4 text-gray-400" /> : <Play className="w-4 h-4 text-gray-400" />}
           </button>
-          <button onClick={handlePrev} className="p-2 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors">
-            <ChevronLeft className="w-5 h-5" />
+          <button 
+            onClick={handlePrev} 
+            className="p-2 rounded-full bg-red-500/10 hover:bg-red-500/20 transition-colors"
+          >
+            <ChevronLeft className="w-5 h-5 text-red-500" />
           </button>
-          <button onClick={handleNext} className="p-2 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors">
-            <ChevronRight className="w-5 h-5" />
+          <button 
+            onClick={handleNext} 
+            className="p-2 rounded-full bg-red-500/10 hover:bg-red-500/20 transition-colors"
+          >
+            <ChevronRight className="w-5 h-5 text-red-500" />
           </button>
         </div>
 
         <div className="relative max-w-6xl mx-auto">
-          <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-12 md:w-24 z-10 bg-gradient-to-r from-background via-background/80 to-transparent"></div>
-          <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-12 md:w-24 z-10 bg-gradient-to-l from-background via-background/80 to-transparent"></div>
+          <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-12 md:w-24 z-10 bg-gradient-to-r from-black via-black/80 to-transparent"></div>
+          <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-12 md:w-24 z-10 bg-gradient-to-l from-black via-black/80 to-transparent"></div>
           
-          <div ref={scrollRef} className="flex gap-6 overflow-x-auto scroll-smooth pb-6 px-2 hide-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+          <div 
+            ref={scrollRef} 
+            className="flex gap-6 overflow-x-auto scroll-smooth pb-6 px-2 hide-scrollbar" 
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
             {ojtTimeline.map((event, index) => (
               <div key={index} className="relative flex-shrink-0 w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] group">
-                <div className="relative h-full bg-card rounded-2xl border border-border overflow-hidden hover:border-primary/40 hover:shadow-xl transition-all duration-300">
+                <div className="relative h-full bg-gray-900/80 backdrop-blur-sm rounded-2xl border border-gray-800 overflow-hidden hover:border-red-500/40 hover:shadow-xl transition-all duration-300">
                   {index < ojtTimeline.length - 1 && (
-                    <div className="absolute top-1/2 -right-3 w-6 h-0.5 bg-primary/20 hidden lg:block"></div>
+                    <div className="absolute top-1/2 -right-3 w-6 h-0.5 bg-red-500/20 hidden lg:block"></div>
                   )}
                   
-                  <div className={`px-4 py-2 border-b border-border ${event.date === "May 6, 2026" ? "bg-gradient-to-r from-yellow-500/20 to-orange-500/20" : "bg-primary/5"}`}>
+                  <div className={`px-4 py-2 border-b border-gray-800 ${event.date === "May 6, 2026" ? "bg-gradient-to-r from-yellow-500/20 to-orange-500/20" : "bg-red-500/5"}`}>
                     <div className="flex items-center justify-between">
-                      <span className={`text-xs font-bold ${event.date === "May 6, 2026" ? "text-yellow-600" : "text-primary"}`}>
+                      <span className={`text-xs font-bold ${event.date === "May 6, 2026" ? "text-yellow-500" : "text-red-500"}`}>
                         {event.date}
                       </span>
                       <span className="text-lg">{event.icon}</span>
@@ -241,32 +258,32 @@ export default function AutoSlidingRoadmap() {
                   </div>
                   
                   <div className="p-5">
-                    <h3 className={`font-headline font-bold text-base md:text-lg mb-2 line-clamp-2 ${event.date === "May 6, 2026" ? "text-yellow-600" : ""}`}>
+                    <h3 className={`font-headline font-bold text-base md:text-lg mb-2 line-clamp-2 ${event.date === "May 6, 2026" ? "text-yellow-500" : "text-white"}`}>
                       {event.title}
                     </h3>
-                    <p className="text-muted-foreground text-sm leading-relaxed line-clamp-3">
+                    <p className="text-gray-400 text-sm leading-relaxed line-clamp-3">
                       {event.description}
                     </p>
                   </div>
                   
                   <div className="absolute -top-2 left-1/2 transform -translate-x-1/2">
-                    <div className="w-3 h-3 rounded-full bg-primary opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div className="w-3 h-3 rounded-full bg-red-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   </div>
                 </div>
               </div>
             ))}
             
             <div className="relative flex-shrink-0 w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] group">
-              <div className="relative h-full bg-gradient-to-br from-primary/10 to-accent/10 rounded-2xl border border-primary/30 overflow-hidden">
-                <div className="bg-primary/10 px-4 py-2 border-b border-primary/20">
+              <div className="relative h-full bg-gradient-to-br from-red-500/10 to-red-600/10 backdrop-blur-sm rounded-2xl border border-red-500/30 overflow-hidden">
+                <div className="bg-red-500/10 px-4 py-2 border-b border-red-500/20">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-primary">May 2026 - Present</span>
+                    <span className="text-xs font-bold text-red-500">May 2026 - Present</span>
                     <span className="text-lg">🌟</span>
                   </div>
                 </div>
                 <div className="p-5">
-                  <h3 className="font-headline font-bold text-base md:text-lg mb-2">Continuing OJT & Skill Development</h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed">Actively working on FlowState project, implementing new features, fixing bugs, and collaborating with the development team.</p>
+                  <h3 className="font-headline font-bold text-base md:text-lg mb-2 text-white">Continuing OJT & Skill Development</h3>
+                  <p className="text-gray-400 text-sm leading-relaxed">Actively working on FlowState project, implementing new features, fixing bugs, and collaborating with the development team.</p>
                 </div>
               </div>
             </div>
@@ -275,12 +292,23 @@ export default function AutoSlidingRoadmap() {
 
         <div className="flex justify-center gap-2 mt-8">
           {Array.from({ length: Math.ceil(ojtTimeline.length / visibleCards) }).map((_, i) => (
-            <button key={i} onClick={() => { setIsAutoPlaying(false); setCurrentIndex(i * visibleCards); setTimeout(() => setIsAutoPlaying(true), 5000); }}
-              className={`h-2 rounded-full transition-all duration-300 ${Math.floor(currentIndex / visibleCards) === i ? 'w-8 bg-primary' : 'w-2 bg-primary/30 hover:bg-primary/50'}`} />
+            <button 
+              key={i} 
+              onClick={() => { 
+                setIsAutoPlaying(false); 
+                setCurrentIndex(i * visibleCards); 
+                setTimeout(() => setIsAutoPlaying(true), 5000); 
+              }}
+              className={`h-2 rounded-full transition-all duration-300 ${
+                Math.floor(currentIndex / visibleCards) === i 
+                  ? 'w-8 bg-red-500' 
+                  : 'w-2 bg-red-500/30 hover:bg-red-500/50'
+              }`} 
+            />
           ))}
         </div>
 
-        <p className="text-center text-xs text-muted-foreground mt-4 flex items-center justify-center gap-1">
+        <p className="text-center text-xs text-gray-600 mt-4 flex items-center justify-center gap-1">
           <span>←</span> Swipe or drag to explore my journey <span>→</span>
         </p>
       </div>
