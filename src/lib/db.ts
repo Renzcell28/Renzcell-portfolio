@@ -11,7 +11,16 @@ export interface ActivityLog {
   icon: string;
 }
 
+export interface UploadedImage {
+  id: string;
+  url: string;
+  filename: string;
+  timestamp: string;
+  logSlug: string;
+}
+
 const STORAGE_KEY = 'activity_logs';
+const IMAGES_STORAGE_KEY = 'activity_log_images';
 
 // Get all logs from localStorage
 export function getAllLogsFromDB(): ActivityLog[] {
@@ -54,6 +63,9 @@ export function deleteLogFromDB(id: number): void {
   const logs = getAllLogsFromDB();
   const updatedLogs = logs.filter(log => log.id !== id);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedLogs));
+  
+  // Also delete associated images
+  deleteImagesForLog(getLogByIdFromDB(id)?.slug || '');
 }
 
 // Get a single log by slug
@@ -79,11 +91,87 @@ export function generateSlug(title: string, currentId?: number): string {
   let slug = baseSlug;
   let counter = 1;
   
-  // If updating, exclude current log from check
   while (existingLogs.some(log => log.slug === slug && log.id !== currentId)) {
     slug = `${baseSlug}-${counter}`;
     counter++;
   }
   
   return slug;
+}
+
+// ============ IMAGE STORAGE FUNCTIONS ============
+
+// Get all images for a specific log
+export function getImagesForLog(logSlug: string): UploadedImage[] {
+  if (typeof window === 'undefined') return [];
+  
+  const stored = localStorage.getItem(IMAGES_STORAGE_KEY);
+  if (!stored) return [];
+  
+  try {
+    const allImages: UploadedImage[] = JSON.parse(stored);
+    return allImages.filter(img => img.logSlug === logSlug);
+  } catch {
+    return [];
+  }
+}
+
+// Save multiple images for a log
+export function saveImagesForLog(logSlug: string, images: Omit<UploadedImage, 'logSlug'>[]): void {
+  if (typeof window === 'undefined') return;
+  
+  const stored = localStorage.getItem(IMAGES_STORAGE_KEY);
+  const allImages: UploadedImage[] = stored ? JSON.parse(stored) : [];
+  
+  // Remove old images for this log
+  const filteredImages = allImages.filter(img => img.logSlug !== logSlug);
+  
+  // Add new images
+  const newImages: UploadedImage[] = images.map(img => ({
+    ...img,
+    logSlug,
+  }));
+  
+  const updatedImages = [...newImages, ...filteredImages];
+  localStorage.setItem(IMAGES_STORAGE_KEY, JSON.stringify(updatedImages));
+}
+
+// Add a single image to a log
+export function addImageToLog(logSlug: string, image: Omit<UploadedImage, 'logSlug'>): void {
+  if (typeof window === 'undefined') return;
+  
+  const stored = localStorage.getItem(IMAGES_STORAGE_KEY);
+  const allImages: UploadedImage[] = stored ? JSON.parse(stored) : [];
+  
+  const newImage: UploadedImage = {
+    ...image,
+    logSlug,
+  };
+  
+  allImages.push(newImage);
+  localStorage.setItem(IMAGES_STORAGE_KEY, JSON.stringify(allImages));
+}
+
+// Delete an image
+export function deleteImageFromDB(imageId: string): void {
+  if (typeof window === 'undefined') return;
+  
+  const stored = localStorage.getItem(IMAGES_STORAGE_KEY);
+  if (!stored) return;
+  
+  const allImages: UploadedImage[] = JSON.parse(stored);
+  const updatedImages = allImages.filter(img => img.id !== imageId);
+  localStorage.setItem(IMAGES_STORAGE_KEY, JSON.stringify(updatedImages));
+}
+
+// Delete all images for a log
+export function deleteImagesForLog(logSlug: string): void {
+  if (typeof window === 'undefined') return;
+  
+  const stored = localStorage.getItem(IMAGES_STORAGE_KEY);
+  if (!stored) return;
+  
+  const allImages: UploadedImage[] = JSON.parse(stored);
+  const updatedImages = allImages.filter(img => img.logSlug !== logSlug);
+  localStorage.setItem(IMAGES_STORAGE_KEY, JSON.stringify(updatedImages));
 }

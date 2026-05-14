@@ -4,19 +4,47 @@ import { notFound, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { AISummaryTool } from '@/components/portfolio/ai-summary-tool';
-import { ArrowLeft, Calendar, User, Clock, BookOpen, ThumbsUp, Share2, Bookmark, Image as ImageIcon, Upload, X, ZoomIn, Trash2, Edit2, Save, XCircle } from 'lucide-react';
+import { ArrowLeft, Calendar, User, Clock, BookOpen, ThumbsUp, Share2, Bookmark, Image as ImageIcon, Upload, X, ZoomIn, Trash2, Edit2, Save, XCircle, Plus, Calendar as CalendarIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState, useEffect, useRef, use, useCallback } from 'react';
-import { getLogBySlugFromDB, updateLogInDB, getLogByIdFromDB, generateSlug, ActivityLog } from '@/lib/db';
+import { getLogBySlugFromDB, updateLogInDB, generateSlug, ActivityLog, getImagesForLog, addImageToLog, deleteImageFromDB, UploadedImage } from '@/lib/db';
 
-interface UploadedImage {
-  id: string;
-  url: string;
-  filename: string;
-  timestamp: string;
-}
+const IMAGES_STORAGE_KEY = 'activity_log_images';
 
-const STORAGE_KEY = 'log_images';
+// Helper function to format date for input (YYYY-MM-DD)
+const formatDateForInput = (formattedDate: string): string => {
+  try {
+    const match = formattedDate.match(/(\w+) (\d+), (\d+)/);
+    if (!match) return '';
+    
+    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
+                       'July', 'August', 'September', 'October', 'November', 'December'];
+    const monthIndex = monthNames.indexOf(match[1]);
+    const day = parseInt(match[2]);
+    const year = parseInt(match[3]);
+    
+    if (monthIndex === -1) return '';
+    
+    return `${year}-${String(monthIndex + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+  } catch {
+    return '';
+  }
+};
+
+// Helper function to format date for display (Month Day, Year)
+const formatDateForDisplay = (dateValue: string): string => {
+  try {
+    const [year, month, day] = dateValue.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
+    return date.toLocaleDateString('en-US', { 
+      month: 'long', 
+      day: 'numeric', 
+      year: 'numeric' 
+    });
+  } catch {
+    return '';
+  }
+};
 
 export default function LogDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const router = useRouter();
@@ -30,21 +58,18 @@ export default function LogDetailPage({ params }: { params: Promise<{ slug: stri
   const [isLoadingImages, setIsLoadingImages] = useState(true);
   const [selectedImage, setSelectedImage] = useState<UploadedImage | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [editedLog, setEditedLog] = useState<Partial<ActivityLog>>({});
+  const [editedLog, setEditedLog] = useState<Partial<ActivityLog> & { dateValue?: string }>({});
   const [isSaving, setIsSaving] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const log = getLogBySlugFromDB(slug);
 
+  // Load images from database
   const loadImages = useCallback(() => {
     try {
-      const storedImages = localStorage.getItem(`${STORAGE_KEY}_${slug}`);
-      if (storedImages) {
-        const parsed = JSON.parse(storedImages);
-        setUploadedImages(parsed);
-      } else {
-        setUploadedImages([]);
-      }
+      const images = getImagesForLog(slug);
+      setUploadedImages(images);
     } catch (error) {
       console.error('Error loading images:', error);
       setUploadedImages([]);
@@ -57,13 +82,7 @@ export default function LogDetailPage({ params }: { params: Promise<{ slug: stri
     loadImages();
   }, [loadImages]);
 
-  useEffect(() => {
-    if (!isLoadingImages) {
-      localStorage.setItem(`${STORAGE_KEY}_${slug}`, JSON.stringify(uploadedImages));
-    }
-  }, [uploadedImages, slug, isLoadingImages]);
-
-  // Initialize edit form when editing starts
+  // Initialize edit form when editing starts - FIXED
   const startEditing = () => {
     if (log) {
       setEditedLog({
@@ -74,6 +93,7 @@ export default function LogDetailPage({ params }: { params: Promise<{ slug: stri
         tags: log.tags,
         icon: log.icon,
         date: log.date,
+        dateValue: formatDateForInput(log.date),
       });
       setIsEditing(true);
     }
@@ -93,12 +113,10 @@ export default function LogDetailPage({ params }: { params: Promise<{ slug: stri
     setIsSaving(true);
 
     try {
-      // Generate new slug if title changed
       const newSlug = editedLog.title !== log.title 
         ? generateSlug(editedLog.title!, log.id)
         : log.slug;
 
-      // Prepare updated log
       const updatedLog: Partial<ActivityLog> = {
         title: editedLog.title,
         description: editedLog.description,
@@ -108,23 +126,20 @@ export default function LogDetailPage({ params }: { params: Promise<{ slug: stri
           : editedLog.tags,
         icon: editedLog.icon || log.icon,
         slug: newSlug,
+        date: editedLog.date || log.date,
       };
 
-      // Update in database
       updateLogInDB(log.id, updatedLog);
 
-      // Show success message
       const toast = document.createElement('div');
       toast.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-in slide-in-from-bottom-4';
       toast.textContent = '✅ Log updated successfully!';
       document.body.appendChild(toast);
       setTimeout(() => toast.remove(), 3000);
 
-      // If slug changed, redirect to new URL
       if (newSlug !== log.slug) {
         router.push(`/logs/${newSlug}`);
       } else {
-        // Reload the page to show updated content
         window.location.reload();
       }
     } catch (error) {
@@ -135,75 +150,101 @@ export default function LogDetailPage({ params }: { params: Promise<{ slug: stri
     }
   };
 
+  // Handle date change - FIXED
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const dateValue = e.target.value;
+    if (dateValue) {
+      const formattedDate = formatDateForDisplay(dateValue);
+      setEditedLog(prev => ({ ...prev, date: formattedDate, dateValue }));
+    }
+  };
+
   const handleTagChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const tagString = e.target.value;
     setEditedLog(prev => ({ ...prev, tags: tagString }));
   };
 
-  if (!log) {
-    notFound();
-  }
-
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Multiple image upload
+  const handleMultipleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
-    const file = files[0];
-    
-    if (!file.type.startsWith('image/')) {
-      alert('Please upload an image file');
-      return;
+    const validFiles: File[] = [];
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      if (!file.type.startsWith('image/')) {
+        alert(`${file.name} is not an image file`);
+        continue;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        alert(`${file.name} is larger than 5MB`);
+        continue;
+      }
+      validFiles.push(file);
     }
-    
-    if (file.size > 5 * 1024 * 1024) {
-      alert('Image size must be less than 5MB');
-      return;
-    }
+
+    if (validFiles.length === 0) return;
 
     setIsUploading(true);
 
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('slug', slug);
+    const uploadedImagesList: Omit<UploadedImage, 'logSlug'>[] = [];
 
-    try {
-      const response = await fetch('/api/upload-cloudinary', {
-        method: 'POST',
-        body: formData,
-      });
+    for (let i = 0; i < validFiles.length; i++) {
+      const file = validFiles[i];
+      setUploadProgress(prev => ({ ...prev, [file.name]: 0 }));
 
-      const result = await response.json();
-      
-      if (response.ok) {
-        const newImage = {
-          id: result.public_id,
-          url: result.url,
-          filename: file.name,
-          timestamp: new Date().toLocaleString(),
-        };
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('slug', slug);
+
+      try {
+        const response = await fetch('/api/upload-cloudinary', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const result = await response.json();
         
-        setUploadedImages(prev => [newImage, ...prev]);
-        
-        const toast = document.createElement('div');
-        toast.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-in slide-in-from-bottom-4';
-        toast.textContent = '✅ Image uploaded to Cloudinary!';
-        document.body.appendChild(toast);
-        setTimeout(() => toast.remove(), 3000);
-      } else {
-        throw new Error(result.error);
+        if (response.ok) {
+          const newImage = {
+            id: result.public_id,
+            url: result.url,
+            filename: file.name,
+            timestamp: new Date().toLocaleString(),
+          };
+          uploadedImagesList.push(newImage);
+          
+          addImageToLog(slug, newImage);
+          
+          setUploadProgress(prev => ({ ...prev, [file.name]: 100 }));
+        } else {
+          throw new Error(result.error);
+        }
+      } catch (error) {
+        console.error(`Error uploading ${file.name}:`, error);
+        setUploadProgress(prev => ({ ...prev, [file.name]: -1 }));
       }
-    } catch (error) {
-      console.error('Upload error:', error);
-      alert('Failed to upload image');
-    } finally {
-      setIsUploading(false);
     }
+
+    await loadImages();
+    setIsUploading(false);
     
+    const successCount = uploadedImagesList.length;
+    if (successCount > 0) {
+      const toast = document.createElement('div');
+      toast.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-in slide-in-from-bottom-4';
+      toast.textContent = `✅ ${successCount} image${successCount > 1 ? 's' : ''} uploaded successfully!`;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
     if (fileInputRef.current) fileInputRef.current.value = '';
+    setTimeout(() => setUploadProgress({}), 3000);
   };
 
   const handleDeleteImage = (imageId: string) => {
     if (confirm('Are you sure you want to delete this image?')) {
+      deleteImageFromDB(imageId);
       setUploadedImages(prev => prev.filter(img => img.id !== imageId));
       
       const toast = document.createElement('div');
@@ -226,57 +267,172 @@ export default function LogDetailPage({ params }: { params: Promise<{ slug: stri
     const files = e.dataTransfer.files;
     if (files.length === 0) return;
     
-    const file = files[0];
-    if (!file.type.startsWith('image/')) {
-      alert('Please upload an image file');
-      return;
+    const validFiles: File[] = [];
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      if (!file.type.startsWith('image/')) {
+        alert(`${file.name} is not an image file`);
+        continue;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        alert(`${file.name} is larger than 5MB`);
+        continue;
+      }
+      validFiles.push(file);
     }
-    
-    if (file.size > 5 * 1024 * 1024) {
-      alert('Image size must be less than 5MB');
-      return;
-    }
+
+    if (validFiles.length === 0) return;
 
     setIsUploading(true);
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('slug', slug);
 
-    try {
-      const response = await fetch('/api/upload-cloudinary', {
-        method: 'POST',
-        body: formData,
-      });
+    for (let i = 0; i < validFiles.length; i++) {
+      const file = validFiles[i];
+      setUploadProgress(prev => ({ ...prev, [file.name]: 0 }));
 
-      const result = await response.json();
-      
-      if (response.ok) {
-        const newImage = {
-          id: result.public_id,
-          url: result.url,
-          filename: file.name,
-          timestamp: new Date().toLocaleString(),
-        };
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('slug', slug);
+
+      try {
+        const response = await fetch('/api/upload-cloudinary', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const result = await response.json();
         
-        setUploadedImages(prev => [newImage, ...prev]);
-        
-        const toast = document.createElement('div');
-        toast.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-in slide-in-from-bottom-4';
-        toast.textContent = '✅ Image uploaded!';
-        document.body.appendChild(toast);
-        setTimeout(() => toast.remove(), 3000);
+        if (response.ok) {
+          const newImage = {
+            id: result.public_id,
+            url: result.url,
+            filename: file.name,
+            timestamp: new Date().toLocaleString(),
+          };
+          
+          addImageToLog(slug, newImage);
+          setUploadProgress(prev => ({ ...prev, [file.name]: 100 }));
+        }
+      } catch (error) {
+        console.error(`Error uploading ${file.name}:`, error);
+        setUploadProgress(prev => ({ ...prev, [file.name]: -1 }));
       }
-    } catch (error) {
-      console.error('Upload error:', error);
-      alert('Failed to upload image');
-    } finally {
-      setIsUploading(false);
     }
+
+    await loadImages();
+    setIsUploading(false);
+    setTimeout(() => setUploadProgress({}), 3000);
   };
+
+  // Function to render formatted content
+  const renderFormattedContent = (content: string) => {
+    if (!content) return null;
+    
+    const lines = content.split('\n');
+    const sections: JSX.Element[] = [];
+    let currentSection: JSX.Element[] = [];
+    let isBulletList = false;
+    let bulletItems: string[] = [];
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      
+      if (line.startsWith('## ')) {
+        if (currentSection.length > 0) {
+          sections.push(<div key={`section-${i}`} className="mb-6">{currentSection}</div>);
+          currentSection = [];
+        }
+        sections.push(
+          <div key={`header-${i}`} className="mb-4 mt-6 first:mt-0">
+            <div className="flex items-center gap-2">
+              <div className="w-1 h-6 bg-gradient-to-b from-primary to-accent rounded-full"></div>
+              <h2 className="text-xl md:text-2xl font-bold text-foreground">{line.replace('## ', '')}</h2>
+            </div>
+          </div>
+        );
+        continue;
+      }
+      
+      if (line.startsWith('### ')) {
+        if (currentSection.length > 0) {
+          sections.push(<div key={`section-${i}`} className="mb-6">{currentSection}</div>);
+          currentSection = [];
+        }
+        sections.push(
+          <div key={`subheader-${i}`} className="mb-3 mt-4">
+            <h3 className="text-lg md:text-xl font-semibold text-foreground/90">{line.replace('### ', '')}</h3>
+          </div>
+        );
+        continue;
+      }
+      
+      if (line.trim().startsWith('- ')) {
+        if (!isBulletList) {
+          if (currentSection.length > 0) {
+            sections.push(<div key={`section-${i}`} className="mb-6">{currentSection}</div>);
+            currentSection = [];
+          }
+          isBulletList = true;
+          bulletItems = [];
+        }
+        bulletItems.push(line.trim().replace('- ', ''));
+        continue;
+      } else if (isBulletList && line.trim() === '') {
+        sections.push(
+          <div key={`bullet-list-${i}`} className="mb-6 space-y-2">
+            {bulletItems.map((item, idx) => (
+              <div key={idx} className="flex items-start gap-3 p-3 rounded-lg bg-primary/5 border border-primary/10 hover:bg-primary/10 transition-colors">
+                <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2"></div>
+                <span className="text-muted-foreground">{item}</span>
+              </div>
+            ))}
+          </div>
+        );
+        isBulletList = false;
+        bulletItems = [];
+        continue;
+      } else if (isBulletList) {
+        bulletItems.push(line.trim().replace('- ', ''));
+        continue;
+      }
+      
+      if (line.trim()) {
+        currentSection.push(
+          <p key={`paragraph-${i}`} className="text-foreground/80 leading-relaxed mb-4">
+            {line}
+          </p>
+        );
+      } else if (currentSection.length > 0) {
+        sections.push(<div key={`section-end-${i}`} className="mb-6">{currentSection}</div>);
+        currentSection = [];
+      }
+    }
+    
+    if (currentSection.length > 0) {
+      sections.push(<div key="section-final" className="mb-6">{currentSection}</div>);
+    }
+    
+    if (isBulletList && bulletItems.length > 0) {
+      sections.push(
+        <div key="bullet-list-final" className="mb-6 space-y-2">
+          {bulletItems.map((item, idx) => (
+            <div key={idx} className="flex items-start gap-3 p-3 rounded-lg bg-primary/5 border border-primary/10">
+              <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2"></div>
+              <span className="text-muted-foreground">{item}</span>
+            </div>
+          ))}
+        </div>
+      );
+    }
+    
+    return sections;
+  };
+
+  if (!log) {
+    notFound();
+  }
 
   return (
     <div className="relative min-h-screen overflow-hidden">
-      {/* Background effects... (keep same) */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5" />
         <div className="absolute top-20 left-10 w-72 h-72 bg-primary/10 rounded-full blur-[100px] animate-pulse" />
@@ -304,21 +460,34 @@ export default function LogDetailPage({ params }: { params: Promise<{ slug: stri
           </div>
 
           <div className="bg-card/80 backdrop-blur-sm rounded-2xl border border-primary/10 overflow-hidden shadow-2xl animate-fade-in-up animation-delay-200">
-            {/* Edit Mode OR View Mode */}
             {isEditing ? (
               // Edit Mode
               <div className="p-6 md:p-8">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-bold">Edit Activity Log</h2>
-                  <button
-                    onClick={cancelEditing}
-                    className="p-2 rounded-full hover:bg-secondary transition-colors"
-                  >
+                  <button onClick={cancelEditing} className="p-2 rounded-full hover:bg-secondary transition-colors">
                     <XCircle className="w-5 h-5" />
                   </button>
                 </div>
 
                 <div className="space-y-4">
+                  {/* Date Picker - FIXED */}
+                  <div>
+                    <label className="text-sm font-medium mb-1 block flex items-center gap-2">
+                      <CalendarIcon className="w-4 h-4 text-primary" />
+                      Date
+                    </label>
+                    <input
+                      type="date"
+                      value={editedLog.dateValue || ''}
+                      onChange={handleDateChange}
+                      className="w-full px-3 py-2 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Current: {editedLog.date}
+                    </p>
+                  </div>
+
                   <div>
                     <label className="text-sm font-medium mb-1 block">Icon (Emoji)</label>
                     <div className="flex items-center gap-2">
@@ -377,55 +546,29 @@ export default function LogDetailPage({ params }: { params: Promise<{ slug: stri
                     {editedLog.tags && Array.isArray(editedLog.tags) && editedLog.tags.length > 0 && (
                       <div className="flex flex-wrap gap-1.5 mt-2">
                         {editedLog.tags.map((tag, i) => (
-                          <span key={i} className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs">
-                            {tag}
-                          </span>
+                          <span key={i} className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs">{tag}</span>
                         ))}
                       </div>
                     )}
                   </div>
 
                   <div className="flex gap-3 pt-4">
-                    <Button
-                      onClick={saveEdit}
-                      disabled={isSaving}
-                      className="flex-1 bg-gradient-to-r from-primary to-accent"
-                    >
-                      {isSaving ? (
-                        <>
-                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                          Saving...
-                        </>
-                      ) : (
-                        <>
-                          <Save className="w-4 h-4 mr-2" />
-                          Save Changes
-                        </>
-                      )}
+                    <Button onClick={saveEdit} disabled={isSaving} className="flex-1 bg-gradient-to-r from-primary to-accent">
+                      {isSaving ? <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />Saving...</> : <><Save className="w-4 h-4 mr-2" />Save Changes</>}
                     </Button>
-                    <Button
-                      onClick={cancelEditing}
-                      variant="outline"
-                      className="flex-1"
-                    >
-                      Cancel
-                    </Button>
+                    <Button onClick={cancelEditing} variant="outline" className="flex-1">Cancel</Button>
                   </div>
                 </div>
               </div>
             ) : (
-              // View Mode (Original Content)
+              // View Mode
               <>
                 <div className="relative overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-accent/5 to-transparent" />
                   <div className="relative p-6 md:p-8">
                     <div className="flex flex-wrap gap-2 mb-4">
                       {log.tags.map((tag: string) => (
-                        <Badge 
-                          key={tag} 
-                          variant="secondary" 
-                          className="px-3 py-1 text-xs font-medium bg-primary/10 hover:bg-primary/20 transition-colors"
-                        >
+                        <Badge key={tag} variant="secondary" className="px-3 py-1 text-xs font-medium bg-primary/10 hover:bg-primary/20 transition-colors">
                           {tag}
                         </Badge>
                       ))}
@@ -462,24 +605,34 @@ export default function LogDetailPage({ params }: { params: Promise<{ slug: stri
                   </div>
 
                   <div className="relative my-8">
-                    <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-border"></div>
-                    </div>
-                    <div className="relative flex justify-center">
-                      <span className="bg-card px-4 text-xs text-muted-foreground">DETAILED LOG</span>
-                    </div>
+                    <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-border"></div></div>
+                    <div className="relative flex justify-center"><span className="bg-card px-4 text-xs text-muted-foreground">DETAILED LOG</span></div>
                   </div>
 
-                  <article className="prose prose-lg max-w-none dark:prose-invert prose-headings:font-headline prose-headings:font-bold prose-p:leading-relaxed prose-p:text-foreground/90 prose-li:text-foreground/90 prose-a:text-primary animate-fade-in animation-delay-400">
-                    <div className="whitespace-pre-line text-base md:text-lg leading-relaxed">
-                      {log.content}
-                    </div>
+                  <article className="prose prose-lg max-w-none dark:prose-invert animate-fade-in animation-delay-400">
+                    {renderFormattedContent(log.content)}
                   </article>
 
-                  {isLoadingImages ? (
-                    <div className="mt-8 flex justify-center py-8">
-                      <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+                  {/* Upload Progress Indicators */}
+                  {Object.keys(uploadProgress).length > 0 && (
+                    <div className="mt-6 space-y-2">
+                      {Object.entries(uploadProgress).map(([filename, progress]) => (
+                        <div key={filename} className="bg-secondary/20 rounded-lg p-2">
+                          <div className="flex justify-between text-xs mb-1">
+                            <span className="truncate flex-1">{filename}</span>
+                            <span>{progress === 100 ? '✓' : progress === -1 ? '✗' : `${progress}%`}</span>
+                          </div>
+                          <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
+                            <div className={`h-full transition-all duration-300 ${progress === 100 ? 'bg-green-500' : progress === -1 ? 'bg-red-500' : 'bg-primary'}`} style={{ width: `${progress === -1 ? 100 : progress}%` }} />
+                          </div>
+                        </div>
+                      ))}
                     </div>
+                  )}
+
+                  {/* Uploaded Images Gallery */}
+                  {isLoadingImages ? (
+                    <div className="mt-8 flex justify-center py-8"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" /></div>
                   ) : uploadedImages.length > 0 && (
                     <div className="mt-8 animate-fade-in animation-delay-400">
                       <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
@@ -489,25 +642,10 @@ export default function LogDetailPage({ params }: { params: Promise<{ slug: stri
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {uploadedImages.map((image) => (
                           <div key={image.id} className="relative group rounded-xl overflow-hidden border border-border hover:border-primary/40 transition-all">
-                            <img
-                              src={image.url}
-                              alt={image.filename}
-                              className="w-full h-48 object-cover cursor-pointer hover:scale-105 transition-transform duration-300"
-                              onClick={() => setSelectedImage(image)}
-                            />
+                            <img src={image.url} alt={image.filename} className="w-full h-48 object-cover cursor-pointer hover:scale-105 transition-transform duration-300" onClick={() => setSelectedImage(image)} />
                             <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                              <button
-                                onClick={() => setSelectedImage(image)}
-                                className="p-1.5 rounded-lg bg-black/50 hover:bg-black/70 text-white transition-colors"
-                              >
-                                <ZoomIn className="w-4 h-4" />
-                              </button>
-                              <button
-                                onClick={() => handleDeleteImage(image.id)}
-                                className="p-1.5 rounded-lg bg-red-500/80 hover:bg-red-600 text-white transition-colors"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
+                              <button onClick={() => setSelectedImage(image)} className="p-1.5 rounded-lg bg-black/50 hover:bg-black/70 text-white transition-colors"><ZoomIn className="w-4 h-4" /></button>
+                              <button onClick={() => handleDeleteImage(image.id)} className="p-1.5 rounded-lg bg-red-500/80 hover:bg-red-600 text-white transition-colors"><Trash2 className="w-4 h-4" /></button>
                             </div>
                             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-2">
                               <p className="text-white text-xs truncate">{image.filename}</p>
@@ -523,71 +661,23 @@ export default function LogDetailPage({ params }: { params: Promise<{ slug: stri
                 <div className="border-t border-border p-6 md:p-8">
                   <div className="flex flex-wrap items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
-                      <button 
-                        onClick={() => setIsLiked(!isLiked)}
-                        className={`p-2 rounded-full transition-all duration-300 hover:scale-110 ${
-                          isLiked ? 'bg-primary/20 text-primary' : 'hover:bg-primary/10 text-muted-foreground'
-                        }`}
-                      >
-                        <ThumbsUp className="w-4 h-4" />
-                      </button>
-                      <button 
-                        onClick={() => setIsBookmarked(!isBookmarked)}
-                        className={`p-2 rounded-full transition-all duration-300 hover:scale-110 ${
-                          isBookmarked ? 'bg-primary/20 text-primary' : 'hover:bg-primary/10 text-muted-foreground'
-                        }`}
-                      >
-                        <Bookmark className="w-4 h-4" />
-                      </button>
-                      <button className="p-2 rounded-full hover:bg-primary/10 transition-all duration-300 hover:scale-110 group">
-                        <Share2 className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                      </button>
-                      
-                      {/* Edit Button */}
-                      <button
-                        onClick={startEditing}
-                        className="p-2 rounded-full hover:bg-primary/10 transition-all duration-300 hover:scale-110 group"
-                      >
-                        <Edit2 className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                      </button>
-                      
+                      <button onClick={() => setIsLiked(!isLiked)} className={`p-2 rounded-full transition-all duration-300 hover:scale-110 ${isLiked ? 'bg-primary/20 text-primary' : 'hover:bg-primary/10 text-muted-foreground'}`}><ThumbsUp className="w-4 h-4" /></button>
+                      <button onClick={() => setIsBookmarked(!isBookmarked)} className={`p-2 rounded-full transition-all duration-300 hover:scale-110 ${isBookmarked ? 'bg-primary/20 text-primary' : 'hover:bg-primary/10 text-muted-foreground'}`}><Bookmark className="w-4 h-4" /></button>
+                      <button className="p-2 rounded-full hover:bg-primary/10 transition-all duration-300 hover:scale-110 group"><Share2 className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" /></button>
+                      <button onClick={startEditing} className="p-2 rounded-full hover:bg-primary/10 transition-all duration-300 hover:scale-110 group"><Edit2 className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" /></button>
                       <div className="relative">
-                        <input
-                          ref={fileInputRef}
-                          type="file"
-                          accept="image/*"
-                          onChange={handleImageUpload}
-                          className="hidden"
-                        />
-                        <button
-                          onClick={() => fileInputRef.current?.click()}
-                          disabled={isUploading}
-                          className="p-2 rounded-full hover:bg-primary/10 transition-all duration-300 hover:scale-110 group flex items-center gap-2"
-                        >
-                          {isUploading ? (
-                            <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                          ) : (
-                            <Upload className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                          )}
-                          <span className="text-xs text-muted-foreground group-hover:text-primary transition-colors hidden sm:inline">
-                            Add Picture
-                          </span>
+                        <input ref={fileInputRef} type="file" accept="image/*" multiple onChange={handleMultipleImageUpload} className="hidden" />
+                        <button onClick={() => fileInputRef.current?.click()} disabled={isUploading} className="p-2 rounded-full hover:bg-primary/10 transition-all duration-300 hover:scale-110 group flex items-center gap-2">
+                          {isUploading ? <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" /> : <Upload className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />}
+                          <span className="text-xs text-muted-foreground group-hover:text-primary transition-colors hidden sm:inline">Add Pictures</span>
                         </button>
                       </div>
                     </div>
-                    <div className="text-xs text-muted-foreground">
-                      Last updated: {log.date}
-                    </div>
+                    <div className="text-xs text-muted-foreground">Last updated: {log.date}</div>
                   </div>
-
-                  <div
-                    onDragOver={handleDragOver}
-                    onDrop={handleDrop}
-                    className="mt-4 border-2 border-dashed border-border rounded-lg p-4 text-center hover:border-primary/40 transition-colors"
-                  >
-                    <p className="text-xs text-muted-foreground">
-                      📷 Drag & drop an image here to upload (max 5MB)
-                    </p>
+                  <div onDragOver={handleDragOver} onDrop={handleDrop} className="mt-4 border-2 border-dashed border-border rounded-lg p-4 text-center hover:border-primary/40 transition-colors">
+                    <p className="text-xs text-muted-foreground">📷 Drag & drop multiple images here to upload (max 5MB each)</p>
+                    <p className="text-[10px] text-muted-foreground mt-1">Supports: JPG, PNG, WEBP, GIF</p>
                   </div>
                 </div>
               </>
@@ -596,22 +686,10 @@ export default function LogDetailPage({ params }: { params: Promise<{ slug: stri
 
           {/* Lightbox Modal */}
           {selectedImage && (
-            <div 
-              className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 animate-fade-in"
-              onClick={() => setSelectedImage(null)}
-            >
+            <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 animate-fade-in" onClick={() => setSelectedImage(null)}>
               <div className="relative max-w-4xl max-h-[90vh]">
-                <img
-                  src={selectedImage.url}
-                  alt={selectedImage.filename}
-                  className="max-w-full max-h-[90vh] object-contain rounded-lg"
-                />
-                <button
-                  onClick={() => setSelectedImage(null)}
-                  className="absolute top-4 right-4 p-2 rounded-full bg-black/50 hover:bg-black/70 text-white transition-colors"
-                >
-                  <X className="w-5 h-5" />
-                </button>
+                <img src={selectedImage.url} alt={selectedImage.filename} className="max-w-full max-h-[90vh] object-contain rounded-lg" />
+                <button onClick={() => setSelectedImage(null)} className="absolute top-4 right-4 p-2 rounded-full bg-black/50 hover:bg-black/70 text-white transition-colors"><X className="w-5 h-5" /></button>
                 <div className="absolute bottom-4 left-4 right-4 bg-black/50 rounded-lg p-2 text-white text-sm">
                   <p>{selectedImage.filename}</p>
                   <p className="text-xs text-white/70">Uploaded: {selectedImage.timestamp}</p>
@@ -624,19 +702,11 @@ export default function LogDetailPage({ params }: { params: Promise<{ slug: stri
             <div className="bg-gradient-to-br from-primary/10 via-accent/5 to-transparent rounded-2xl p-8 border border-primary/10">
               <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                 <div className="space-y-2 text-center md:text-left">
-                  <h4 className="font-bold text-lg flex items-center gap-2 justify-center md:justify-start">
-                    <span className="text-2xl">📖</span>
-                    Thanks for reading!
-                  </h4>
-                  <p className="text-muted-foreground text-sm">
-                    Check out more of my daily activity logs and internship journey.
-                  </p>
+                  <h4 className="font-bold text-lg flex items-center gap-2 justify-center md:justify-start"><span className="text-2xl">📖</span>Thanks for reading!</h4>
+                  <p className="text-muted-foreground text-sm">Check out more of my daily activity logs and internship journey.</p>
                 </div>
                 <Button asChild className="rounded-full h-12 px-8 font-bold bg-gradient-to-r from-primary to-accent hover:shadow-lg transition-all duration-300 hover:scale-105">
-                  <Link href="/logs">
-                    Explore More Logs
-                    <ArrowLeft className="w-4 h-4 ml-2 rotate-180" />
-                  </Link>
+                  <Link href="/logs">Explore More Logs<ArrowLeft className="w-4 h-4 ml-2 rotate-180" /></Link>
                 </Button>
               </div>
             </div>
@@ -662,15 +732,6 @@ export default function LogDetailPage({ params }: { params: Promise<{ slug: stri
           25% { transform: translateY(-15px) translateX(5px); }
           75% { transform: translateY(10px) translateX(-5px); }
         }
-        @keyframes float-delay {
-          0%, 100% { transform: translateY(0px) translateX(0px); }
-          25% { transform: translateY(-10px) translateX(-5px); }
-          75% { transform: translateY(15px) translateX(5px); }
-        }
-        @keyframes float-slow {
-          0%, 100% { transform: translateY(0px) translateX(0px); }
-          50% { transform: translateY(-12px) translateX(8px); }
-        }
         .animate-fade-in-up { animation: fade-in-up 0.6s ease-out forwards; }
         .animate-slide-up { animation: slide-up 0.5s ease-out forwards; }
         .animate-fade-in { animation: fade-in 0.8s ease-out forwards; }
@@ -683,7 +744,6 @@ export default function LogDetailPage({ params }: { params: Promise<{ slug: stri
         .animation-delay-500 { animation-delay: 0.5s; opacity: 0; animation-fill-mode: forwards; }
         @keyframes spin { to { transform: rotate(360deg); } }
         .animate-spin { animation: spin 1s linear infinite; }
-        .slide-in-from-bottom-4 { animation: slide-up 0.3s ease-out; }
       `}</style>
     </div>
   );
