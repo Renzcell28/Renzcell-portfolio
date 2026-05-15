@@ -164,37 +164,36 @@ export default function ChatBot() {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 z-50 group"
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 group"
       >
-        {/* Animated Robot Floating Button */}
         <div className="relative">
           {/* Pulsing ring effect */}
           <div className="absolute inset-0 rounded-full bg-red-500/30 animate-ping opacity-75"></div>
           
           {/* Robot icon floating animation */}
-          <div className="relative w-16 h-16 rounded-full bg-gradient-to-r from-red-600 to-red-500 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 flex items-center justify-center animate-float-robot">
-            <Bot className="w-8 h-8 text-white" />
+          <div className="relative w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full bg-gradient-to-r from-red-600 to-red-500 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 flex items-center justify-center animate-float-robot">
+            <Bot className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-white" />
           </div>
           
           {/* Moving antenna */}
           <div className="absolute -top-3 left-1/2 -translate-x-1/2 animate-antenna">
-            <div className="w-1 h-4 bg-red-500 rounded-full"></div>
-            <div className="w-3 h-3 rounded-full bg-red-600 -mt-1"></div>
+            <div className="w-0.5 h-3 sm:w-1 sm:h-4 bg-red-500 rounded-full"></div>
+            <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-red-600 -mt-1"></div>
           </div>
           
           {/* Moving eyes */}
-          <div className="absolute top-4 left-3 flex gap-2">
-            <div className="w-1.5 h-1.5 rounded-full bg-white animate-blink"></div>
-            <div className="w-1.5 h-1.5 rounded-full bg-white animate-blink delay-150"></div>
+          <div className="absolute top-3 left-2 sm:top-3.5 sm:left-2.5 flex gap-1.5">
+            <div className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-white animate-blink"></div>
+            <div className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-white animate-blink delay-150"></div>
           </div>
           
-          {/* Tooltip */}
-          <span className="absolute right-full mr-3 px-3 py-1.5 text-xs bg-gray-900 text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
+          {/* Tooltip - hidden on mobile */}
+          <span className="hidden sm:block absolute right-full mr-3 px-3 py-1.5 text-xs bg-gray-900 text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
             Chat with Renzcell Bot 🤖
           </span>
           
           {/* Online indicator */}
-          <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-green-500 rounded-full animate-pulse border-2 border-white"></span>
+          <span className="absolute -top-0.5 -right-0.5 sm:-top-1 sm:-right-1 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-green-500 rounded-full animate-pulse border-2 border-white"></span>
         </div>
       </button>
     );
@@ -202,111 +201,121 @@ export default function ChatBot() {
 
   return (
     <>
+      {/* Backdrop overlay - only on larger screens when not minimized */}
       {!isMinimized && (
         <div 
-          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 animate-fade-in"
+          className="hidden sm:block fixed inset-0 bg-black/50 backdrop-blur-sm z-40 animate-fade-in"
           onClick={() => setIsOpen(false)}
         />
       )}
 
+      {/* Chat Window */}
       <div className={`fixed z-50 transition-all duration-300 ${
         isMinimized 
-          ? 'bottom-6 right-6 w-80 h-14' 
-          : 'bottom-6 right-6 w-[90vw] sm:w-96 h-[550px] sm:h-[650px]'
+          ? 'bottom-4 right-4 sm:bottom-6 sm:right-6 w-[calc(100vw-2rem)] sm:w-80 h-14' 
+          : 'bottom-4 right-4 sm:bottom-6 sm:right-6 left-4 sm:left-auto w-[calc(100vw-2rem)] sm:w-96 h-[500px] sm:h-[600px] md:h-[650px]'
       }`}>
         <div className="bg-gradient-to-br from-gray-900 to-gray-900/95 backdrop-blur-sm rounded-2xl shadow-2xl border border-red-500/20 overflow-hidden flex flex-col h-full animate-slide-up">
-          {/* Header with Animated Robot */}
-          <div className="bg-gradient-to-r from-red-500/10 to-red-600/10 p-4 border-b border-red-500/20">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center gap-3">
-                {/* Animated robot in header */}
-                <div className="relative">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-r from-red-600 to-red-500 flex items-center justify-center animate-float-small">
-                    <Bot className="w-5 h-5 text-white" />
-                  </div>
-                  <div className="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                </div>
-                <div>
-                  <h3 className="font-bold text-sm flex items-center gap-1 text-white">
-                    Renzcell Bot
-                    <Sparkles className="w-3 h-3 text-yellow-500 animate-pulse" />
-                  </h3>
-                  <p className="text-xs text-gray-400 flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
-                    Online • AI Assistant
-                  </p>
-                </div>
-              </div>
-              <div className="flex gap-1">
-                <button
-                  onClick={() => setIsMinimized(!isMinimized)}
-                  className="p-1.5 rounded-lg hover:bg-gray-800 transition-colors"
-                >
-                  {isMinimized ? <Maximize2 className="w-3.5 h-3.5 text-gray-400" /> : <Minimize2 className="w-3.5 h-3.5 text-gray-400" />}
-                </button>
-                <button
-                  onClick={() => setIsOpen(false)}
-                  className="p-1.5 rounded-lg hover:bg-gray-800 transition-colors"
-                >
-                  <X className="w-3.5 h-3.5 text-gray-400" />
-                </button>
-              </div>
-            </div>
-            
-            {/* Animated robot message */}
-            <div className="mt-2 flex items-center gap-2 text-xs text-gray-500">
-              <div className="flex gap-0.5">
-                <span className="w-1 h-1 bg-red-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
-                <span className="w-1 h-1 bg-red-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
-                <span className="w-1 h-1 bg-red-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
-              </div>
-              <span>Ready to help you!</span>
-            </div>
-          </div>
+         
 
+{/* Header - Fixed spacing with no overlap */}
+<div className="flex-shrink-0 bg-gradient-to-r from-red-500/10 to-red-600/10 border-b border-red-500/20">
+  <div className="p-3 sm:p-4">
+    <div className="flex justify-between items-center">
+      <div className="flex items-center gap-2 sm:gap-3">
+        {/* Animated robot in header */}
+        <div className="relative">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-r from-red-600 to-red-500 flex items-center justify-center animate-float-small">
+            <Bot className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+          </div>
+          <div className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-500 rounded-full animate-pulse"></div>
+        </div>
+        <div>
+          <h3 className="font-bold text-xs sm:text-sm flex items-center gap-1 text-white">
+            Renzcell Bot
+            <Sparkles className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-yellow-500 animate-pulse" />
+          </h3>
+          <p className="text-[10px] sm:text-xs text-gray-400 flex items-center gap-1">
+            <span className="w-1 h-1 sm:w-1.5 sm:h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+            Online • AI Assistant
+          </p>
+        </div>
+      </div>
+      <div className="flex gap-1">
+        <button
+          onClick={() => setIsMinimized(!isMinimized)}
+          className="p-1.5 rounded-lg hover:bg-gray-800 transition-colors"
+          aria-label={isMinimized ? "Maximize chat" : "Minimize chat"}
+        >
+          {isMinimized ? <Maximize2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-gray-400" /> : <Minimize2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-gray-400" />}
+        </button>
+        <button
+          onClick={() => setIsOpen(false)}
+          className="p-1.5 rounded-lg hover:bg-gray-800 transition-colors"
+          aria-label="Close chat"
+        >
+          <X className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-gray-400" />
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  {/* Status message - separate section with its own padding and border */}
+  <div className="px-3 sm:px-4 pb-3 sm:pb-4 pt-0 border-t border-red-500/10">
+    <div className="flex items-center gap-2 text-[10px] sm:text-xs text-gray-500 bg-gray-800/30 rounded-lg px-2 py-1.5 sm:px-3 sm:py-2">
+      <div className="flex gap-0.5">
+        <span className="w-0.5 h-0.5 sm:w-1 sm:h-1 bg-red-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+        <span className="w-0.5 h-0.5 sm:w-1 sm:h-1 bg-red-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+        <span className="w-0.5 h-0.5 sm:w-1 sm:h-1 bg-red-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+      </div>
+      <span>🤖 Ready to help you! Ask me anything about Renzcell's skills, projects, or experience.</span>
+    </div>
+  </div>
+</div>
           {!isMinimized && (
             <>
-              <div className="flex-1 overflow-y-auto p-4 space-y-3">
+              {/* Messages Container - Scrollable area */}
+              <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-2 sm:space-y-3 min-h-0">
                 {messages.map((message) => (
                   <div
                     key={message.id}
                     className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in-up`}
                   >
                     <div
-                      className={`max-w-[80%] rounded-2xl px-4 py-2.5 ${
+                      className={`max-w-[85%] sm:max-w-[80%] rounded-2xl px-3 py-2 sm:px-4 sm:py-2.5 ${
                         message.sender === 'user'
                           ? 'bg-gradient-to-r from-red-600 to-red-500 text-white'
                           : 'bg-gray-800/50 border border-red-500/10'
                       }`}
                     >
-                      <div className="flex items-center gap-2 mb-1">
+                      <div className="flex items-center gap-1.5 sm:gap-2 mb-1">
                         {message.sender === 'bot' ? (
-                          <div className="w-4 h-4 rounded-full bg-red-500/20 flex items-center justify-center">
-                            <Bot className="w-2.5 h-2.5 text-red-500" />
+                          <div className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-red-500/20 flex items-center justify-center">
+                            <Bot className="w-2 h-2 sm:w-2.5 sm:h-2.5 text-red-500" />
                           </div>
                         ) : (
-                          <User className="w-3 h-3 text-white/70" />
+                          <User className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white/70" />
                         )}
-                        <span className="text-xs opacity-70">
+                        <span className="text-[10px] sm:text-xs opacity-70">
                           {message.sender === 'bot' ? 'Renzcell Bot' : 'You'} • {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </span>
                       </div>
-                      <p className="text-sm whitespace-pre-wrap text-white">{message.text}</p>
+                      <p className="text-xs sm:text-sm whitespace-pre-wrap text-white break-words">{message.text}</p>
                     </div>
                   </div>
                 ))}
                 
                 {isTyping && (
                   <div className="flex justify-start animate-fade-in-up">
-                    <div className="bg-gray-800/50 border border-red-500/10 rounded-2xl px-4 py-2.5">
+                    <div className="bg-gray-800/50 border border-red-500/10 rounded-2xl px-3 py-2 sm:px-4 sm:py-2.5">
                       <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 rounded-full bg-red-500/20 flex items-center justify-center animate-pulse">
-                          <Bot className="w-2.5 h-2.5 text-red-500" />
+                        <div className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-red-500/20 flex items-center justify-center animate-pulse">
+                          <Bot className="w-2 h-2 sm:w-2.5 sm:h-2.5 text-red-500" />
                         </div>
                         <div className="flex gap-1">
-                          <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                          <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                          <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                          <span className="w-1 h-1 sm:w-1.5 sm:h-1.5 bg-red-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                          <span className="w-1 h-1 sm:w-1.5 sm:h-1.5 bg-red-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                          <span className="w-1 h-1 sm:w-1.5 sm:h-1.5 bg-red-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                         </div>
                       </div>
                     </div>
@@ -316,7 +325,8 @@ export default function ChatBot() {
                 <div ref={messagesEndRef} />
               </div>
 
-              <div className="border-t border-gray-800 p-4">
+              {/* Input Area - Fixed at bottom */}
+              <div className="flex-shrink-0 border-t border-gray-800 p-3 sm:p-4 bg-gray-900/50">
                 <div className="flex gap-2">
                   <input
                     ref={inputRef}
@@ -325,24 +335,25 @@ export default function ChatBot() {
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyPress={handleKeyPress}
                     placeholder="Ask me about Renzcell..."
-                    className="flex-1 px-4 py-2 rounded-lg border border-gray-800 bg-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm text-white"
+                    className="flex-1 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg border border-gray-800 bg-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-xs sm:text-sm text-white placeholder:text-gray-500"
                   />
                   <button
                     onClick={handleSendMessage}
                     disabled={!inputValue.trim()}
-                    className="p-2 rounded-lg bg-gradient-to-r from-red-600 to-red-500 text-white hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="p-1.5 sm:p-2 rounded-lg bg-gradient-to-r from-red-600 to-red-500 text-white hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    aria-label="Send message"
                   >
-                    <Send className="w-4 h-4" />
+                    <Send className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </button>
                 </div>
                 <div className="flex justify-between items-center mt-2">
-                  <p className="text-[10px] text-gray-500 flex items-center gap-1">
+                  <p className="text-[9px] sm:text-[10px] text-gray-500 flex items-center gap-1">
                     <span className="animate-wave">🤖</span>
                     Ask about skills, projects, experience
                   </p>
                   <button
                     onClick={clearChat}
-                    className="text-[10px] text-gray-500 hover:text-red-500 transition-colors"
+                    className="text-[9px] sm:text-[10px] text-gray-500 hover:text-red-500 transition-colors"
                   >
                     Clear chat
                   </button>
@@ -352,6 +363,97 @@ export default function ChatBot() {
           )}
         </div>
       </div>
+
+      <style jsx>{`
+        @keyframes float-robot {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes float-small {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-5px); }
+        }
+        
+        @keyframes antenna {
+          0%, 100% { transform: rotate(0deg); }
+          25% { transform: rotate(5deg); }
+          75% { transform: rotate(-5deg); }
+        }
+        
+        @keyframes blink {
+          0%, 90%, 100% { opacity: 1; }
+          95% { opacity: 0; }
+        }
+        
+        @keyframes wave {
+          0% { transform: rotate(0deg); }
+          25% { transform: rotate(20deg); }
+          75% { transform: rotate(-10deg); }
+          100% { transform: rotate(0deg); }
+        }
+        
+        @keyframes fade-in-up {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        @keyframes slide-up {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        @keyframes fade-in {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        
+        .animate-float-robot {
+          animation: float-robot 3s ease-in-out infinite;
+        }
+        
+        .animate-float-small {
+          animation: float-small 2s ease-in-out infinite;
+        }
+        
+        .animate-antenna {
+          animation: antenna 2s ease-in-out infinite;
+          transform-origin: center top;
+        }
+        
+        .animate-blink {
+          animation: blink 3s infinite;
+        }
+        
+        .animate-wave {
+          animation: wave 1s ease-in-out infinite;
+          display: inline-block;
+        }
+        
+        .animate-fade-in-up {
+          animation: fade-in-up 0.3s ease-out;
+        }
+        
+        .animate-slide-up {
+          animation: slide-up 0.3s ease-out;
+        }
+        
+        .animate-fade-in {
+          animation: fade-in 0.2s ease-out;
+        }
+      `}</style>
     </>
   );
 }

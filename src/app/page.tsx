@@ -6,7 +6,7 @@ import { ProjectCard } from '@/components/portfolio/project-card';
 import TechStackSection from '@/components/TechStackSection';
 import AutoSlidingRoadmap from '@/components/AutoSlidingRoadmap';
 import ChatBot from '@/components/ChatBot';
-import LearningPathGenerator from '@/components/LearningPathGenerator';
+import ResumeSection from '@/components/ResumeSection';
 
 export default async function Home() {
   const projects = await getProjects();
@@ -109,19 +109,55 @@ export default async function Home() {
           </div>
         </section>
 
-        {/* Professional Description Section - Red Theme */}
-        <section className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto text-center space-y-4 md:space-y-6 animate-fade-in-up">
-            <div className="inline-flex items-center gap-2 px-3 py-1 md:px-4 md:py-1.5 rounded-full bg-red-500/10 text-red-500 text-xs md:text-sm font-medium hover:scale-105 transition-transform duration-300">
-              <Sparkles className="w-3 h-3 md:w-4 md:h-4" />
-              About Me
+        {/* Professional Description Section - Simple Red Theme Card */}
+        <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="max-w-4xl mx-auto">
+            <div className="relative bg-gradient-to-br from-gray-900/80 to-gray-900/40 backdrop-blur-sm rounded-2xl border border-red-500/20 p-6 md:p-8 lg:p-10 shadow-xl">
+              
+              {/* Decorative accent */}
+              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -mt-3">
+                <div className="w-12 h-1 bg-gradient-to-r from-red-600 to-red-500 rounded-full"></div>
+              </div>
+              
+              {/* Header */}
+              <div className="text-center space-y-3 mb-6">
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-500/10 text-red-500 text-sm font-medium mx-auto">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  About Me
+                </div>
+              </div>
+              
+              {/* Main Description */}
+              <p className="text-base md:text-lg lg:text-xl text-gray-300 leading-relaxed text-center">
+                Aspiring developer with expertise in{' '}
+                <span className="text-white font-medium">HTML, CSS, Java, JavaScript, and PHP</span>, 
+                specializing in modern frameworks like{' '}
+                <span className="text-white font-medium">React Native and Laravel</span>.
+              </p>
+              
+              {/* Divider */}
+              <div className="flex justify-center gap-2 my-6">
+                <div className="w-2 h-2 rounded-full bg-red-500/50"></div>
+                <div className="w-2 h-2 rounded-full bg-red-500/70"></div>
+                <div className="w-2 h-2 rounded-full bg-red-500"></div>
+                <div className="w-2 h-2 rounded-full bg-red-500/70"></div>
+                <div className="w-2 h-2 rounded-full bg-red-500/50"></div>
+              </div>
+              
+              {/* Additional Info */}
+              <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-gray-400">
+                <span>🎓 BSIT Student @ Universidad De Dagupan</span>
+                <span>🏅 NCII CSS Certified</span>
+                <span>💼 OJT at MakerSpace Innohub</span>
+              </div>
+              
+              {/* Personal Quote */}
+              <p className="text-xs text-gray-500 text-center mt-4 italic">
+                "Building innovative solutions through code, one project at a time."
+              </p>
             </div>
-            <p className="text-base md:text-lg lg:text-xl text-gray-400 max-w-2xl mx-auto px-4">
-              Aspiring full-stack developer with expertise in{' '}
-              <span className="text-white font-medium">HTML, CSS, Java, JavaScript, and PHP</span>, 
-              specializing in modern frameworks like{' '}
-              <span className="text-white font-medium">React Native and Laravel</span>.
-            </p>
           </div>
         </section>
 
@@ -158,10 +194,8 @@ export default async function Home() {
         {/* OJT & Certification Section - Client Component */}
         <AutoSlidingRoadmap />
 
-        {/* AI Learning Path Generator Section */}
-        <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <LearningPathGenerator />
-        </section>
+        {/* Resume Section - Client Component */}
+        <ResumeSection />
 
         {/* Personal Information Section - Red Theme */}
         <section className="container mx-auto px-4 sm:px-6 lg:px-8">

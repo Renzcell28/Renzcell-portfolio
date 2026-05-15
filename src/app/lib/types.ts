@@ -7,6 +7,7 @@ export interface Project {
   category: 'SEO Audit' | 'Frontend' | 'Research' | 'Fullstack' | 'Automation';
   imageUrl: string;
   featured?: boolean;
+   gallery?: string[];
 }
 
 export interface ActivityLog {

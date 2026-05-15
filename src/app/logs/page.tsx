@@ -4,11 +4,141 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { Calendar, ChevronRight, BookOpen, Plus, X, Save, Trash2, Filter, Search, Clock, ChevronLeft, ChevronsLeft, ChevronsRight, Briefcase, MapPin, CalendarDays, Upload, Image as ImageIcon } from 'lucide-react';
+import { Calendar, ChevronRight, BookOpen, Plus, X, Save, Trash2, Filter, Search, Clock, ChevronLeft, ChevronsLeft, ChevronsRight, Briefcase, MapPin, CalendarDays, Upload, Rocket, Award, Play, Pause, ChevronUp, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getAllLogsFromDB, saveLogToDB, deleteLogFromDB, generateSlug, ActivityLog, addImageToLog } from '@/lib/db';
 
 const ITEMS_PER_PAGE = 10;
+
+// OJT Timeline Data
+const ojtTimeline = [
+  {
+    date: "Feb 2026",
+    title: "OJT Started + Learning Phase",
+    description: "Started online OJT at MakerSpace Innohub. Learned Laravel + Vue.js integration. Completed SUI Modules 1-5. Started Axiom Scrumban development.",
+    icon: "🚀",
+    category: "Learning"
+  },
+  {
+    date: "Feb 15-20, 2026",
+    title: "Axiom Scrumban - Notification System",
+    description: "Built notification system with 3-day reminders, due today alerts, overdue alerts, and instant in-app notifications. Implemented project archive system.",
+    icon: "💻",
+    category: "Development"
+  },
+  {
+    date: "Feb 23-25, 2026",
+    title: "Axiom Scrumban - Bug Fixes",
+    description: "Implemented permanent project deletion with confirmation. Configured Gmail SMTP for email notifications. Resolved 404 errors, PostgreSQL issues, route conflicts.",
+    icon: "⚙️",
+    category: "Bug Fix"
+  },
+  {
+    date: "March 1-5, 2026",
+    title: "SyncSnap - Gamification",
+    description: "Implemented daily streaks, early bird bonuses (+10 points), milestone rewards, and leaderboard rankings.",
+    icon: "🎮",
+    category: "Development"
+  },
+  {
+    date: "March 6-12, 2026",
+    title: "SyncSnap - Blocker Management",
+    description: "Implemented blocker status management (Pending/Processing/Resolved). Built email notification system for admin alerts.",
+    icon: "🔒",
+    category: "Development"
+  },
+  {
+    date: "March 13-19, 2026",
+    title: "SyncSnap - AI Reports",
+    description: "Integrated Gemini API for AI report generation. Built deadline reminders with email notifications. Added date picker for custom ranges.",
+    icon: "🤖",
+    category: "AI Integration"
+  },
+  {
+    date: "March 20-25, 2026",
+    title: "SyncSnap - Reports & Permissions",
+    description: "Built MemberReport dashboard with team performance analytics. Implemented role-based access control and IDOR protection.",
+    icon: "📈",
+    category: "Security"
+  },
+  {
+    date: "March 26-31, 2026",
+    title: "SyncSnap - Final Features",
+    description: "Added Reports Search, optimized Report Parsing, created vehicle comparison design template.",
+    icon: "🔧",
+    category: "Development"
+  },
+  {
+    date: "April 1-2, 2026",
+    title: "FlowState - Account Management",
+    description: "Added Delete Account with confirmation modal, Change Password with password fields. Profile photos in assignee dropdown. Fixed API call for user deletion.",
+    icon: "🔐",
+    category: "Security"
+  },
+  {
+    date: "April 3-6, 2026",
+    title: "FlowState - Project Setup",
+    description: "Created one-page pitch for digital solution. Cloned repository, installed dependencies, connected to MongoDB Atlas.",
+    icon: "🌊",
+    category: "Setup"
+  },
+  {
+    date: "April 7-12, 2026",
+    title: "FlowState - UI Development",
+    description: "Set up My Tasks page UI, Layout UI/UX, Blockers UI design, Floating Action Button, AI Insight page with custom date ranges.",
+    icon: "🎨",
+    category: "UI/UX"
+  },
+  {
+    date: "April 13-17, 2026",
+    title: "FlowState - Settings & Team Features",
+    description: "Built Settings page with Profile/Security/Preferences tabs. Added team selection page, View AI Analytics button, switch teams from sidebar.",
+    icon: "⚙️",
+    category: "Development"
+  },
+  {
+    date: "April 14-18, 2026",
+    title: "FlowState - Team Feed Complete",
+    description: "Built Team Feed Tab System (Chat, Members, Activity, Settings). Members list with color-coded badges. Real-time messaging.",
+    icon: "👥",
+    category: "Real-time"
+  },
+  {
+    date: "April 18-20, 2026",
+    title: "FlowState - Settings Functionality",
+    description: "Working name/email/password changes with verification. Delete account with confirmation modal.",
+    icon: "🔧",
+    category: "Development"
+  },
+  {
+    date: "April 21 - May 5, 2026",
+    title: "📚 NCII CSS Training",
+    description: "Started TESDA NCII CSS training. Focused on training modules and assessment preparation.",
+    icon: "📖",
+    category: "Training"
+  },
+  {
+    date: "May 6, 2026",
+    title: "🎉 NCII CSS Assessment - PASSED! 🎉",
+    description: "Successfully passed the NCII CSS competency assessment. Officially NCII Certified! ✅",
+    icon: "🏅",
+    category: "Achievement"
+  },
+  {
+    date: "May 7-9, 2026",
+    title: "FlowState - Workstream Features",
+    description: "Added workstream rename with real-time database sync. Team rename with live updates. Real-time socket events. Custom FlowState logo.",
+    icon: "🔄",
+    category: "Real-time"
+  },
+  {
+    date: "May 10-12, 2026",
+    title: "FlowState - Authentication System",
+    description: "Built secure signup with real-time password meter (8 chars, uppercase, special). Login backend with bcrypt. Responsive design.",
+    icon: "🔑",
+    category: "Authentication"
+  }
+];
 
 // Helper function to format date for input (YYYY-MM-DD)
 const formatDateForInput = (date: Date): string => {
@@ -37,6 +167,12 @@ export default function LogsPage() {
   const [selectedMonth, setSelectedMonth] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [showOjtJourney, setShowOjtJourney] = useState(true);
+  const [ojtCurrentIndex, setOjtCurrentIndex] = useState(0);
+  const [ojtVisibleCards, setOjtVisibleCards] = useState(3);
+  const [ojtIsAutoPlaying, setOjtIsAutoPlaying] = useState(true);
+  const ojtScrollRef = useRef<HTMLDivElement>(null);
+  const ojtAutoPlayRef = useRef<NodeJS.Timeout | null>(null);
   
   // Image upload states
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
@@ -54,6 +190,43 @@ export default function LogsPage() {
   useEffect(() => {
     loadLogs();
   }, []);
+
+  // OJT Journey responsive cards
+  useEffect(() => {
+    const updateVisibleCards = () => {
+      if (window.innerWidth < 640) setOjtVisibleCards(1);
+      else if (window.innerWidth < 1024) setOjtVisibleCards(2);
+      else setOjtVisibleCards(3);
+    };
+    updateVisibleCards();
+    window.addEventListener('resize', updateVisibleCards);
+    return () => window.removeEventListener('resize', updateVisibleCards);
+  }, []);
+
+  // OJT Journey auto-play
+  useEffect(() => {
+    if (ojtIsAutoPlaying && showOjtJourney) {
+      ojtAutoPlayRef.current = setInterval(() => {
+        setOjtCurrentIndex((prev) => 
+          prev + ojtVisibleCards >= ojtTimeline.length ? 0 : prev + 1
+        );
+      }, 4000);
+    }
+    return () => {
+      if (ojtAutoPlayRef.current) clearInterval(ojtAutoPlayRef.current);
+    };
+  }, [ojtIsAutoPlaying, ojtVisibleCards, showOjtJourney]);
+
+  // Scroll OJT cards when index changes
+  useEffect(() => {
+    if (ojtScrollRef.current && ojtScrollRef.current.children[0]) {
+      const cardWidth = (ojtScrollRef.current.children[0] as HTMLElement).offsetWidth;
+      ojtScrollRef.current.scrollTo({
+        left: ojtCurrentIndex * (cardWidth + 24),
+        behavior: 'smooth'
+      });
+    }
+  }, [ojtCurrentIndex]);
 
   const loadLogs = () => {
     const loadedLogs = getAllLogsFromDB();
@@ -113,6 +286,26 @@ export default function LogsPage() {
 
   const goToPage = (page: number) => {
     setCurrentPage(Math.max(1, Math.min(page, totalPages)));
+  };
+
+  const handleOjtPrev = () => {
+    setOjtIsAutoPlaying(false);
+    setOjtCurrentIndex((prev) => 
+      prev - 1 < 0 ? Math.max(0, ojtTimeline.length - ojtVisibleCards) : prev - 1
+    );
+    setTimeout(() => setOjtIsAutoPlaying(true), 5000);
+  };
+
+  const handleOjtNext = () => {
+    setOjtIsAutoPlaying(false);
+    setOjtCurrentIndex((prev) => 
+      prev + ojtVisibleCards >= ojtTimeline.length ? 0 : prev + 1
+    );
+    setTimeout(() => setOjtIsAutoPlaying(true), 5000);
+  };
+
+  const toggleOjtAutoPlay = () => {
+    setOjtIsAutoPlaying(!ojtIsAutoPlaying);
   };
 
   // Handle date change
@@ -506,6 +699,131 @@ export default function LogsPage() {
         </div>
       )}
 
+      {/* My OJT Journey Section - Placed BELOW the activity logs */}
+      <div className="max-w-6xl mx-auto mt-16 pt-8 border-t border-gray-800">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 text-red-500 font-bold tracking-widest text-xs uppercase">
+              <Rocket className="w-4 h-4" />
+              <span>MY OJT JOURNEY</span>
+            </div>
+            <Badge className="bg-yellow-500/20 text-yellow-400 border-yellow-500/30">
+              <Award className="w-3 h-3 mr-1" />
+              NCII CSS Certified
+            </Badge>
+          </div>
+          <button
+            onClick={() => setShowOjtJourney(!showOjtJourney)}
+            className="p-1.5 rounded-lg hover:bg-gray-800 transition-colors"
+          >
+            {showOjtJourney ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
+          </button>
+        </div>
+
+        {showOjtJourney && (
+          <div className="space-y-4">
+            {/* Controls */}
+            <div className="flex justify-end items-center gap-2">
+              <button 
+                onClick={toggleOjtAutoPlay} 
+                className="p-2 rounded-full bg-gray-800/50 hover:bg-gray-800 transition-colors"
+                title={ojtIsAutoPlaying ? "Pause Auto-Slide" : "Play Auto-Slide"}
+              >
+                {ojtIsAutoPlaying ? <Pause className="w-3.5 h-3.5 text-gray-400" /> : <Play className="w-3.5 h-3.5 text-gray-400" />}
+              </button>
+              <button 
+                onClick={handleOjtPrev} 
+                className="p-2 rounded-full bg-red-500/10 hover:bg-red-500/20 transition-colors"
+              >
+                <ChevronLeft className="w-4 h-4 text-red-500" />
+              </button>
+              <button 
+                onClick={handleOjtNext} 
+                className="p-2 rounded-full bg-red-500/10 hover:bg-red-500/20 transition-colors"
+              >
+                <ChevronRight className="w-4 h-4 text-red-500" />
+              </button>
+            </div>
+
+            {/* OJT Cards Carousel */}
+            <div className="relative">
+              <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-12 md:w-24 z-10 bg-gradient-to-r from-black via-black/80 to-transparent"></div>
+              <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-12 md:w-24 z-10 bg-gradient-to-l from-black via-black/80 to-transparent"></div>
+              
+              <div 
+                ref={ojtScrollRef} 
+                className="flex gap-5 overflow-x-auto scroll-smooth pb-4 hide-scrollbar" 
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+              >
+                {ojtTimeline.map((event, index) => (
+                  <div key={index} className="relative flex-shrink-0 w-full sm:w-[calc(50%-10px)] lg:w-[calc(33.333%-14px)] group">
+                    <div className={`relative h-full bg-gray-900/80 backdrop-blur-sm rounded-xl border overflow-hidden hover:shadow-xl transition-all duration-300 ${
+                      event.title.includes("PASSED") 
+                        ? 'border-yellow-500/40 hover:border-yellow-500/60' 
+                        : 'border-gray-800 hover:border-red-500/40'
+                    }`}>
+                      {/* Header */}
+                      <div className={`px-4 py-2 border-b ${
+                        event.title.includes("PASSED") 
+                          ? 'bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border-yellow-500/20' 
+                          : 'bg-red-500/5 border-gray-800'
+                      }`}>
+                        <div className="flex items-center justify-between">
+                          <span className={`text-xs font-bold ${
+                            event.title.includes("PASSED") ? 'text-yellow-500' : 'text-red-500'
+                          }`}>
+                            {event.date}
+                          </span>
+                          <span className="text-lg">{event.icon}</span>
+                        </div>
+                      </div>
+                      
+                      {/* Content */}
+                      <div className="p-4">
+                        <h3 className={`font-headline font-bold text-sm md:text-base mb-2 line-clamp-2 ${
+                          event.title.includes("PASSED") ? 'text-yellow-500' : 'text-white'
+                        }`}>
+                          {event.title}
+                        </h3>
+                        <p className="text-gray-400 text-xs md:text-sm leading-relaxed line-clamp-3">
+                          {event.description}
+                        </p>
+                      </div>
+                      
+                      {/* Category Badge */}
+                      <div className="px-4 pb-3">
+                        <Badge variant="secondary" className="text-[9px] bg-gray-800/50 text-gray-500">
+                          {event.category}
+                        </Badge>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Progress Dots */}
+            <div className="flex justify-center gap-2 mt-4">
+              {Array.from({ length: Math.ceil(ojtTimeline.length / ojtVisibleCards) }).map((_, i) => (
+                <button 
+                  key={i} 
+                  onClick={() => { 
+                    setOjtIsAutoPlaying(false); 
+                    setOjtCurrentIndex(i * ojtVisibleCards); 
+                    setTimeout(() => setOjtIsAutoPlaying(true), 5000); 
+                  }}
+                  className={`h-1.5 rounded-full transition-all duration-300 ${
+                    Math.floor(ojtCurrentIndex / ojtVisibleCards) === i 
+                      ? 'w-6 bg-red-500' 
+                      : 'w-1.5 bg-red-500/30 hover:bg-red-500/50'
+                  }`} 
+                />
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* Floating Action Button with Image Upload - Red Theme */}
       <div className="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-50">
         {!showForm ? (
@@ -747,6 +1065,9 @@ export default function LogsPage() {
       </div>
 
       <style jsx>{`
+        .hide-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
         @keyframes slide-in {
           from { opacity: 0; transform: translateY(20px); }
           to { opacity: 1; transform: translateY(0); }
