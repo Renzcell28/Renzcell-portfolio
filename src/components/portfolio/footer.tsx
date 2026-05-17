@@ -27,14 +27,14 @@ export function Footer() {
             <h4 className="font-semibold text-sm uppercase tracking-wider text-red-500">Contact</h4>
             <div className="text-sm text-gray-400">
               <p>Renzcell Rick V. Loresco</p>
-              <p>MIH Internship 2024</p>
+              <p>63+ 09664138823</p>
               <p className="mt-2 text-white">renzcell.loresco.3@gmail.com</p>
             </div>
           </div>
         </div>
 
         <div className="mt-12 pt-8 border-t border-gray-800 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-gray-500">
-          <p>© {currentYear} DevVault Portfolio. All rights reserved.</p>
+          <p>© {currentYear} DevCore Portfolio. All rights reserved.</p>
           <div className="flex gap-4">
             <a href="#" className="hover:text-red-500 transition-colors">GitHub</a>
             <a href="#" className="hover:text-red-500 transition-colors">LinkedIn</a>

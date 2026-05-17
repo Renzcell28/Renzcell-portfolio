@@ -270,7 +270,7 @@ const JourneyMap = () => {
           </div>
           
           <h2 className="font-headline font-bold text-3xl md:text-4xl lg:text-5xl bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 bg-clip-text text-transparent">
-            15-Week Development Journey
+           Development Journey
           </h2>
           <p className="text-gray-400 text-sm md:text-base max-w-2xl mx-auto">
             A weekly breakdown of my OJT adventure at{' '}

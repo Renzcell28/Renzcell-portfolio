@@ -24,7 +24,7 @@ export function Navbar() {
             R
           </div>
           <span className="font-headline font-bold text-xl tracking-tight hidden sm:inline-block text-white">
-            DevVault <span className="bg-gradient-to-r from-red-600 to-red-500 bg-clip-text text-transparent">Portfolio</span>
+            DevCore<span className="bg-gradient-to-r from-red-600 to-red-500 bg-clip-text text-transparent">Portfolio</span>
           </span>
         </Link>
 

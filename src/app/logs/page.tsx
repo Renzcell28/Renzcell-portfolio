@@ -171,27 +171,77 @@ export default function LogsPage() {
   const [ojtCurrentIndex, setOjtCurrentIndex] = useState(0);
   const [ojtVisibleCards, setOjtVisibleCards] = useState(3);
   const [ojtIsAutoPlaying, setOjtIsAutoPlaying] = useState(true);
+  const [hoveredLogId, setHoveredLogId] = useState<number | null>(null);
+  const [showActionButtons, setShowActionButtons] = useState(false);
   const ojtScrollRef = useRef<HTMLDivElement>(null);
   const ojtAutoPlayRef = useRef<NodeJS.Timeout | null>(null);
   
-  // Image upload states
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [isUploadingImages, setIsUploadingImages] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
   
-  // Get today's date in YYYY-MM-DD format for the date picker default
   const today = new Date();
   const defaultDateValue = formatDateForInput(today);
   const defaultFormattedDate = formatDateForDisplay(today.getFullYear(), today.getMonth() + 1, today.getDate());
   
-  // Load logs from localStorage on mount
   useEffect(() => {
     loadLogs();
   }, []);
 
-  // OJT Journey responsive cards
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.shiftKey && (e.key === 'F' || e.key === 'f')) {
+        e.preventDefault();
+        e.stopPropagation();
+        setShowActionButtons(prev => {
+          const newState = !prev;
+          const toast = document.createElement('div');
+          toast.className = `fixed bottom-20 right-4 ${newState ? 'bg-green-500' : 'bg-gray-600'} text-white px-4 py-2 rounded-lg shadow-lg z-50 text-sm`;
+          toast.textContent = newState 
+            ? '🔓 Admin mode: Action buttons visible'
+            : '🔒 Security mode: Action buttons hidden';
+          document.body.appendChild(toast);
+          setTimeout(() => toast.remove(), 2000);
+          return newState;
+        });
+        return;
+      }
+      
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'f' || e.key === 'F') && showActionButtons) {
+        e.preventDefault();
+        e.stopPropagation();
+        setShowForm(true);
+        const toast = document.createElement('div');
+        toast.className = 'fixed bottom-20 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 text-sm';
+        toast.textContent = '📝 Add Activity Log form opened! (Ctrl+F)';
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2000);
+        return;
+      }
+      
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'd' || e.key === 'D') && hoveredLogId !== null && showActionButtons) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (confirm('⚠️ Are you sure you want to permanently delete this activity log?')) {
+          deleteLogFromDB(hoveredLogId);
+          loadLogs();
+          const toast = document.createElement('div');
+          toast.className = 'fixed bottom-20 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 text-sm';
+          toast.textContent = '🗑️ Activity log deleted! (Ctrl+D)';
+          document.body.appendChild(toast);
+          setTimeout(() => toast.remove(), 2000);
+          setHoveredLogId(null);
+        }
+        return;
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [hoveredLogId, showActionButtons]);
+
   useEffect(() => {
     const updateVisibleCards = () => {
       if (window.innerWidth < 640) setOjtVisibleCards(1);
@@ -203,7 +253,6 @@ export default function LogsPage() {
     return () => window.removeEventListener('resize', updateVisibleCards);
   }, []);
 
-  // OJT Journey auto-play
   useEffect(() => {
     if (ojtIsAutoPlaying && showOjtJourney) {
       ojtAutoPlayRef.current = setInterval(() => {
@@ -217,7 +266,6 @@ export default function LogsPage() {
     };
   }, [ojtIsAutoPlaying, ojtVisibleCards, showOjtJourney]);
 
-  // Scroll OJT cards when index changes
   useEffect(() => {
     if (ojtScrollRef.current && ojtScrollRef.current.children[0]) {
       const cardWidth = (ojtScrollRef.current.children[0] as HTMLElement).offsetWidth;
@@ -308,7 +356,6 @@ export default function LogsPage() {
     setOjtIsAutoPlaying(!ojtIsAutoPlaying);
   };
 
-  // Handle date change
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const dateValue = e.target.value;
     if (dateValue) {
@@ -318,7 +365,6 @@ export default function LogsPage() {
     }
   };
 
-  // Handle image selection
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
@@ -344,14 +390,12 @@ export default function LogsPage() {
     setImagePreviews(prev => [...prev, ...validPreviews]);
   };
 
-  // Remove image from selection
   const removeImage = (index: number) => {
     URL.revokeObjectURL(imagePreviews[index]);
     setSelectedImages(prev => prev.filter((_, i) => i !== index));
     setImagePreviews(prev => prev.filter((_, i) => i !== index));
   };
 
-  // Upload images to Cloudinary
   const uploadImages = async (slug: string): Promise<boolean> => {
     if (selectedImages.length === 0) return true;
 
@@ -415,21 +459,16 @@ export default function LogsPage() {
         icon: newLog.icon || "📝"
       };
       
-      // Save log to database
       saveLogToDB(newEntry);
       
-      // Upload images if any
       if (selectedImages.length > 0) {
         await uploadImages(slug);
       }
       
-      // Reload logs
       loadLogs();
       
-      // Clean up preview URLs
       imagePreviews.forEach(preview => URL.revokeObjectURL(preview));
       
-      // Reset form
       setNewLog({
         dateValue: defaultDateValue,
         date: defaultFormattedDate,
@@ -443,21 +482,21 @@ export default function LogsPage() {
       setImagePreviews([]);
       setShowForm(false);
       
-      // Show success message
       const toast = document.createElement('div');
-      toast.className = 'fixed bottom-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-in slide-in-from-bottom-4';
+      toast.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
       toast.textContent = `✅ Activity log added successfully! ${selectedImages.length > 0 ? `(${selectedImages.length} image${selectedImages.length > 1 ? 's' : ''} uploaded)` : ''}`;
       document.body.appendChild(toast);
       setTimeout(() => toast.remove(), 3000);
     }
   };
 
-  const handleDeleteLog = (id: number) => {
-    if (confirm('Are you sure you want to delete this activity log?')) {
+  const handleDeleteLog = (id: number, e?: React.MouseEvent) => {
+    if (e) e.preventDefault();
+    if (confirm('⚠️ Are you sure you want to delete this activity log?')) {
       deleteLogFromDB(id);
       loadLogs();
       const toast = document.createElement('div');
-      toast.className = 'fixed bottom-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-in slide-in-from-bottom-4';
+      toast.className = 'fixed bottom-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
       toast.textContent = '🗑️ Activity log deleted!';
       document.body.appendChild(toast);
       setTimeout(() => toast.remove(), 3000);
@@ -472,7 +511,7 @@ export default function LogsPage() {
 
   return (
     <div className="container mx-auto px-4 py-16 min-h-screen relative pb-32 bg-black">
-      {/* Header Section with Company Info - Red Theme */}
+      {/* Header Section */}
       <div className="max-w-4xl mx-auto mb-10 space-y-6">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 text-red-500 text-xs font-bold mb-2">
           <Briefcase className="w-3 h-3" />
@@ -488,7 +527,7 @@ export default function LogsPage() {
           </p>
         </div>
 
-        {/* MakerSpace Innohub Company Card - Red Theme */}
+        {/* MakerSpace Innohub Company Card */}
         <div className="mt-6 p-5 rounded-xl bg-gradient-to-r from-red-500/5 via-red-600/5 to-transparent border border-red-500/20 backdrop-blur-sm">
           <div className="flex flex-col md:flex-row items-start md:items-center gap-5">
             <div className="flex-shrink-0">
@@ -540,7 +579,7 @@ export default function LogsPage() {
           </div>
         </div>
 
-        {/* Stats Section - Red Theme */}
+        {/* Stats Section */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-2">
           <div className="text-center p-3 rounded-lg bg-gray-900/50 border border-gray-800">
             <p className="text-2xl font-bold text-red-500">{logs.length}</p>
@@ -561,7 +600,7 @@ export default function LogsPage() {
         </div>
       </div>
 
-      {/* Search and Filter Bar - Red Theme */}
+      {/* Search and Filter Bar */}
       <div className="max-w-4xl mx-auto mb-6">
         <div className="flex flex-wrap gap-3 items-center justify-between">
           <div className="flex-1 min-w-[200px]">
@@ -616,11 +655,11 @@ export default function LogsPage() {
         )}
       </div>
 
-      <div className="max-w-4xl mx-auto mb-4 flex justify-between items-center">
+      <div className="max-w-4xl mx-auto mb-4">
         <p className="text-sm text-gray-500">Showing {startIndex + 1}-{Math.min(endIndex, filteredLogs.length)} of {filteredLogs.length} activity logs</p>
       </div>
 
-      {/* Activity Logs List - Red Theme */}
+      {/* Activity Logs List */}
       <div className="max-w-4xl mx-auto space-y-4">
         {currentLogs.length === 0 && !logs.length ? (
           <div className="text-center py-20">
@@ -637,45 +676,57 @@ export default function LogsPage() {
           </div>
         ) : (
           currentLogs.map((log) => (
-            <Link key={log.id} href={`/logs/${log.slug}`} className="block group">
-              <Card className="hover:shadow-md transition-all border-gray-800 hover:border-red-500/50 overflow-hidden cursor-pointer bg-gray-900/80 backdrop-blur-sm">
-                <CardContent className="p-5">
-                  <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
-                    <div className="space-y-2 flex-1">
-                      <div className="flex items-center gap-3 text-xs font-code text-gray-500 flex-wrap">
-                        <span className="text-xl">{log.icon}</span>
-                        <div className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5 text-red-400" />{log.date}</div>
-                        <div className="flex items-center gap-1.5"><BookOpen className="w-3.5 h-3.5 text-red-400" />2 min read</div>
+            <div
+              key={log.id}
+              className="relative group"
+              onMouseEnter={() => showActionButtons && setHoveredLogId(log.id)}
+              onMouseLeave={() => setHoveredLogId(null)}
+            >
+              <Link href={`/logs/${log.slug}`} className="block">
+                <Card className="hover:shadow-md transition-all border-gray-800 hover:border-red-500/50 overflow-hidden cursor-pointer bg-gray-900/80 backdrop-blur-sm">
+                  <CardContent className="p-5">
+                    <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
+                      <div className="space-y-2 flex-1">
+                        <div className="flex items-center gap-3 text-xs font-code text-gray-500 flex-wrap">
+                          <span className="text-xl">{log.icon}</span>
+                          <div className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5 text-red-400" />{log.date}</div>
+                          <div className="flex items-center gap-1.5"><BookOpen className="w-3.5 h-3.5 text-red-400" />2 min read</div>
+                        </div>
+                        <h2 className="font-headline font-bold text-lg md:text-xl group-hover:text-red-500 transition-colors text-white">
+                          {log.title}
+                        </h2>
+                        <p className="text-gray-400 text-sm md:text-base leading-relaxed">{log.description}</p>
+                        <div className="flex flex-wrap gap-2 pt-2">
+                          {log.tags.map(tag => (
+                            <Badge key={tag} variant="secondary" className="text-[10px] uppercase font-bold tracking-wider px-2 cursor-pointer hover:bg-red-500/20 transition-colors bg-red-500/10 text-red-400" onClick={(e) => { e.preventDefault(); setSelectedTag(tag); }}>
+                              {tag}
+                            </Badge>
+                          ))}
+                        </div>
                       </div>
-                      <h2 className="font-headline font-bold text-lg md:text-xl group-hover:text-red-500 transition-colors text-white">
-                        {log.title}
-                      </h2>
-                      <p className="text-gray-400 text-sm md:text-base leading-relaxed">{log.description}</p>
-                      <div className="flex flex-wrap gap-2 pt-2">
-                        {log.tags.map(tag => (
-                          <Badge key={tag} variant="secondary" className="text-[10px] uppercase font-bold tracking-wider px-2 cursor-pointer hover:bg-red-500/20 transition-colors bg-red-500/10 text-red-400" onClick={(e) => { e.preventDefault(); setSelectedTag(tag); }}>
-                            {tag}
-                          </Badge>
-                        ))}
+                      <div className="flex items-center gap-2">
+                        {showActionButtons && (
+                          <button 
+                            onClick={(e) => { e.preventDefault(); handleDeleteLog(log.id, e); }} 
+                            className="opacity-0 group-hover:opacity-100 transition-opacity p-2 rounded-full hover:bg-red-900/30 text-red-500 hover:text-red-400"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
+                        <div className="w-10 h-10 rounded-full bg-red-500/5 flex items-center justify-center text-red-500 group-hover:bg-red-500 group-hover:text-white transition-all duration-300 group-hover:scale-110">
+                          <ChevronRight className="w-5 h-5" />
+                        </div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <button onClick={(e) => { e.preventDefault(); handleDeleteLog(log.id); }} className="opacity-0 group-hover:opacity-100 transition-opacity p-2 rounded-full hover:bg-red-900/30 text-red-500 hover:text-red-400">
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                      <div className="w-10 h-10 rounded-full bg-red-500/5 flex items-center justify-center text-red-500 group-hover:bg-red-500 group-hover:text-white transition-all duration-300 group-hover:scale-110">
-                        <ChevronRight className="w-5 h-5" />
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
+                  </CardContent>
+                </Card>
+              </Link>
+            </div>
           ))
         )}
       </div>
 
-      {/* Pagination Controls - Red Theme */}
+      {/* Pagination Controls */}
       {totalPages > 1 && (
         <div className="max-w-4xl mx-auto mt-8 flex justify-center items-center gap-2">
           <button onClick={() => goToPage(1)} disabled={currentPage === 1} className="p-2 rounded-lg border border-gray-800 hover:border-red-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"><ChevronsLeft className="w-4 h-4" /></button>
@@ -699,7 +750,7 @@ export default function LogsPage() {
         </div>
       )}
 
-      {/* My OJT Journey Section - Placed BELOW the activity logs */}
+      {/* My OJT Journey Section */}
       <div className="max-w-6xl mx-auto mt-16 pt-8 border-t border-gray-800">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
@@ -722,7 +773,6 @@ export default function LogsPage() {
 
         {showOjtJourney && (
           <div className="space-y-4">
-            {/* Controls */}
             <div className="flex justify-end items-center gap-2">
               <button 
                 onClick={toggleOjtAutoPlay} 
@@ -745,7 +795,6 @@ export default function LogsPage() {
               </button>
             </div>
 
-            {/* OJT Cards Carousel */}
             <div className="relative">
               <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-12 md:w-24 z-10 bg-gradient-to-r from-black via-black/80 to-transparent"></div>
               <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-12 md:w-24 z-10 bg-gradient-to-l from-black via-black/80 to-transparent"></div>
@@ -762,7 +811,6 @@ export default function LogsPage() {
                         ? 'border-yellow-500/40 hover:border-yellow-500/60' 
                         : 'border-gray-800 hover:border-red-500/40'
                     }`}>
-                      {/* Header */}
                       <div className={`px-4 py-2 border-b ${
                         event.title.includes("PASSED") 
                           ? 'bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border-yellow-500/20' 
@@ -777,8 +825,6 @@ export default function LogsPage() {
                           <span className="text-lg">{event.icon}</span>
                         </div>
                       </div>
-                      
-                      {/* Content */}
                       <div className="p-4">
                         <h3 className={`font-headline font-bold text-sm md:text-base mb-2 line-clamp-2 ${
                           event.title.includes("PASSED") ? 'text-yellow-500' : 'text-white'
@@ -789,8 +835,6 @@ export default function LogsPage() {
                           {event.description}
                         </p>
                       </div>
-                      
-                      {/* Category Badge */}
                       <div className="px-4 pb-3">
                         <Badge variant="secondary" className="text-[9px] bg-gray-800/50 text-gray-500">
                           {event.category}
@@ -802,7 +846,6 @@ export default function LogsPage() {
               </div>
             </div>
 
-            {/* Progress Dots */}
             <div className="flex justify-center gap-2 mt-4">
               {Array.from({ length: Math.ceil(ojtTimeline.length / ojtVisibleCards) }).map((_, i) => (
                 <button 
@@ -824,245 +867,244 @@ export default function LogsPage() {
         )}
       </div>
 
-      {/* Floating Action Button with Image Upload - Red Theme */}
-      <div className="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-50">
-        {!showForm ? (
-          <button 
-            onClick={() => setShowForm(true)} 
-            className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-r from-red-600 to-red-500 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 flex items-center justify-center group"
-          >
-            <Plus className="w-5 h-5 sm:w-6 sm:h-6 group-hover:rotate-90 transition-transform duration-300" />
-            <span className="absolute right-full mr-3 px-2 py-1 text-xs bg-gray-900 text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap hidden sm:block">
-              Add Activity Log
-            </span>
-          </button>
-        ) : (
-          <>
-            <div 
-              className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 animate-fade-in"
-              onClick={() => setShowForm(false)}
-            />
-            
-            <div className="fixed inset-x-4 bottom-0 sm:inset-auto sm:bottom-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 bg-gray-900 rounded-t-2xl sm:rounded-2xl shadow-2xl border border-red-500/20 w-auto sm:w-[550px] max-h-[90vh] overflow-y-auto z-50 animate-slide-up">
-              <div className="sticky top-0 bg-gray-900/95 backdrop-blur-sm border-b border-red-500/20 p-4 sm:p-5 flex justify-between items-center">
-                <h3 className="font-bold text-base sm:text-lg text-white">Add Activity Log</h3>
-                <button onClick={() => setShowForm(false)} className="p-1.5 rounded-full hover:bg-gray-800 transition-colors">
-                  <X className="w-4 h-4 sm:w-5 sm:h-5" />
-                </button>
-              </div>
+      {/* Floating Action Button - Only visible when admin mode is active */}
+      {showActionButtons && (
+        <div className="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-50">
+          {!showForm ? (
+            <button 
+              onClick={() => setShowForm(true)} 
+              className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-r from-red-600 to-red-500 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 flex items-center justify-center group"
+            >
+              <Plus className="w-5 h-5 sm:w-6 sm:h-6 group-hover:rotate-90 transition-transform duration-300" />
+              <span className="absolute right-full mr-3 px-2 py-1 text-xs bg-gray-900 text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap hidden sm:block">
+                Add Activity Log (Ctrl+F)
+              </span>
+            </button>
+          ) : (
+            <>
+              <div 
+                className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 animate-fade-in"
+                onClick={() => setShowForm(false)}
+              />
               
-              <div className="p-4 sm:p-5">
-                <div className="space-y-4 sm:space-y-3">
-                  {/* Date Picker */}
-                  <div className="space-y-1">
-                    <label className="text-xs sm:text-sm font-medium text-gray-400 flex items-center gap-2">
-                      <Calendar className="w-4 h-4 text-red-500" />
-                      Date
-                    </label>
-                    <input 
-                      type="date" 
-                      value={newLog.dateValue}
-                      onChange={handleDateChange}
-                      className="w-full px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg border border-gray-800 bg-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm text-white" 
-                    />
-                    <p className="text-[10px] text-gray-500 mt-1">
-                      Selected: {newLog.date}
-                    </p>
-                  </div>
-
-                  {/* Icon Picker */}
-                  <div className="space-y-1">
-                    <label className="text-xs sm:text-sm font-medium text-gray-400">Icon (Emoji)</label>
-                    <div className="flex items-center gap-2">
+              <div className="fixed inset-x-4 bottom-0 sm:inset-auto sm:bottom-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 bg-gray-900 rounded-t-2xl sm:rounded-2xl shadow-2xl border border-red-500/20 w-auto sm:w-[550px] max-h-[90vh] overflow-y-auto z-50 animate-slide-up">
+                <div className="sticky top-0 bg-gray-900/95 backdrop-blur-sm border-b border-red-500/20 p-4 sm:p-5 flex justify-between items-center">
+                  <h3 className="font-bold text-base sm:text-lg text-white">Add Activity Log</h3>
+                  <button onClick={() => setShowForm(false)} className="p-1.5 rounded-full hover:bg-gray-800 transition-colors">
+                    <X className="w-4 h-4 sm:w-5 sm:h-5" />
+                  </button>
+                </div>
+                
+                <div className="p-4 sm:p-5">
+                  <div className="space-y-4 sm:space-y-3">
+                    {/* Date Picker */}
+                    <div className="space-y-1">
+                      <label className="text-xs sm:text-sm font-medium text-gray-400 flex items-center gap-2">
+                        <Calendar className="w-4 h-4 text-red-500" />
+                        Date
+                      </label>
                       <input 
-                        type="text" 
-                        placeholder="📝" 
-                        value={newLog.icon} 
-                        onChange={(e) => setNewLog({...newLog, icon: e.target.value})} 
-                        className="flex-1 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg border border-gray-800 bg-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm text-white" 
-                        maxLength={2} 
-                      />
-                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-red-500/10 flex items-center justify-center text-2xl">
-                        {newLog.icon || "📝"}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Title */}
-                  <div className="space-y-1">
-                    <label className="text-xs sm:text-sm font-medium text-gray-400">
-                      Title <span className="text-red-500">*</span>
-                    </label>
-                    <input 
-                      type="text" 
-                      placeholder="Enter title" 
-                      value={newLog.title} 
-                      onChange={(e) => setNewLog({...newLog, title: e.target.value})} 
-                      className="w-full px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg border border-gray-800 bg-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm text-white" 
-                    />
-                  </div>
-
-                  {/* Description */}
-                  <div className="space-y-1">
-                    <label className="text-xs sm:text-sm font-medium text-gray-400">
-                      Description <span className="text-red-500">*</span>
-                    </label>
-                    <textarea 
-                      placeholder="Enter short description" 
-                      value={newLog.description} 
-                      onChange={(e) => setNewLog({...newLog, description: e.target.value})} 
-                      rows={2} 
-                      className="w-full px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg border border-gray-800 bg-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm resize-none text-white" 
-                    />
-                    <div className="text-right">
-                      <span className="text-[10px] text-gray-500">
-                        {newLog.description.length} / 500 characters
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Full Content */}
-                  <div className="space-y-1">
-                    <label className="text-xs sm:text-sm font-medium text-gray-400">Full Content (Markdown)</label>
-                    <div className="relative">
-                      <textarea 
-                        placeholder="Enter detailed content in markdown... Use ## for headings, - for lists, etc." 
-                        value={newLog.content} 
-                        onChange={(e) => setNewLog({...newLog, content: e.target.value})} 
-                        rows={5} 
-                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg border border-gray-800 bg-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm resize-y font-mono text-white" 
-                      />
-                      <div className="absolute bottom-2 right-2 text-[10px] text-gray-500">
-                        Markdown supported
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Tags */}
-                  <div className="space-y-1">
-                    <label className="text-xs sm:text-sm font-medium text-gray-400">Tags (comma separated)</label>
-                    <div className="space-y-2">
-                      <input 
-                        type="text" 
-                        placeholder="Learning, Development, Bug Fix" 
-                        value={newLog.tags} 
-                        onChange={(e) => setNewLog({...newLog, tags: e.target.value})} 
+                        type="date" 
+                        value={newLog.dateValue}
+                        onChange={handleDateChange}
                         className="w-full px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg border border-gray-800 bg-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm text-white" 
                       />
-                      {newLog.tags && (
-                        <div className="flex flex-wrap gap-1.5">
-                          {newLog.tags.split(',').map((tag, i) => tag.trim() && (
-                            <span key={i} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-500/10 text-red-400 text-xs">
-                              {tag.trim()}
-                            </span>
+                      <p className="text-[10px] text-gray-500 mt-1">
+                        Selected: {newLog.date}
+                      </p>
+                    </div>
+
+                    {/* Icon Picker */}
+                    <div className="space-y-1">
+                      <label className="text-xs sm:text-sm font-medium text-gray-400">Icon (Emoji)</label>
+                      <div className="flex items-center gap-2">
+                        <input 
+                          type="text" 
+                          placeholder="📝" 
+                          value={newLog.icon} 
+                          onChange={(e) => setNewLog({...newLog, icon: e.target.value})} 
+                          className="flex-1 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg border border-gray-800 bg-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm text-white" 
+                          maxLength={2} 
+                        />
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-red-500/10 flex items-center justify-center text-2xl">
+                          {newLog.icon || "📝"}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Title */}
+                    <div className="space-y-1">
+                      <label className="text-xs sm:text-sm font-medium text-gray-400">
+                        Title <span className="text-red-500">*</span>
+                      </label>
+                      <input 
+                        type="text" 
+                        placeholder="Enter title" 
+                        value={newLog.title} 
+                        onChange={(e) => setNewLog({...newLog, title: e.target.value})} 
+                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg border border-gray-800 bg-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm text-white" 
+                      />
+                    </div>
+
+                    {/* Description */}
+                    <div className="space-y-1">
+                      <label className="text-xs sm:text-sm font-medium text-gray-400">
+                        Description <span className="text-red-500">*</span>
+                      </label>
+                      <textarea 
+                        placeholder="Enter short description" 
+                        value={newLog.description} 
+                        onChange={(e) => setNewLog({...newLog, description: e.target.value})} 
+                        rows={2} 
+                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg border border-gray-800 bg-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm resize-none text-white" 
+                      />
+                      <div className="text-right">
+                        <span className="text-[10px] text-gray-500">
+                          {newLog.description.length} / 500 characters
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Full Content */}
+                    <div className="space-y-1">
+                      <label className="text-xs sm:text-sm font-medium text-gray-400">Full Content (Markdown)</label>
+                      <div className="relative">
+                        <textarea 
+                          placeholder="Enter detailed content in markdown... Use ## for headings, - for lists, etc." 
+                          value={newLog.content} 
+                          onChange={(e) => setNewLog({...newLog, content: e.target.value})} 
+                          rows={5} 
+                          className="w-full px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg border border-gray-800 bg-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm resize-y font-mono text-white" 
+                        />
+                        <div className="absolute bottom-2 right-2 text-[10px] text-gray-500">
+                          Markdown supported
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Tags */}
+                    <div className="space-y-1">
+                      <label className="text-xs sm:text-sm font-medium text-gray-400">Tags (comma separated)</label>
+                      <div className="space-y-2">
+                        <input 
+                          type="text" 
+                          placeholder="Learning, Development, Bug Fix" 
+                          value={newLog.tags} 
+                          onChange={(e) => setNewLog({...newLog, tags: e.target.value})} 
+                          className="w-full px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg border border-gray-800 bg-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm text-white" 
+                        />
+                        {newLog.tags && (
+                          <div className="flex flex-wrap gap-1.5">
+                            {newLog.tags.split(',').map((tag, i) => tag.trim() && (
+                              <span key={i} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-500/10 text-red-400 text-xs">
+                                {tag.trim()}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Image Upload Section */}
+                    <div className="space-y-2">
+                      <label className="text-xs sm:text-sm font-medium text-gray-400">Upload Images (Optional)</label>
+                      <div className="flex items-center gap-3">
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          accept="image/*"
+                          multiple
+                          onChange={handleImageSelect}
+                          className="hidden"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => fileInputRef.current?.click()}
+                          className="flex items-center gap-2 px-4 py-2 rounded-lg border border-dashed border-red-500/50 hover:border-red-500 hover:bg-red-500/5 transition-all duration-300"
+                        >
+                          <Upload className="w-4 h-4 text-red-500" />
+                          <span className="text-sm text-red-500">Select Images</span>
+                        </button>
+                        <span className="text-xs text-gray-500">
+                          {selectedImages.length} file{selectedImages.length !== 1 ? 's' : ''} selected
+                        </span>
+                      </div>
+
+                      {imagePreviews.length > 0 && (
+                        <div className="grid grid-cols-3 gap-2 mt-3">
+                          {imagePreviews.map((preview, index) => (
+                            <div key={index} className="relative group">
+                              <img
+                                src={preview}
+                                alt={`Preview ${index + 1}`}
+                                className="w-full h-20 object-cover rounded-lg border border-gray-800"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => removeImage(index)}
+                                className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-red-500 text-white flex items-center justify-center hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100"
+                              >
+                                <X className="w-3 h-3" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {Object.keys(uploadProgress).length > 0 && (
+                        <div className="mt-2 space-y-1.5">
+                          {Object.entries(uploadProgress).map(([filename, progress]) => (
+                            <div key={filename} className="bg-gray-800/20 rounded p-1.5">
+                              <div className="flex justify-between text-xs mb-0.5">
+                                <span className="truncate text-[10px] text-gray-400">{filename}</span>
+                                <span className="text-[10px] text-gray-400">{progress === 100 ? '✓' : progress === -1 ? '✗' : `${progress}%`}</span>
+                              </div>
+                              <div className="h-1 bg-gray-800 rounded-full overflow-hidden">
+                                <div 
+                                  className={`h-full transition-all duration-300 ${
+                                    progress === 100 ? 'bg-red-500' : progress === -1 ? 'bg-red-700' : 'bg-red-500'
+                                  }`}
+                                  style={{ width: `${progress === -1 ? 100 : progress}%` }}
+                                />
+                              </div>
+                            </div>
                           ))}
                         </div>
                       )}
                     </div>
+
+                    {/* Save Button */}
+                    <button 
+                      onClick={handleAddLog} 
+                      disabled={!newLog.title || !newLog.description || isUploadingImages} 
+                      className="w-full mt-3 sm:mt-4 px-4 py-2.5 sm:py-3 bg-gradient-to-r from-red-600 to-red-500 rounded-lg text-white text-sm sm:text-base font-medium hover:opacity-90 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98]"
+                    >
+                      {isUploadingImages ? (
+                        <>
+                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          Uploading images...
+                        </>
+                      ) : (
+                        <>
+                          <Save className="w-4 h-4 sm:w-5 sm:h-5" />
+                          Save Activity Log
+                        </>
+                      )}
+                    </button>
+
+                    <button 
+                      onClick={() => setShowForm(false)} 
+                      className="w-full mt-2 px-4 py-2 rounded-lg border border-gray-800 text-gray-500 text-sm font-medium hover:bg-gray-800/50 transition-colors sm:hidden"
+                    >
+                      Cancel
+                    </button>
                   </div>
-
-                  {/* Image Upload Section */}
-                  <div className="space-y-2">
-                    <label className="text-xs sm:text-sm font-medium text-gray-400">Upload Images (Optional)</label>
-                    
-                    <div className="flex items-center gap-3">
-                      <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept="image/*"
-                        multiple
-                        onChange={handleImageSelect}
-                        className="hidden"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => fileInputRef.current?.click()}
-                        className="flex items-center gap-2 px-4 py-2 rounded-lg border border-dashed border-red-500/50 hover:border-red-500 hover:bg-red-500/5 transition-all duration-300"
-                      >
-                        <Upload className="w-4 h-4 text-red-500" />
-                        <span className="text-sm text-red-500">Select Images</span>
-                      </button>
-                      <span className="text-xs text-gray-500">
-                        {selectedImages.length} file{selectedImages.length !== 1 ? 's' : ''} selected
-                      </span>
-                    </div>
-
-                    {/* Image Previews */}
-                    {imagePreviews.length > 0 && (
-                      <div className="grid grid-cols-3 gap-2 mt-3">
-                        {imagePreviews.map((preview, index) => (
-                          <div key={index} className="relative group">
-                            <img
-                              src={preview}
-                              alt={`Preview ${index + 1}`}
-                              className="w-full h-20 object-cover rounded-lg border border-gray-800"
-                            />
-                            <button
-                              type="button"
-                              onClick={() => removeImage(index)}
-                              className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-red-500 text-white flex items-center justify-center hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100"
-                            >
-                              <X className="w-3 h-3" />
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    {/* Upload Progress */}
-                    {Object.keys(uploadProgress).length > 0 && (
-                      <div className="mt-2 space-y-1.5">
-                        {Object.entries(uploadProgress).map(([filename, progress]) => (
-                          <div key={filename} className="bg-gray-800/20 rounded p-1.5">
-                            <div className="flex justify-between text-xs mb-0.5">
-                              <span className="truncate text-[10px] text-gray-400">{filename}</span>
-                              <span className="text-[10px] text-gray-400">{progress === 100 ? '✓' : progress === -1 ? '✗' : `${progress}%`}</span>
-                            </div>
-                            <div className="h-1 bg-gray-800 rounded-full overflow-hidden">
-                              <div 
-                                className={`h-full transition-all duration-300 ${
-                                  progress === 100 ? 'bg-red-500' : progress === -1 ? 'bg-red-700' : 'bg-red-500'
-                                }`}
-                                style={{ width: `${progress === -1 ? 100 : progress}%` }}
-                              />
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Save Button - Red Theme */}
-                  <button 
-                    onClick={handleAddLog} 
-                    disabled={!newLog.title || !newLog.description || isUploadingImages} 
-                    className="w-full mt-3 sm:mt-4 px-4 py-2.5 sm:py-3 bg-gradient-to-r from-red-600 to-red-500 rounded-lg text-white text-sm sm:text-base font-medium hover:opacity-90 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98]"
-                  >
-                    {isUploadingImages ? (
-                      <>
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                        Uploading images...
-                      </>
-                    ) : (
-                      <>
-                        <Save className="w-4 h-4 sm:w-5 sm:h-5" />
-                        Save Activity Log
-                      </>
-                    )}
-                  </button>
-
-                  <button 
-                    onClick={() => setShowForm(false)} 
-                    className="w-full mt-2 px-4 py-2 rounded-lg border border-gray-800 text-gray-500 text-sm font-medium hover:bg-gray-800/50 transition-colors sm:hidden"
-                  >
-                    Cancel
-                  </button>
                 </div>
               </div>
-            </div>
-          </>
-        )}
-      </div>
+            </>
+          )}
+        </div>
+      )}
 
       <style jsx>{`
         .hide-scrollbar::-webkit-scrollbar {
@@ -1076,8 +1118,13 @@ export default function LogsPage() {
           from { opacity: 0; transform: translateY(-10px); }
           to { opacity: 1; transform: translateY(0); }
         }
+        @keyframes slide-in-from-bottom-4 {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
         .animate-in { animation: slide-in 0.3s ease-out; }
         .slide-in-from-top-2 { animation: slide-in-top 0.3s ease-out; }
+        .slide-in-from-bottom-4 { animation: slide-in-from-bottom-4 0.3s ease-out; }
         @keyframes fade-in {
           from { opacity: 0; }
           to { opacity: 1; }

@@ -1,10 +1,9 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, Filter, LayoutGrid, Plus, X, Save, Trash2, Upload, Edit, ExternalLink, Github } from 'lucide-react';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Search, Filter, LayoutGrid, X, ExternalLink, Github, Star, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 interface Project {
@@ -20,109 +19,238 @@ interface Project {
   githubLink: string;
   featured: boolean;
   date: string;
+  myTasks: string[];
 }
 
-interface NewProject {
-  title: string;
-  description: string;
-  category: string;
-  techStack: string;
-  fullDetails: string;
-  projectLink: string;
-  githubLink: string;
-  images: File[];
-  imagePreviews: string[];
-}
+// Hardcoded projects
+const HARDCODED_PROJECTS: Project[] = [
+  {
+    id: 1,
+    title: "SyncSnap",
+    description: "SyncSnap is a multi-tenant asynchronous daily standup and team collaboration system designed to help teams manage updates, track progress, and surface blockers in a more efficient and structured way.",
+    category: "Web Development",
+    techStack: ["Laravel", "React", "PostgreSQL"],
+    image: "/SyncSnap/Screenshot (425).png",
+    gallery: [
+      "/SyncSnap/Screenshot (133).png",
+      "/SyncSnap/Screenshot (132).png",
+      "/SyncSnap/Screenshot (131).png",
+      "/SyncSnap/Screenshot (130).png",
+      "/SyncSnap/Screenshot (129).png",
+      "/SyncSnap/Screenshot (128).png",
+      "/SyncSnap/Screenshot (127).png",
+      "/SyncSnap/Screenshot (126).png",
+      "/SyncSnap/Screenshot (125).png",
+      "/SyncSnap/Screenshot (124).png",
+      "/SyncSnap/Screenshot (123).png",
+      "/SyncSnap/Screenshot (122).png",
+      "/SyncSnap/Screenshot (121).png",
+      "/SyncSnap/Screenshot (117).png",
+      "/SyncSnap/Screenshot (116).png",
+      "/SyncSnap/Screenshot (115).png",
+      "/SyncSnap/Screenshot (99).png",
+      "/SyncSnap/Screenshot (98).png",
+      "/SyncSnap/Screenshot (97).png",
+      "/SyncSnap/Screenshot (95).png",
+      "/SyncSnap/Screenshot (93).png",
+      "/SyncSnap/Screenshot (92).png",
+      "/SyncSnap/Screenshot (90).png",
+      "/SyncSnap/Screenshot (89).png",
+      "/SyncSnap/Screenshot (88).png",
+      "/SyncSnap/Screenshot (87).png",
+      "/SyncSnap/Screenshot (86).png",
+      "/SyncSnap/Screenshot (85).png"
+    ],
+    fullDetails: `SyncSnap is a multi-tenant asynchronous daily standup and team collaboration system designed to help teams manage updates, track progress, and surface blockers in a more efficient and structured way. Instead of relying on traditional live standup meetings, SyncSnap allows team members to submit their daily updates anytime before a set deadline, while still keeping the whole team aligned through a centralized dashboard and real-time visibility features.
 
-// Default placeholder image
-const DEFAULT_PLACEHOLDER_IMAGE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'%3E%3Crect width='400' height='300' fill='%23333333'/%3E%3Ctext x='200' y='150' font-family='Arial' font-size='16' fill='%23999999' text-anchor='middle'%3ENo Image%3C/text%3E%3C/svg%3E";
+The system enables Team Leads or Scrum Masters to create dedicated workspaces where members join using a secure invite code. Once inside, users can quickly submit their daily standup (Yesterday, Today, Blockers), which is automatically organized and displayed in a team dashboard. Blockers are highlighted and prioritized so managers can immediately identify and resolve issues without waiting for meetings.
 
-// Helper function to convert File to Base64
-const fileToBase64 = (file: File): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = (error) => reject(error);
-  });
-};
-
-export default function WorkPage() {
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [filteredProjects, setFilteredProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [activeCategory, setActiveCategory] = useState<string>('All');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [showForm, setShowForm] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({});
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const [showDetailModal, setShowDetailModal] = useState(false);
-  const [editingProject, setEditingProject] = useState<Project | null>(null);
-
-  const [newProject, setNewProject] = useState<NewProject>({
-    title: "",
-    description: "",
-    category: "",
-    techStack: "",
-    fullDetails: "",
+SyncSnap also introduces productivity-focused features such as gamification through streak tracking, early submission rewards, and leaderboards to encourage consistency. With real-time updates, structured reporting, and multi-team support, SyncSnap helps teams stay connected, improve accountability, and maintain productivity while eliminating the need for repetitive daily meetings.`,
     projectLink: "",
     githubLink: "",
-    images: [],
-    imagePreviews: []
-  });
+    featured: true,
+    date: "2024",
+    myTasks: [
+      "System Planning & Requirements - Reviewed and analyzed the SyncSnap Product Requirements Document (PRD). Defined core system flow for workspace, standup submission, and dashboard structure. Planned multi-tenant architecture for separating teams and ensuring data isolation.",
+      "Workspace & Invite System - Designed workspace creation flow for Team Leads/Admins. Implemented invite code-based joining system for team members. Ensured secure workspace-to-user association.",
+      "Standup System Development - Built structure for daily standup submission (Yesterday, Today, Blockers). Implemented validation for one submission per user per workspace per day. Designed timestamp handling for accurate daily tracking.",
+      "Team Dashboard (Daily Snap) - Developed dashboard structure to display all team submissions. Implemented blocker highlighting and prioritization at the top of the feed. Added logic for showing submitted vs missing users per day.",
+      "AI Integration (Gemini System) - Integrated Google Gemini AI to enhance standup data processing and insights. Used AI to generate summaries from team standup submissions. Improved readability of blockers and progress reports using AI-generated insights. Supported smarter decision-making by transforming raw updates into structured summaries.",
+      "Gamification Features - Implemented daily streak tracking system for continuous submissions. Added early bird bonus logic for submissions before deadline time. Designed leaderboard concept for tracking top consistent users.",
+      "Real-Time & Collaboration Features - Integrated real-time updates for standup submissions and dashboard refresh. Ensured live visibility of blockers and updates without page reload. Improved team synchronization across workspace activities.",
+      "UI/UX Structure - Designed clean and simple standup form layout for fast input. Planned mobile-first UI for quick daily usage. Ensured distraction-free dashboard design for better readability.",
+      "Authentication & Data Handling - Structured user authentication flow for workspace access. Linked users correctly to their respective workspace data. Ensured secure handling of submissions and identity mapping.",
+      "Performance & System Logic - Designed efficient querying for daily dashboard aggregation. Optimized real-time updates for scalability and responsiveness. Ensured proper timezone handling for accurate 'today' calculations."
+    ]
+  },
+  {
+    id: 2,
+    title: "FlowState",
+    description: "A system update for Flowstate focused on improving sidebar interactions, modal positioning, sprint planning features, and AI-assisted task management. These updates enhance usability, real-time synchronization, and intelligent workload balancing across the platform.",
+    category: "Web Development",
+    techStack: ["Next.js", "MongoDB"],
+    image: "/Flowstate/Screenshot (381).png",
+    gallery: [
+      "/Flowstate/Screenshot (237).png",
+      "/Flowstate/Screenshot (239).png",
+      "/Flowstate/Screenshot (241).png",
+      "/Flowstate/Screenshot (243).png",
+      "/Flowstate/Screenshot (242).png",
+      "/Flowstate/Screenshot (244).png",
+      "/Flowstate/Screenshot (245).png",
+      "/Flowstate/Screenshot (280).png",
+      "/Flowstate/Screenshot (315).png",
+      "/Flowstate/Screenshot (316).png",
+      "/Flowstate/Screenshot (318).png",
+      "/Flowstate/Screenshot (319).png",
+      "/Flowstate/Screenshot (320).png",
+      "/Flowstate/Screenshot (325).png",
+      "/Flowstate/Screenshot (331).png",
+      "/Flowstate/Screenshot (332).png",
+      "/Flowstate/Screenshot (338).png",
+      "/Flowstate/Screenshot (339).png",
+      "/Flowstate/Screenshot (340).png",
+      "/Flowstate/Screenshot (342).png",
+      "/Flowstate/Screenshot (343).png",
+      "/Flowstate/Screenshot (344).png",
+      "/Flowstate/Screenshot (345).png",
+      "/Flowstate/Screenshot (508).png",
+      "/Flowstate/Screenshot (507).png",
+      "/Flowstate/Screenshot (506).png",
+      "/Flowstate/Screenshot (505).png",
+      "/Flowstate/Screenshot (504).png",
+      "/Flowstate/Screenshot (503).png",
+      "/Flowstate/Screenshot (502).png",
+      "/Flowstate/Screenshot (501).png",
+      "/Flowstate/Screenshot (500).png",
+      "/Flowstate/Screenshot (499).png",
+      "/Flowstate/Screenshot (498).png",
+      "/Flowstate/Screenshot (496).png"
+    ],
+    fullDetails: `FlowState is a unified AI-powered project management and team collaboration system designed to replace fragmented tools like chat apps, spreadsheets, and manual tracking with a single structured platform that manages tasks, workflows, and communication in real time. It helps teams eliminate lost tasks and unnoticed blockers by providing clear visibility of work progress, structured daily updates, and centralized dashboards for managers and team members.
 
-  const [categories, setCategories] = useState<string[]>(['All']);
+The system is built to support a "Simplicity First" approach, starting with essential features like task logging, time tracking, and blocker monitoring, then gradually evolving into advanced capabilities such as multi-team management, asynchronous standups, and automated workflow organization. As it matures, FlowState introduces AI-driven features that generate summaries, predict risks like missed deadlines or burnout, and optimize task prioritization and sprint planning.
 
-  useEffect(() => {
-    const uniqueCategories = Array.from(new Set(projects.map(p => p.category).filter(Boolean)));
-    setCategories(['All', ...uniqueCategories]);
-  }, [projects]);
+Overall, FlowState aims to improve productivity, accountability, and collaboration by combining real-time system updates, intuitive user experience, and intelligent automation into a scalable platform that grows from basic workflow tracking into a powerful AI-assisted project management ecosystem.`,
+    projectLink: "",
+    githubLink: "",
+    featured: true,
+    date: "2024",
+    myTasks: [
+      "UI/UX & Navigation Improvements - Improved collapsed sidebar interactions with workspace hover tooltips ('Switch Workspace', 'Select a team to continue'). Added navigation icon tooltips in collapsed mode without affecting layout or sidebar width. Fixed Create Team and Join Team modals to stay centered using portal rendering.",
+      "Task & Priority System - Added 'View Priority Tasks' button in My Tasks tab to display REGULAR TASKS – BY PRIORITY table with filters (Today, This Week, This Month). Added 'Blocker Priority' button in Live Blockers tab with workstream and deadline filtering.",
+      "Sprint Planner Enhancements - Improved Sprint Planner with workload balancing and task ordering by urgency. Integrated Google Gemini AI for intelligent workload balancing and blocker resolution suggestions.",
+      "System Synchronization Fixes - Fixed sidebar team switching synchronization across AI Insights and Team Activity pages."
+    ]
+  },
+  {
+    id: 3,
+    title: "Base Platform & FurFund",
+    description: "A development and learning phase focused on exploring the Base blockchain platform and setting up the required development environment using Vercel, while also building the initial prototype of FurFund, a project designed to establish a foundation for future blockchain-based features and enhancements.",
+    category: "Web Development",
+    techStack: ["Next.js"],
+    image: "/FurFand/Screenshot (149).png",
+    gallery: [
+      "/FurFand/Screenshot (141).png",
+      "/FurFand/Screenshot (142).png",
+      "/FurFand/Screenshot (143).png",
+      "/FurFand/Screenshot (144).png",
+      "/FurFand/Screenshot (145).png",
+      "/FurFand/Screenshot (146).png",
+      "/FurFand/Screenshot (147).png",
+      "/FurFand/Screenshot (150).png",
+      "/FurFand/Screenshot (152).png",
+      "/FurFand/Screenshot (153).png",
+      "/FurFand/Screenshot (154).png",
+      "/FurFand/Screenshot (155).png",
+      "/FurFand/Screenshot (156).png",
+      "/FurFand/Screenshot (160).png",
+      "/FurFand/Screenshot (159).png",
+      "/FurFand/Screenshot (161).png",
+      "/FurFand/Screenshot (162).png",
+      "/FurFand/Screenshot (164).png",
+      "/FurFand/Screenshot (165).png",
+      "/FurFand/Screenshot (166).png",
+      "/FurFand/Screenshot (167).png",
+      "/FurFand/Screenshot (168).png",
+      "/FurFand/Screenshot (169).png",
+      "/FurFand/Screenshot (170).png",
+      "/FurFand/Screenshot (173).png"
+    ],
+    fullDetails: `This focus area covers both learning and practical implementation, starting with understanding the Base platform ecosystem and preparing the necessary tools for development and deployment. The setup includes creating accounts and configuring environments on Base App and Vercel, ensuring readiness for future blockchain integration, smart contract development, and decentralized application deployment.
 
-  useEffect(() => {
-    loadProjects();
-  }, []);
+Alongside the learning phase, the initial version of FurFund was developed as a prototype project. This step involved creating the first structure of the system, defining its base architecture, and establishing a starting point for future improvements. The prototype serves as a foundation for upcoming features, allowing the project to grow into a more complete and functional application over time.
 
-  const loadProjects = async () => {
-    setLoading(true);
-    try {
-      const storedProjects = localStorage.getItem('projects');
-      let loadedProjects: Project[] = [];
-      
-      if (storedProjects) {
-        loadedProjects = JSON.parse(storedProjects);
-        loadedProjects = loadedProjects.map(p => ({
-          ...p,
-          image: (p.image && p.image.trim() !== '') ? p.image : DEFAULT_PLACEHOLDER_IMAGE,
-          gallery: p.gallery || []
-        }));
-      } else {
-        // Add some sample data for testing
-        loadedProjects = [];
-        localStorage.setItem('projects', JSON.stringify([]));
-      }
-      
-      setProjects(loadedProjects);
-      setFilteredProjects(loadedProjects);
-    } catch (error) {
-      console.error('Error loading projects:', error);
-      setProjects([]);
-      setFilteredProjects([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+Overall, this phase combines platform learning, environment setup, and early-stage project development, ensuring both technical readiness and a solid foundation for continued expansion of FurFund.`,
+    projectLink: "",
+    githubLink: "",
+    featured: true,
+    date: "2024",
+    myTasks: [
+      "Base Platform Learning & Setup - Learned the basics of the Base platform and its ecosystem for blockchain development. Successfully set up accounts on Base App and Vercel for deployment and development readiness. Prepared the initial development environment to support future blockchain-based features and integrations.",
+      "FurFund Prototype Development - Built the initial prototype of FurFund, establishing the first working structure of the project. Defined the foundational layout and system flow for future feature expansion. Set up the base architecture to support upcoming enhancements and development iterations."
+    ]
+  },
+  {
+    id: 4,
+    title: "2026 Chevrolet Silverado 1500 vs. 2026 Toyota Tundra – Comparison Page Design",
+    description: "A UI/UX design task focused on creating a structured and visually appealing comparison page for the 2026 Chevrolet Silverado 1500 and 2026 Toyota Tundra. The design was created to provide users with a clear side-by-side vehicle comparison experience.",
+    category: "UI/UX Design",
+    techStack: ["UI/UX Design", "Figma"],
+    image: "/Car/Screenshot (434).png",
+    gallery: [
+      "/Car/Screenshot (435).png",
+      "/Car/Screenshot (436).png",
+      "/Car/Screenshot (437).png",
+      "/Car/Screenshot (438).png",
+      "/Car/Screenshot (439).png",
+      "/Car/Screenshot (440).png",
+      "/Car/Screenshot (441).png",
+      "/Car/Screenshot (442).png",
+      "/Car/Screenshot (443).png",
+      "/Car/Screenshot (444).png",
+      "/Car/Screenshot (445).png"
+    ],
+    fullDetails: `This task involved designing a comparison page template that presents vehicle information in an organized and visually balanced format. The layout was planned to improve readability and help users quickly compare important details between the two truck models without confusion or excessive scrolling.
 
-  useEffect(() => {
-    let result = projects;
+The design focused on maintaining a modern automotive-style interface with structured content sections for specifications, engine performance, towing capacity, interior features, technology, pricing, and overall vehicle highlights. Attention was also given to spacing, typography, visual hierarchy, and responsive layout behavior to ensure a smooth viewing experience across different screen sizes.
+
+The template was built to support scalability, allowing additional vehicle comparison pages to follow the same design structure in future implementations. Overall, the task emphasized clean presentation, user-friendly navigation, and efficient information comparison for automotive content.`,
+    projectLink: "",
+    githubLink: "",
+    featured: false,
+    date: "2024",
+    myTasks: [
+      "UI/UX Design - Created the full comparison page layout for the 2026 Chevrolet Silverado 1500 vs. 2026 Toyota Tundra. Designed a clean side-by-side comparison structure for easier content readability. Organized sections for specifications, performance, pricing, and feature highlights.",
+      "Layout & User Experience - Improved visual hierarchy to help users quickly identify key differences between vehicles. Applied responsive design considerations for desktop and mobile viewing. Structured content spacing and alignment for better readability and navigation.",
+      "Design Planning - Built a reusable template structure for future vehicle comparison pages. Focused on modern automotive-style UI presentation and organized information flow. Ensured the design supports scalable content expansion and additional comparison categories."
+    ]
+  }
+];
+
+// Get unique categories
+const categories = ['All', ...new Set(HARDCODED_PROJECTS.map(p => p.category))];
+
+export default function WorkPage() {
+  const [filteredProjects, setFilteredProjects] = useState<Project[]>(HARDCODED_PROJECTS);
+  const [activeCategory, setActiveCategory] = useState<string>('All');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [currentGalleryIndex, setCurrentGalleryIndex] = useState(0);
+  const [showGalleryModal, setShowGalleryModal] = useState(false);
+  const [selectedGalleryImage, setSelectedGalleryImage] = useState('');
+
+  // Filter projects based on category and search
+  const updateFilters = (category: string, query: string) => {
+    let result = HARDCODED_PROJECTS;
     
-    if (activeCategory !== 'All') {
-      result = result.filter(p => p.category === activeCategory);
+    if (category !== 'All') {
+      result = result.filter(p => p.category === category);
     }
     
-    if (searchQuery) {
-      const q = searchQuery.toLowerCase();
+    if (query) {
+      const q = query.toLowerCase();
       result = result.filter(p => 
         p.title.toLowerCase().includes(q) || 
         p.description.toLowerCase().includes(q) ||
@@ -131,236 +259,39 @@ export default function WorkPage() {
     }
     
     setFilteredProjects(result);
-  }, [activeCategory, searchQuery, projects]);
-
-  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files || files.length === 0) return;
-
-    const validFiles: File[] = [];
-    const validPreviews: string[] = [];
-
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      if (!file.type.startsWith('image/')) {
-        alert(`${file.name} is not an image file`);
-        continue;
-      }
-      if (file.size > 5 * 1024 * 1024) {
-        alert(`${file.name} is larger than 5MB`);
-        continue;
-      }
-      validFiles.push(file);
-      validPreviews.push(URL.createObjectURL(file));
-    }
-
-    setNewProject(prev => ({
-      ...prev,
-      images: [...prev.images, ...validFiles],
-      imagePreviews: [...prev.imagePreviews, ...validPreviews]
-    }));
   };
 
-  const removeImage = (index: number) => {
-    URL.revokeObjectURL(newProject.imagePreviews[index]);
-    setNewProject(prev => ({
-      ...prev,
-      images: prev.images.filter((_, i) => i !== index),
-      imagePreviews: prev.imagePreviews.filter((_, i) => i !== index)
-    }));
+  const handleCategoryChange = (category: string) => {
+    setActiveCategory(category);
+    updateFilters(category, searchQuery);
   };
 
-  const convertImagesToBase64 = async (files: File[]): Promise<string[]> => {
-    const base64Images: string[] = [];
-    
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      setUploadProgress(prev => ({ ...prev, [file.name]: 0 }));
-      try {
-        const base64 = await fileToBase64(file);
-        base64Images.push(base64);
-        setUploadProgress(prev => ({ ...prev, [file.name]: 100 }));
-      } catch (error) {
-        console.error(`Error converting ${file.name}:`, error);
-        setUploadProgress(prev => ({ ...prev, [file.name]: -1 }));
-      }
-    }
-    
-    return base64Images;
-  };
-
-  const saveProjectsToStorage = (updatedProjects: Project[]) => {
-    const validatedProjects = updatedProjects.map(p => ({
-      ...p,
-      image: (p.image && p.image.trim() !== '') ? p.image : DEFAULT_PLACEHOLDER_IMAGE,
-      gallery: p.gallery || []
-    }));
-    localStorage.setItem('projects', JSON.stringify(validatedProjects));
-    setProjects(validatedProjects);
-  };
-
-  const handleAddProject = async () => {
-    if (!newProject.title || !newProject.description || !newProject.category) {
-      alert('Please fill in title, description, and category');
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      const base64Images = await convertImagesToBase64(newProject.images);
-      
-      const techStackArray = newProject.techStack.split(',').map(t => t.trim()).filter(t => t);
-      
-      const existingProjects = localStorage.getItem('projects');
-      const allProjects: Project[] = existingProjects ? JSON.parse(existingProjects) : [];
-      
-      const newId = allProjects.length > 0 ? Math.max(...allProjects.map(p => p.id)) + 1 : 1;
-      
-      const newProjectData: Project = {
-        id: newId,
-        title: newProject.title,
-        description: newProject.description,
-        category: newProject.category,
-        techStack: techStackArray,
-        image: base64Images.length > 0 ? base64Images[0] : DEFAULT_PLACEHOLDER_IMAGE,
-        gallery: base64Images,
-        fullDetails: newProject.fullDetails || newProject.description,
-        projectLink: newProject.projectLink,
-        githubLink: newProject.githubLink,
-        featured: false,
-        date: new Date().toISOString().split('T')[0]
-      };
-      
-      allProjects.push(newProjectData);
-      saveProjectsToStorage(allProjects);
-      
-      resetForm();
-      setShowForm(false);
-      showToast('✅ Project added successfully!');
-      
-    } catch (error) {
-      console.error('Error adding project:', error);
-      alert('Failed to add project. Please try again.');
-    } finally {
-      setIsSubmitting(false);
-      setTimeout(() => setUploadProgress({}), 3000);
-    }
-  };
-
-  const handleEditProject = (project: Project, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setEditingProject(project);
-    setNewProject({
-      title: project.title,
-      description: project.description,
-      category: project.category,
-      techStack: project.techStack?.join(', ') || '',
-      fullDetails: project.fullDetails || '',
-      projectLink: project.projectLink || '',
-      githubLink: project.githubLink || '',
-      images: [],
-      imagePreviews: []
-    });
-    setShowForm(true);
-  };
-
-  const handleUpdateProject = async () => {
-    if (!editingProject) return;
-    if (!newProject.title || !newProject.description || !newProject.category) {
-      alert('Please fill in title, description, and category');
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      let base64Images: string[] = [];
-      if (newProject.images.length > 0) {
-        base64Images = await convertImagesToBase64(newProject.images);
-      }
-      
-      const techStackArray = newProject.techStack.split(',').map(t => t.trim()).filter(t => t);
-      
-      const existingProjects = localStorage.getItem('projects');
-      const allProjects: Project[] = existingProjects ? JSON.parse(existingProjects) : [];
-      
-      const updatedProjects = allProjects.map(p => {
-        if (p.id === editingProject.id) {
-          const existingGallery = p.gallery || [];
-          const newGallery = base64Images.length > 0 ? [...existingGallery, ...base64Images] : existingGallery;
-          const newImage = base64Images.length > 0 ? base64Images[0] : p.image;
-          
-          return {
-            ...p,
-            title: newProject.title,
-            description: newProject.description,
-            category: newProject.category,
-            techStack: techStackArray,
-            fullDetails: newProject.fullDetails || newProject.description,
-            projectLink: newProject.projectLink,
-            githubLink: newProject.githubLink,
-            gallery: newGallery,
-            image: (newImage && newImage.trim() !== '') ? newImage : DEFAULT_PLACEHOLDER_IMAGE,
-            date: new Date().toISOString().split('T')[0]
-          };
-        }
-        return p;
-      });
-      
-      saveProjectsToStorage(updatedProjects);
-      resetForm();
-      setEditingProject(null);
-      setShowForm(false);
-      showToast('✅ Project updated successfully!');
-      
-    } catch (error) {
-      console.error('Error updating project:', error);
-      alert('Failed to update project. Please try again.');
-    } finally {
-      setIsSubmitting(false);
-      setTimeout(() => setUploadProgress({}), 3000);
-    }
-  };
-
-  const handleDeleteProject = (id: number, e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (confirm('⚠️ Are you sure you want to permanently delete this project?')) {
-      const existingProjects = localStorage.getItem('projects');
-      const allProjects = existingProjects ? JSON.parse(existingProjects) : [];
-      const updatedProjects = allProjects.filter((p: Project) => p.id !== id);
-      saveProjectsToStorage(updatedProjects);
-      showToast('🗑️ Project deleted permanently!');
-    }
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    updateFilters(activeCategory, query);
   };
 
   const handleViewProject = (project: Project) => {
     setSelectedProject(project);
+    setCurrentGalleryIndex(0);
     setShowDetailModal(true);
   };
 
-  const resetForm = () => {
-    newProject.imagePreviews.forEach(preview => URL.revokeObjectURL(preview));
-    setNewProject({
-      title: "",
-      description: "",
-      category: "",
-      techStack: "",
-      fullDetails: "",
-      projectLink: "",
-      githubLink: "",
-      images: [],
-      imagePreviews: []
-    });
-    setEditingProject(null);
+  const openGalleryImage = (image: string) => {
+    setSelectedGalleryImage(image);
+    setShowGalleryModal(true);
   };
 
-  const showToast = (message: string) => {
-    const toast = document.createElement('div');
-    toast.className = 'fixed bottom-4 right-4 bg-gray-900 text-white px-4 py-2 rounded-lg shadow-lg z-50 text-sm';
-    toast.textContent = message;
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 3000);
+  const nextImage = () => {
+    if (selectedProject && currentGalleryIndex < selectedProject.gallery.length - 1) {
+      setCurrentGalleryIndex(currentGalleryIndex + 1);
+    }
+  };
+
+  const prevImage = () => {
+    if (selectedProject && currentGalleryIndex > 0) {
+      setCurrentGalleryIndex(currentGalleryIndex - 1);
+    }
   };
 
   // Custom Project Card Component
@@ -368,34 +299,42 @@ export default function WorkPage() {
     const [imgError, setImgError] = useState(false);
     
     return (
-      <div className="bg-card rounded-xl overflow-hidden border border-border hover:border-red-500/50 transition-all duration-300 hover:shadow-xl group">
+      <div 
+        className="bg-card rounded-xl overflow-hidden border border-border hover:border-red-500/50 transition-all duration-300 hover:shadow-xl group cursor-pointer"
+        onClick={() => handleViewProject(project)}
+      >
         <div className="aspect-video w-full overflow-hidden bg-muted relative">
-          {!imgError ? (
+          {project.featured && (
+            <div className="absolute top-2 left-2 z-10">
+              <Badge className="bg-yellow-500/90 text-black border-0 flex items-center gap-1">
+                <Star className="w-3 h-3 fill-current" />
+                Featured
+              </Badge>
+            </div>
+          )}
+          {!imgError && project.image ? (
             <img 
-              src={project.image || DEFAULT_PLACEHOLDER_IMAGE} 
+              src={project.image} 
               alt={project.title}
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               onError={() => setImgError(true)}
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
-              <div className="text-center">
-                <LayoutGrid className="w-12 h-12 text-muted-foreground mx-auto mb-2" />
-                <p className="text-sm text-muted-foreground">Image not available</p>
-              </div>
+              <LayoutGrid className="w-12 h-12 text-muted-foreground" />
             </div>
           )}
         </div>
         <div className="p-5">
           <div className="flex items-center justify-between mb-2">
-            <Badge className="bg-red-500/20 text-red-500 hover:bg-red-500/30">
+            <Badge className="bg-red-500/20 text-red-500">
               {project.category}
             </Badge>
             {project.date && (
               <span className="text-xs text-muted-foreground">{project.date}</span>
             )}
           </div>
-          <h3 className="font-bold text-xl mb-2 line-clamp-1">{project.title}</h3>
+          <h3 className="font-bold text-xl mb-2 line-clamp-1 text-white">{project.title}</h3>
           <p className="text-muted-foreground text-sm mb-3 line-clamp-2">{project.description}</p>
           {project.techStack && project.techStack.length > 0 && (
             <div className="flex flex-wrap gap-1.5 mb-3">
@@ -415,7 +354,10 @@ export default function WorkPage() {
             variant="ghost" 
             size="sm" 
             className="mt-2 text-red-500 hover:text-red-600 hover:bg-red-500/10"
-            onClick={() => handleViewProject(project)}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleViewProject(project);
+            }}
           >
             View Details →
           </Button>
@@ -447,7 +389,7 @@ export default function WorkPage() {
                 placeholder="Find a project..." 
                 className="pl-10 h-11 bg-card"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => handleSearch(e.target.value)}
               />
             </div>
           </div>
@@ -461,7 +403,7 @@ export default function WorkPage() {
               {categories.map(cat => (
                 <button
                   key={cat}
-                  onClick={() => setActiveCategory(cat)}
+                  onClick={() => handleCategoryChange(cat)}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-all text-left min-h-[44px] ${
                     activeCategory === cat 
                     ? 'bg-red-600 text-white shadow-md' 
@@ -477,35 +419,11 @@ export default function WorkPage() {
 
         {/* Project Grid */}
         <div className="flex-1">
-          {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {[1, 2, 3, 4].map(i => (
-                <div key={i} className="space-y-4">
-                  <Skeleton className="aspect-video w-full rounded-xl" />
-                  <Skeleton className="h-6 w-3/4" />
-                  <Skeleton className="h-20 w-full" />
-                </div>
-              ))}
-            </div>
-          ) : filteredProjects.length > 0 ? (
+          {filteredProjects.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {filteredProjects.map(project => (
                 <div key={project.id} className="relative group">
                   <CustomProjectCard project={project} />
-                  <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                    <button
-                      onClick={(e) => handleEditProject(project, e)}
-                      className="p-2 rounded-lg bg-blue-500/80 hover:bg-blue-600 text-white backdrop-blur-sm"
-                    >
-                      <Edit className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={(e) => handleDeleteProject(project.id, e)}
-                      className="p-2 rounded-lg bg-red-500/80 hover:bg-red-600 text-white backdrop-blur-sm"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
                 </div>
               ))}
             </div>
@@ -515,307 +433,200 @@ export default function WorkPage() {
                 <LayoutGrid className="w-8 h-8" />
               </div>
               <div>
-                <h3 className="font-headline font-bold text-2xl">No projects yet</h3>
-                <p className="text-muted-foreground">Click the + button to add your first project.</p>
+                <h3 className="font-headline font-bold text-2xl">No projects found</h3>
+                <p className="text-muted-foreground">Try adjusting your search or filter criteria.</p>
               </div>
-              <Button onClick={() => { setShowForm(true); resetForm(); }} variant="default" className="bg-red-600 hover:bg-red-700">
-                <Plus className="w-4 h-4 mr-2" />
-                Add Your First Project
-              </Button>
             </div>
           )}
         </div>
       </div>
 
-      {/* Floating Action Button & Form Modal */}
-      <div className="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-50">
-        {!showForm ? (
-          <button 
-            onClick={() => { resetForm(); setShowForm(true); }} 
-            className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-r from-red-600 to-rose-500 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 flex items-center justify-center group"
-          >
-            <Plus className="w-5 h-5 sm:w-6 sm:h-6 group-hover:rotate-90 transition-transform duration-300" />
-          </button>
-        ) : (
-          <>
-            <div 
-              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
-              onClick={() => { setShowForm(false); resetForm(); }}
-            />
-            
-            <div className="fixed inset-x-4 bottom-0 sm:inset-auto sm:bottom-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 bg-card rounded-t-2xl sm:rounded-2xl shadow-2xl border border-red-500/20 w-auto sm:w-[550px] max-h-[90vh] overflow-y-auto z-50">
-              <div className="sticky top-0 bg-card/95 backdrop-blur-sm border-b border-red-500/20 p-4 sm:p-5 flex justify-between items-center">
-                <h3 className="font-bold text-base sm:text-lg">{editingProject ? 'Edit Project' : 'Add New Project'}</h3>
-                <button onClick={() => { setShowForm(false); resetForm(); }} className="p-1.5 rounded-full hover:bg-secondary transition-colors">
-                  <X className="w-4 h-4 sm:w-5 sm:h-5" />
-                </button>
-              </div>
-              
-              <div className="p-4 sm:p-5">
-                <div className="space-y-4">
-                  {/* Title */}
-                  <div>
-                    <label className="text-sm font-medium text-muted-foreground">
-                      Title <span className="text-red-500">*</span>
-                    </label>
-                    <input 
-                      type="text" 
-                      placeholder="e.g., E-Commerce Platform" 
-                      value={newProject.title} 
-                      onChange={(e) => setNewProject({...newProject, title: e.target.value})} 
-                      className="w-full px-4 py-2 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-red-500/50 mt-1" 
-                    />
-                  </div>
-
-                  {/* Category */}
-                  <div>
-                    <label className="text-sm font-medium text-muted-foreground">
-                      Category <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="e.g., Web Development, Mobile App, etc."
-                      value={newProject.category}
-                      onChange={(e) => setNewProject({...newProject, category: e.target.value})}
-                      className="w-full px-4 py-2 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-red-500/50 mt-1"
-                    />
-                  </div>
-
-                  {/* Description */}
-                  <div>
-                    <label className="text-sm font-medium text-muted-foreground">
-                      Short Description <span className="text-red-500">*</span>
-                    </label>
-                    <textarea 
-                      placeholder="Brief description of the project..." 
-                      value={newProject.description} 
-                      onChange={(e) => setNewProject({...newProject, description: e.target.value})} 
-                      rows={2} 
-                      className="w-full px-4 py-2 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-red-500/50 mt-1 resize-none" 
-                    />
-                  </div>
-
-                  {/* Tech Stack */}
-                  <div>
-                    <label className="text-sm font-medium text-muted-foreground">Tech Stack (comma separated)</label>
-                    <input 
-                      type="text" 
-                      placeholder="React, Node.js, MongoDB" 
-                      value={newProject.techStack} 
-                      onChange={(e) => setNewProject({...newProject, techStack: e.target.value})} 
-                      className="w-full px-4 py-2 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-red-500/50 mt-1" 
-                    />
-                  </div>
-
-                  {/* Full Details */}
-                  <div>
-                    <label className="text-sm font-medium text-muted-foreground">Full Details</label>
-                    <textarea 
-                      placeholder="Detailed description of the project..." 
-                      value={newProject.fullDetails} 
-                      onChange={(e) => setNewProject({...newProject, fullDetails: e.target.value})} 
-                      rows={3} 
-                      className="w-full px-4 py-2 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-red-500/50 mt-1 resize-y" 
-                    />
-                  </div>
-
-                  {/* Project Link */}
-                  <div>
-                    <label className="text-sm font-medium text-muted-foreground">Live Project URL</label>
-                    <input 
-                      type="url" 
-                      placeholder="https://example.com" 
-                      value={newProject.projectLink} 
-                      onChange={(e) => setNewProject({...newProject, projectLink: e.target.value})} 
-                      className="w-full px-4 py-2 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-red-500/50 mt-1" 
-                    />
-                  </div>
-
-                  {/* GitHub Link */}
-                  <div>
-                    <label className="text-sm font-medium text-muted-foreground">GitHub URL</label>
-                    <input 
-                      type="url" 
-                      placeholder="https://github.com/username/project" 
-                      value={newProject.githubLink} 
-                      onChange={(e) => setNewProject({...newProject, githubLink: e.target.value})} 
-                      className="w-full px-4 py-2 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-red-500/50 mt-1" 
-                    />
-                  </div>
-
-                  {/* Image Upload */}
-                  <div>
-                    <label className="text-sm font-medium text-muted-foreground">Project Images</label>
-                    <div className="flex items-center gap-3 mt-1">
-                      <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept="image/*"
-                        multiple
-                        onChange={handleImageSelect}
-                        className="hidden"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => fileInputRef.current?.click()}
-                        className="flex items-center gap-2 px-4 py-2 rounded-lg border border-dashed border-red-500/50 hover:border-red-500 hover:bg-red-500/5 transition-all"
-                      >
-                        <Upload className="w-4 h-4 text-red-500" />
-                        <span className="text-sm text-red-500">Select Images</span>
-                      </button>
-                      <span className="text-xs text-muted-foreground">
-                        {newProject.images.length} file(s) selected
-                      </span>
-                    </div>
-
-                    {newProject.imagePreviews.length > 0 && (
-                      <div className="grid grid-cols-3 gap-2 mt-3">
-                        {newProject.imagePreviews.map((preview, index) => (
-                          <div key={index} className="relative group">
-                            <img
-                              src={preview}
-                              alt={`Preview ${index + 1}`}
-                              className="w-full h-20 object-cover rounded-lg border"
-                            />
-                            <button
-                              type="button"
-                              onClick={() => removeImage(index)}
-                              className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-red-500 text-white flex items-center justify-center hover:bg-red-600 opacity-0 group-hover:opacity-100"
-                            >
-                              <X className="w-3 h-3" />
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    {Object.keys(uploadProgress).length > 0 && (
-                      <div className="mt-2 space-y-1">
-                        {Object.entries(uploadProgress).map(([filename, progress]) => (
-                          <div key={filename} className="bg-secondary/20 rounded p-1">
-                            <div className="flex justify-between text-xs">
-                              <span className="truncate">{filename}</span>
-                              <span>{progress === 100 ? '✓' : progress === -1 ? '✗' : `${progress}%`}</span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Submit Button */}
-                  <button 
-                    onClick={editingProject ? handleUpdateProject : handleAddProject} 
-                    disabled={!newProject.title || !newProject.description || !newProject.category || isSubmitting} 
-                    className="w-full mt-4 px-4 py-3 bg-gradient-to-r from-red-600 to-rose-500 rounded-lg text-white font-medium hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                        {editingProject ? 'Updating...' : 'Saving...'}
-                      </>
-                    ) : (
-                      <>
-                        <Save className="w-4 h-4" />
-                        {editingProject ? 'Update Project' : 'Add Project'}
-                      </>
-                    )}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </>
-        )}
-      </div>
-
       {/* Project Detail Modal */}
       {showDetailModal && selectedProject && (
         <div 
-          className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
           onClick={() => setShowDetailModal(false)}
         >
-          <div className="relative bg-card rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-            <div className="sticky top-0 bg-card/95 backdrop-blur-sm p-4 border-b border-red-500/20 flex justify-between items-center">
-              <h2 className="text-xl font-bold">{selectedProject.title}</h2>
-              <button onClick={() => setShowDetailModal(false)} className="p-1.5 rounded-full hover:bg-secondary">
-                <X className="w-5 h-5" />
+          <div 
+            className="relative bg-gradient-to-br from-gray-900 to-gray-950 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-red-500/30 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="sticky top-0 bg-gray-900/95 backdrop-blur-sm p-4 border-b border-red-500/20 flex justify-between items-center">
+              <h2 className="text-xl font-bold text-white">{selectedProject.title}</h2>
+              <button 
+                onClick={() => setShowDetailModal(false)} 
+                className="p-1.5 rounded-full hover:bg-gray-800 transition-colors"
+              >
+                <X className="w-5 h-5 text-gray-400" />
               </button>
             </div>
+            
             <div className="p-6">
-              {selectedProject.image && selectedProject.image !== DEFAULT_PLACEHOLDER_IMAGE && (
+              {selectedProject.featured && (
                 <div className="mb-4">
-                  <img 
-                    src={selectedProject.image} 
-                    alt={selectedProject.title} 
-                    className="w-full h-64 object-cover rounded-lg"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = DEFAULT_PLACEHOLDER_IMAGE;
-                    }}
-                  />
+                  <Badge className="bg-yellow-500/20 text-yellow-500 border-0 flex items-center gap-1 w-fit">
+                    <Star className="w-3 h-3 fill-current" />
+                    Featured Project
+                  </Badge>
                 </div>
               )}
               
-              <div className="mb-4">
-                <Badge className="bg-red-500/20 text-red-500">{selectedProject.category}</Badge>
+              {/* Main Image with Gallery Navigation */}
+              {selectedProject.gallery.length > 0 && (
+                <div className="mb-6">
+                  <div className="relative rounded-lg overflow-hidden bg-gray-800">
+                    <img 
+                      src={selectedProject.gallery[currentGalleryIndex]} 
+                      alt={`${selectedProject.title} - ${currentGalleryIndex + 1}`}
+                      className="w-full h-96 object-contain bg-gray-900 cursor-pointer"
+                      onClick={() => openGalleryImage(selectedProject.gallery[currentGalleryIndex])}
+                    />
+                    {selectedProject.gallery.length > 1 && (
+                      <>
+                        <button
+                          onClick={prevImage}
+                          disabled={currentGalleryIndex === 0}
+                          className="absolute left-2 top-1/2 -translate-y-1/2 p-1 rounded-full bg-black/50 text-white hover:bg-black/70 disabled:opacity-50 transition-all"
+                        >
+                          <ChevronLeft className="w-6 h-6" />
+                        </button>
+                        <button
+                          onClick={nextImage}
+                          disabled={currentGalleryIndex === selectedProject.gallery.length - 1}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-full bg-black/50 text-white hover:bg-black/70 disabled:opacity-50 transition-all"
+                        >
+                          <ChevronRight className="w-6 h-6" />
+                        </button>
+                        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-black/60 text-white text-xs px-2 py-1 rounded-full">
+                          {currentGalleryIndex + 1} / {selectedProject.gallery.length}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                  {selectedProject.gallery.length > 1 && (
+                    <div className="flex gap-2 mt-3 overflow-x-auto pb-2">
+                      {selectedProject.gallery.slice(0, 8).map((img, idx) => (
+                        <div
+                          key={idx}
+                          className={`w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden cursor-pointer border-2 transition-all ${
+                            currentGalleryIndex === idx ? 'border-red-500' : 'border-transparent hover:border-gray-500'
+                          }`}
+                          onClick={() => setCurrentGalleryIndex(idx)}
+                        >
+                          <img src={img} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
+                        </div>
+                      ))}
+                      {selectedProject.gallery.length > 8 && (
+                        <div className="w-16 h-16 flex-shrink-0 rounded-lg bg-gray-800 flex items-center justify-center text-xs text-gray-400">
+                          +{selectedProject.gallery.length - 8}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+              
+              <div className="flex flex-wrap items-center gap-3 mb-4">
+                <Badge className="bg-red-500/20 text-red-500 px-3 py-1">
+                  {selectedProject.category}
+                </Badge>
                 {selectedProject.date && (
-                  <span className="text-xs text-muted-foreground ml-2">{selectedProject.date}</span>
+                  <span className="text-sm text-gray-400">
+                    {selectedProject.date}
+                  </span>
                 )}
               </div>
               
-              <p className="text-muted-foreground mb-4">{selectedProject.description}</p>
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-white mb-2">Description</h3>
+                <p className="text-gray-300 leading-relaxed">{selectedProject.description}</p>
+              </div>
               
-              {selectedProject.fullDetails && selectedProject.fullDetails !== selectedProject.description && (
-                <div className="mt-4 p-4 bg-secondary/20 rounded-lg">
-                  <h3 className="font-semibold mb-2">Details</h3>
-                  <p className="text-sm whitespace-pre-wrap">{selectedProject.fullDetails}</p>
+              {selectedProject.fullDetails && (
+                <div className="mb-6 p-4 bg-gray-800/50 rounded-lg border border-gray-700">
+                  <h3 className="text-lg font-semibold text-white mb-2">Project Details</h3>
+                  <p className="text-gray-300 whitespace-pre-wrap leading-relaxed">{selectedProject.fullDetails}</p>
+                </div>
+              )}
+              
+              {selectedProject.myTasks && selectedProject.myTasks.length > 0 && (
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold text-white mb-3">My Tasks & Contributions</h3>
+                  <div className="space-y-3">
+                    {selectedProject.myTasks.map((task, idx) => (
+                      <div key={idx} className="p-3 bg-red-500/5 rounded-lg border border-red-500/20">
+                        <p className="text-gray-300 text-sm leading-relaxed">{task}</p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
               
               {selectedProject.techStack && selectedProject.techStack.length > 0 && (
-                <div className="mt-4">
-                  <h3 className="font-semibold mb-2">Tech Stack</h3>
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold text-white mb-3">Technologies Used</h3>
                   <div className="flex flex-wrap gap-2">
                     {selectedProject.techStack.map((tech, i) => (
-                      <Badge key={i} variant="secondary">{tech}</Badge>
+                      <span 
+                        key={i} 
+                        className="px-3 py-1.5 rounded-lg bg-red-500/10 text-red-400 text-sm border border-red-500/20"
+                      >
+                        {tech}
+                      </span>
                     ))}
                   </div>
                 </div>
               )}
               
               {(selectedProject.projectLink || selectedProject.githubLink) && (
-                <div className="mt-4 flex gap-3">
+                <div className="flex flex-wrap gap-4">
                   {selectedProject.projectLink && (
-                    <a href={selectedProject.projectLink} target="_blank" rel="noopener noreferrer" className="text-red-500 hover:underline text-sm flex items-center gap-1">
-                      Live Project <ExternalLink className="w-3 h-3" />
+                    <a 
+                      href={selectedProject.projectLink} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-white transition-colors"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                      Live Demo
                     </a>
                   )}
                   {selectedProject.githubLink && (
-                    <a href={selectedProject.githubLink} target="_blank" rel="noopener noreferrer" className="text-red-500 hover:underline text-sm flex items-center gap-1">
-                      GitHub <Github className="w-3 h-3" />
+                    <a 
+                      href={selectedProject.githubLink} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-white transition-colors border border-gray-700"
+                    >
+                      <Github className="w-4 h-4" />
+                      View Code
                     </a>
                   )}
                 </div>
               )}
-              
-              {selectedProject.gallery && selectedProject.gallery.length > 1 && (
-                <div className="mt-4">
-                  <h3 className="font-semibold mb-2">Gallery ({selectedProject.gallery.length} images)</h3>
-                  <div className="grid grid-cols-2 gap-2">
-                    {selectedProject.gallery.map((img, i) => (
-                      <img 
-                        key={i} 
-                        src={img} 
-                        alt={`Project ${i + 1}`} 
-                        className="rounded-lg w-full h-32 object-cover"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = DEFAULT_PLACEHOLDER_IMAGE;
-                        }}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Full Screen Gallery Modal */}
+      {showGalleryModal && selectedGalleryImage && (
+        <div 
+          className="fixed inset-0 bg-black/95 z-[60] flex items-center justify-center p-4"
+          onClick={() => setShowGalleryModal(false)}
+        >
+          <div className="relative max-w-5xl w-full" onClick={(e) => e.stopPropagation()}>
+            <button
+              onClick={() => setShowGalleryModal(false)}
+              className="absolute -top-12 right-0 p-2 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors"
+            >
+              <X className="w-5 h-5 text-white" />
+            </button>
+            <img 
+              src={selectedGalleryImage} 
+              alt="Full size"
+              className="w-full h-auto max-h-[85vh] object-contain rounded-lg"
+            />
           </div>
         </div>
       )}

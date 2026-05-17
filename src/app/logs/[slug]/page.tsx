@@ -59,9 +59,50 @@ export default function LogDetailPage({ params }: { params: Promise<{ slug: stri
   const [editedLog, setEditedLog] = useState<Partial<ActivityLog> & { dateValue?: string }>({});
   const [isSaving, setIsSaving] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({});
+  const [showActionButtons, setShowActionButtons] = useState(false); // Hidden by default for security
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const log = getLogBySlugFromDB(slug);
+
+  // Keyboard shortcuts - SECURITY: Buttons hidden by default, only appear with Ctrl+Shift+F
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ctrl+Shift+F to toggle action buttons (security feature)
+      if (e.ctrlKey && e.shiftKey && (e.key === 'F' || e.key === 'f')) {
+        e.preventDefault();
+        e.stopPropagation();
+        setShowActionButtons(prev => {
+          const newState = !prev;
+          // Show toast notification for security
+          const toast = document.createElement('div');
+          toast.className = `fixed bottom-20 right-4 ${newState ? 'bg-green-500' : 'bg-gray-600'} text-white px-4 py-2 rounded-lg shadow-lg z-50 text-sm`;
+          toast.textContent = newState 
+            ? '🔓 Admin mode: Action buttons visible'
+            : '🔒 Security mode: Action buttons hidden';
+          document.body.appendChild(toast);
+          setTimeout(() => toast.remove(), 2000);
+          return newState;
+        });
+        return;
+      }
+      
+      // Ctrl+E to enter edit mode (only if admin mode is active)
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'e' || e.key === 'E') && showActionButtons && !isEditing) {
+        e.preventDefault();
+        e.stopPropagation();
+        startEditing();
+        const toast = document.createElement('div');
+        toast.className = 'fixed bottom-20 right-4 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 text-sm';
+        toast.textContent = '✏️ Edit mode activated (Ctrl+E)';
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2000);
+        return;
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showActionButtons, isEditing]);
 
   // Load images from database
   const loadImages = useCallback(() => {
@@ -640,10 +681,19 @@ export default function LogDetailPage({ params }: { params: Promise<{ slug: stri
                         {uploadedImages.map((image) => (
                           <div key={image.id} className="relative group rounded-xl overflow-hidden border border-gray-800 hover:border-red-500/40 transition-all">
                             <img src={image.url} alt={image.filename} className="w-full h-48 object-cover cursor-pointer hover:scale-105 transition-transform duration-300" onClick={() => setSelectedImage(image)} />
-                            <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                              <button onClick={() => setSelectedImage(image)} className="p-1.5 rounded-lg bg-black/50 hover:bg-black/70 text-white transition-colors"><ZoomIn className="w-4 h-4" /></button>
-                              <button onClick={() => handleDeleteImage(image.id)} className="p-1.5 rounded-lg bg-red-500/80 hover:bg-red-600 text-white transition-colors"><Trash2 className="w-4 h-4" /></button>
-                            </div>
+                            {/* Delete button - Only visible when admin mode is active */}
+                            {showActionButtons && (
+                              <div className="absolute top-2 right-2 flex gap-2">
+                                <button onClick={() => setSelectedImage(image)} className="p-1.5 rounded-lg bg-black/50 hover:bg-black/70 text-white transition-colors"><ZoomIn className="w-4 h-4" /></button>
+                                <button onClick={() => handleDeleteImage(image.id)} className="p-1.5 rounded-lg bg-red-500/80 hover:bg-red-600 text-white transition-colors"><Trash2 className="w-4 h-4" /></button>
+                              </div>
+                            )}
+                            {/* If admin mode is off, only show zoom button */}
+                            {!showActionButtons && (
+                              <div className="absolute top-2 right-2">
+                                <button onClick={() => setSelectedImage(image)} className="p-1.5 rounded-lg bg-black/50 hover:bg-black/70 text-white transition-colors"><ZoomIn className="w-4 h-4" /></button>
+                              </div>
+                            )}
                             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-2">
                               <p className="text-white text-xs truncate">{image.filename}</p>
                               <p className="text-white/60 text-[10px]">{new Date(image.timestamp).toLocaleDateString()}</p>
@@ -661,21 +711,40 @@ export default function LogDetailPage({ params }: { params: Promise<{ slug: stri
                       <button onClick={() => setIsLiked(!isLiked)} className={`p-2 rounded-full transition-all duration-300 hover:scale-110 ${isLiked ? 'bg-red-500/20 text-red-500' : 'hover:bg-red-500/10 text-muted-foreground'}`}><ThumbsUp className="w-4 h-4" /></button>
                       <button onClick={() => setIsBookmarked(!isBookmarked)} className={`p-2 rounded-full transition-all duration-300 hover:scale-110 ${isBookmarked ? 'bg-red-500/20 text-red-500' : 'hover:bg-red-500/10 text-muted-foreground'}`}><Bookmark className="w-4 h-4" /></button>
                       <button className="p-2 rounded-full hover:bg-red-500/10 transition-all duration-300 hover:scale-110 group"><Share2 className="w-4 h-4 text-muted-foreground group-hover:text-red-500 transition-colors" /></button>
-                      <button onClick={startEditing} className="p-2 rounded-full hover:bg-red-500/10 transition-all duration-300 hover:scale-110 group"><Edit2 className="w-4 h-4 text-muted-foreground group-hover:text-red-500 transition-colors" /></button>
-                      <div className="relative">
-                        <input ref={fileInputRef} type="file" accept="image/*" multiple onChange={handleMultipleImageUpload} className="hidden" />
-                        <button onClick={() => fileInputRef.current?.click()} disabled={isUploading} className="p-2 rounded-full hover:bg-red-500/10 transition-all duration-300 hover:scale-110 group flex items-center gap-2">
-                          {isUploading ? <div className="w-4 h-4 border-2 border-red-500 border-t-transparent rounded-full animate-spin" /> : <Upload className="w-4 h-4 text-muted-foreground group-hover:text-red-500 transition-colors" />}
-                          <span className="text-xs text-muted-foreground group-hover:text-red-500 transition-colors hidden sm:inline">Add Pictures</span>
+                      {/* Edit button - Only visible when admin mode is active */}
+                      {showActionButtons && (
+                        <button onClick={startEditing} className="p-2 rounded-full hover:bg-red-500/10 transition-all duration-300 hover:scale-110 group">
+                          <Edit2 className="w-4 h-4 text-muted-foreground group-hover:text-red-500 transition-colors" />
                         </button>
-                      </div>
+                      )}
+                      {/* Upload button - Only visible when admin mode is active */}
+                      {showActionButtons && (
+                        <div className="relative">
+                          <input ref={fileInputRef} type="file" accept="image/*" multiple onChange={handleMultipleImageUpload} className="hidden" />
+                          <button onClick={() => fileInputRef.current?.click()} disabled={isUploading} className="p-2 rounded-full hover:bg-red-500/10 transition-all duration-300 hover:scale-110 group flex items-center gap-2">
+                            {isUploading ? <div className="w-4 h-4 border-2 border-red-500 border-t-transparent rounded-full animate-spin" /> : <Upload className="w-4 h-4 text-muted-foreground group-hover:text-red-500 transition-colors" />}
+                            <span className="text-xs text-muted-foreground group-hover:text-red-500 transition-colors hidden sm:inline">Add Pictures</span>
+                          </button>
+                        </div>
+                      )}
                     </div>
                     <div className="text-xs text-muted-foreground">Last updated: {log.date}</div>
                   </div>
-                  <div onDragOver={handleDragOver} onDrop={handleDrop} className="mt-4 border-2 border-dashed border-gray-800 rounded-lg p-4 text-center hover:border-red-500/40 transition-colors">
-                    <p className="text-xs text-muted-foreground">📷 Drag & drop multiple images here to upload (max 5MB each)</p>
-                    <p className="text-[10px] text-muted-foreground mt-1">Supports: JPG, PNG, WEBP, GIF</p>
-                  </div>
+                  
+                  {/* Drag and drop area - Only visible when admin mode is active */}
+                  {showActionButtons && (
+                    <div onDragOver={handleDragOver} onDrop={handleDrop} className="mt-4 border-2 border-dashed border-gray-800 rounded-lg p-4 text-center hover:border-red-500/40 transition-colors">
+                      <p className="text-xs text-muted-foreground">📷 Drag & drop multiple images here to upload (max 5MB each)</p>
+                      <p className="text-[10px] text-muted-foreground mt-1">Supports: JPG, PNG, WEBP, GIF</p>
+                    </div>
+                  )}
+                  
+                  {/* Keyboard shortcut hint (only visible to admin when buttons are hidden) */}
+                  {!showActionButtons && (
+                    <div className="mt-4 text-center">
+                      
+                    </div>
+                  )}
                 </div>
               </>
             )}
