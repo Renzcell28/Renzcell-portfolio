@@ -1,6 +1,6 @@
 [build]
   command = "npm run build"
-  publish = "out"
+  publish = ".next"
 
 [build.environment]
   NODE_VERSION = "20"
@@ -53,11 +53,10 @@
     X-XSS-Protection = "1; mode=block"
     Referrer-Policy = "strict-origin-when-cross-origin"
 
-# Function configuration - CRITICAL: Remove included_files
+# Function configuration
 [functions]
   node_bundler = "esbuild"
   external_node_modules = ["sharp"]
-  # REMOVE this line: included_files = ["node_modules/**"]
 
 [functions."api/*"]
   max_duration = 30
