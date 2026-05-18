@@ -8,8 +8,13 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
-    unoptimized: true,
+    domains: ['res.cloudinary.com', 'placehold.co', 'images.unsplash.com', 'picsum.photos'],
     remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+        pathname: '/**',
+      },
       {
         protocol: 'https',
         hostname: 'placehold.co',
@@ -25,23 +30,16 @@ const nextConfig: NextConfig = {
         hostname: 'picsum.photos',
         pathname: '/**',
       },
-      {
-        protocol: 'https',
-        hostname: 'res.cloudinary.com',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: '*.cloudinary.com',
-        pathname: '/**',
-      },
     ],
-    domains: ['res.cloudinary.com'],
+    unoptimized: false,
   },
-  trailingSlash: false,
-  output: 'standalone',
-  // Add transpilePackages for better CSS handling
-  transpilePackages: ['lucide-react'],
+  // Vercel optimizations
+  swcMinify: true,
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
+  transpilePackages: ['lucide-react', '@radix-ui/*'],
+  reactStrictMode: true,
 };
 
 export default nextConfig;
