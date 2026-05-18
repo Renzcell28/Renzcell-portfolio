@@ -2,70 +2,31 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Eye, Download, Upload, X, FileText, Maximize2, Minimize2 } from 'lucide-react';
+import { Eye, Download, FileText, Maximize2, Minimize2 } from 'lucide-react';
 
-interface ResumeData {
-  url: string;
-  name: string;
-  date: string;
-  content?: string;
-}
+// Permanent resume data - replace with your actual resume
+const PERMANENT_RESUME = {
+  url: "/resume/Resume LORESCO RENZCELL RICK V. (1).pdf",
+  name: "Resume_Loresco_Renzcell_Rick_V.pdf",
+  date: "May 2026"
+};
 
 export default function ResumeSection() {
-  const [resumeData, setResumeData] = useState<ResumeData | null>(null);
   const [showPdfViewer, setShowPdfViewer] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [uploading, setUploading] = useState(false);
-
-  useEffect(() => {
-    const storedResume = localStorage.getItem('resume');
-    if (storedResume) {
-      const data = JSON.parse(storedResume);
-      setResumeData(data);
-    }
-  }, []);
-
-  const handleResumeUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file && file.type === 'application/pdf') {
-      if (file.size > 10 * 1024 * 1024) {
-        alert('File size must be less than 10MB');
-        return;
-      }
-      
-      setUploading(true);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64 = reader.result as string;
-        const newResumeData: ResumeData = {
-          url: base64,
-          name: file.name,
-          date: new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
-        };
-        localStorage.setItem('resume', JSON.stringify(newResumeData));
-        setResumeData(newResumeData);
-        setUploading(false);
-        alert('Resume uploaded successfully!');
-      };
-      reader.readAsDataURL(file);
-    } else {
-      alert('Please select a PDF file');
-    }
-  };
+  const [resumeData] = useState(PERMANENT_RESUME);
 
   const handleViewResume = () => {
     setShowPdfViewer(true);
   };
 
   const handleDownload = () => {
-    if (resumeData?.url) {
-      const link = document.createElement('a');
-      link.href = resumeData.url;
-      link.download = resumeData.name;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
+    const link = document.createElement('a');
+    link.href = resumeData.url;
+    link.download = resumeData.name;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const toggleFullscreen = () => {
@@ -116,116 +77,65 @@ export default function ResumeSection() {
               </p>
             </div>
             
-            {resumeData ? (
-              <>
-                {/* Resume Info Bar */}
-                <div className="bg-gray-800/30 rounded-xl p-4 text-center border border-gray-700 mb-6">
-                  <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 bg-red-500/10 rounded-xl flex items-center justify-center">
-                        <FileText className="w-6 h-6 text-red-500" />
-                      </div>
-                      <div className="text-left">
-                        <h3 className="text-white font-medium">{resumeData.name}</h3>
-                        <p className="text-xs text-gray-500">Last updated: {resumeData.date}</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex gap-3">
-                      <button
-                        onClick={handleViewResume}
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-500 transition-all duration-300 hover:scale-105"
-                      >
-                        <Eye className="w-4 h-4" />
-                        <span className="text-sm">Full Screen View</span>
-                      </button>
-                      <button
-                        onClick={handleDownload}
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-red-600 to-red-500 text-white transition-all duration-300 hover:scale-105"
-                      >
-                        <Download className="w-4 h-4" />
-                        <span className="text-sm">Download</span>
-                      </button>
-                    </div>
+            {/* Resume Info Bar */}
+            <div className="bg-gray-800/30 rounded-xl p-4 text-center border border-gray-700 mb-6">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-red-500/10 rounded-xl flex items-center justify-center">
+                    <FileText className="w-6 h-6 text-red-500" />
+                  </div>
+                  <div className="text-left">
+                    <h3 className="text-white font-medium">{resumeData.name}</h3>
+                    <p className="text-xs text-gray-500">Last updated: {resumeData.date}</p>
                   </div>
                 </div>
+                
+                <div className="flex gap-3">
+                  <button
+                    onClick={handleViewResume}
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-500 transition-all duration-300 hover:scale-105"
+                  >
+                    <Eye className="w-4 h-4" />
+                    <span className="text-sm">Full Screen View</span>
+                  </button>
+                  <button
+                    onClick={handleDownload}
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-red-600 to-red-500 text-white transition-all duration-300 hover:scale-105"
+                  >
+                    <Download className="w-4 h-4" />
+                    <span className="text-sm">Download</span>
+                  </button>
+                </div>
+              </div>
+            </div>
 
-                {/* Real PDF Preview - Large Size */}
-                <div className="bg-gray-900 rounded-xl border border-gray-700 overflow-hidden">
-                  <div className="bg-gray-800/50 px-4 py-2 border-b border-gray-700">
-                    <p className="text-sm text-gray-400 flex items-center gap-2">
-                      <FileText className="w-3 h-3" />
-                      Resume Preview
-                    </p>
-                  </div>
-                  <div className="relative" style={{ height: '600px' }}>
-                    <iframe
-                      src={`${resumeData.url}#toolbar=0&navpanes=0&scrollbar=1&view=FitH`}
-                      className="w-full h-full"
-                      title="Resume Preview"
-                      style={{ border: 'none', backgroundColor: '#f5f5f5' }}
-                    />
-                    {/* Click overlay to open full view */}
-                    <div 
-                      onClick={handleViewResume}
-                      className="absolute inset-0 cursor-pointer flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300 bg-black/60"
-                    >
-                      <div className="text-center">
-                        <Eye className="w-12 h-12 text-white mx-auto mb-2" />
-                        <p className="text-white font-medium">Click to view full resume</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </>
-            ) : (
-              // No Resume Uploaded State
-              <div className="text-center py-12">
-                <div className="w-24 h-24 bg-red-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <FileText className="w-12 h-12 text-red-500" />
-                </div>
-                <h3 className="text-white font-medium text-lg mb-2">No Resume Uploaded</h3>
-                <p className="text-gray-500 text-sm mb-6">Upload your resume to share with potential employers</p>
-                <label className="cursor-pointer inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-red-600 to-red-500 text-white transition-all duration-300 hover:scale-105">
-                  <Upload className="w-4 h-4" />
-                  <span>Upload Resume</span>
-                  <input 
-                    type="file" 
-                    accept=".pdf" 
-                    className="hidden" 
-                    onChange={handleResumeUpload} 
-                    disabled={uploading}
-                  />
-                </label>
-              </div>
-            )}
-            
-            {/* Upload Section - Shown only when resume exists */}
-            {resumeData && (
-              <div className="mt-6 pt-4 border-t border-gray-800">
-                <p className="text-center text-sm text-gray-400 mb-3">
-                  Want to update your resume?
-                </p>
-                <div className="flex justify-center">
-                  <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-dashed border-red-500/50 hover:border-red-500 hover:bg-red-500/5 transition-all duration-300">
-                    <Upload className="w-4 h-4 text-red-500" />
-                    <span className="text-sm text-red-500">
-                      {uploading ? 'Uploading...' : 'Upload New Version'}
-                    </span>
-                    <input 
-                      type="file" 
-                      accept=".pdf" 
-                      className="hidden" 
-                      onChange={handleResumeUpload} 
-                      disabled={uploading}
-                    />
-                  </label>
-                </div>
-                <p className="text-center text-xs text-gray-600 mt-2">
-                  Supported format: PDF only (Max 10MB)
+            {/* Real PDF Preview - Large Size */}
+            <div className="bg-gray-900 rounded-xl border border-gray-700 overflow-hidden">
+              <div className="bg-gray-800/50 px-4 py-2 border-b border-gray-700">
+                <p className="text-sm text-gray-400 flex items-center gap-2">
+                  <FileText className="w-3 h-3" />
+                  Resume Preview
                 </p>
               </div>
-            )}
+              <div className="relative" style={{ height: '600px' }}>
+                <iframe
+                  src={`${resumeData.url}#toolbar=0&navpanes=0&scrollbar=1&view=FitH`}
+                  className="w-full h-full"
+                  title="Resume Preview"
+                  style={{ border: 'none', backgroundColor: '#f5f5f5' }}
+                />
+                {/* Click overlay to open full view */}
+                <div 
+                  onClick={handleViewResume}
+                  className="absolute inset-0 cursor-pointer flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300 bg-black/60"
+                >
+                  <div className="text-center">
+                    <Eye className="w-12 h-12 text-white mx-auto mb-2" />
+                    <p className="text-white font-medium">Click to view full resume</p>
+                  </div>
+                </div>
+              </div>
+            </div>
             
           </div>
         </div>

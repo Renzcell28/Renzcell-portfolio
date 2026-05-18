@@ -69,7 +69,7 @@ SyncSnap also introduces productivity-focused features such as gamification thro
     projectLink: "",
     githubLink: "",
     featured: true,
-    date: "2024",
+    date: "2026",
     myTasks: [
       "System Planning & Requirements - Reviewed and analyzed the SyncSnap Product Requirements Document (PRD). Defined core system flow for workspace, standup submission, and dashboard structure. Planned multi-tenant architecture for separating teams and ensuring data isolation.",
       "Workspace & Invite System - Designed workspace creation flow for Team Leads/Admins. Implemented invite code-based joining system for team members. Ensured secure workspace-to-user association.",
@@ -135,7 +135,7 @@ Overall, FlowState aims to improve productivity, accountability, and collaborati
     projectLink: "",
     githubLink: "",
     featured: true,
-    date: "2024",
+    date: "2026",
     myTasks: [
       "UI/UX & Navigation Improvements - Improved collapsed sidebar interactions with workspace hover tooltips ('Switch Workspace', 'Select a team to continue'). Added navigation icon tooltips in collapsed mode without affecting layout or sidebar width. Fixed Create Team and Join Team modals to stay centered using portal rendering.",
       "Task & Priority System - Added 'View Priority Tasks' button in My Tasks tab to display REGULAR TASKS – BY PRIORITY table with filters (Today, This Week, This Month). Added 'Blocker Priority' button in Live Blockers tab with workstream and deadline filtering.",
@@ -185,7 +185,7 @@ Overall, this phase combines platform learning, environment setup, and early-sta
     projectLink: "",
     githubLink: "",
     featured: true,
-    date: "2024",
+    date: "2026",
     myTasks: [
       "Base Platform Learning & Setup - Learned the basics of the Base platform and its ecosystem for blockchain development. Successfully set up accounts on Base App and Vercel for deployment and development readiness. Prepared the initial development environment to support future blockchain-based features and integrations.",
       "FurFund Prototype Development - Built the initial prototype of FurFund, establishing the first working structure of the project. Defined the foundational layout and system flow for future feature expansion. Set up the base architecture to support upcoming enhancements and development iterations."
@@ -196,7 +196,7 @@ Overall, this phase combines platform learning, environment setup, and early-sta
     title: "2026 Chevrolet Silverado 1500 vs. 2026 Toyota Tundra – Comparison Page Design",
     description: "A UI/UX design task focused on creating a structured and visually appealing comparison page for the 2026 Chevrolet Silverado 1500 and 2026 Toyota Tundra. The design was created to provide users with a clear side-by-side vehicle comparison experience.",
     category: "UI/UX Design",
-    techStack: ["UI/UX Design", "Figma"],
+    techStack: ["UI/UX Design"],
     image: "/Car/Screenshot (434).png",
     gallery: [
       "/Car/Screenshot (435).png",
@@ -219,7 +219,7 @@ The template was built to support scalability, allowing additional vehicle compa
     projectLink: "",
     githubLink: "",
     featured: false,
-    date: "2024",
+    date: "2026",
     myTasks: [
       "UI/UX Design - Created the full comparison page layout for the 2026 Chevrolet Silverado 1500 vs. 2026 Toyota Tundra. Designed a clean side-by-side comparison structure for easier content readability. Organized sections for specifications, performance, pricing, and feature highlights.",
       "Layout & User Experience - Improved visual hierarchy to help users quickly identify key differences between vehicles. Applied responsive design considerations for desktop and mobile viewing. Structured content spacing and alignment for better readability and navigation.",

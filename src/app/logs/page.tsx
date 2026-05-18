@@ -6,9 +6,472 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Calendar, ChevronRight, BookOpen, Plus, X, Save, Trash2, Filter, Search, Clock, ChevronLeft, ChevronsLeft, ChevronsRight, Briefcase, MapPin, CalendarDays, Upload, Rocket, Award, Play, Pause, ChevronUp, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { getAllLogsFromDB, saveLogToDB, deleteLogFromDB, generateSlug, ActivityLog, addImageToLog } from '@/lib/db';
 
 const ITEMS_PER_PAGE = 10;
+
+// Hardcoded Activity Logs Data - All 51 logs
+const HARCODED_LOGS: ActivityLog[] = [
+  {
+    id: 1778919458900,
+    slug: "flowstate-13",
+    date: "May 14, 2026",
+    title: "Flowstate",
+    description: "Today’s work focused on improving Flowstate’s sprint planning, priority tracking, AI recommendations, and team synchronization features.",
+    content: "*Priority Tasks View\\n  -Added a “View Priority Tasks” button in the My Tasks tab to display a REGULAR TASKS – BY PRIORITY table with filtering options for Today, This Week, and This Month.\\n\\n*Blocker Priority Monitoring\\n  -Added a “Blocker Priority” button in the Live Blockers tab to display a BLOCKERS PRIORITY table with filtering options based on workstream and deadline.\\n\\n*Sprint Planner Improvements\\n  -Enhanced the Sprint Planner tab with workload balancing and urgency-based task ordering to help optimize team capacity and sprint execution.\\n\\n*Google Gemini AI Integration\\n  -Successfully integrated Google Gemini AI into the Sprint Planner tab to generate intelligent workload balancing suggestions and blocker resolution recommendations.\\n\\n*Sidebar Team Synchronization Fix\\n  -Fixed sidebar synchronization issues to ensure proper team switching updates across both the AI Insights and Team Activity pages.",
+    tags: ["next.js"],
+    icon: "📝"
+  },
+  {
+    id: 1778919279501,
+    slug: "flowsate",
+    date: "May 13, 2026",
+    title: "Flowsate",
+    description: "Today’s work focused on improving Flowstate’s sidebar interaction system, tooltip usability, and modal behavior.",
+    content: "*Workspace Hover Interaction\\n  -Added hover interaction on the team/workspace icon in collapsed sidebar mode, displaying a tooltip with “Switch Workspace” and “Select a team to continue” before opening the dropdown.\\n\\n*Navigation Icon Tooltips\\n  -Implemented hover tooltips for navigation icons in collapsed mode, showing labels such as “(icon Dashboard)” without affecting sidebar width or layout structure.\\n\\n*Centered Modal Fixes\\n  -Fixed the Create Team and Join Team modals to remain perfectly centered using portal rendering, ensuring they are not affected by sidebar hover, collapse, or expanded states.",
+    tags: ["next.js"],
+    icon: "📝"
+  },
+  {
+    id: 1778919136782,
+    slug: "flowstate-12",
+    date: "May 12, 2026",
+    title: "Flowstate",
+    description: "Today’s work focused on improving Flowstate’s sidebar navigation, profile management, and settings functionality.",
+    content: "*Interactive Sidebar Toggle\\n  -Built a clickable FlowState logo that toggles the sidebar width from 64px to 256px with smooth transitions while always displaying the full FlowState brand name.\\n\\n*Enhanced Navigation UI\\n  -Organized menu items with hover tooltips, active state indicators (blue background with right-side bar), and responsive icon/text alignment for both collapsed and expanded sidebar states.\\n\\n*Profile Management System\\n  -Developed a full Settings profile management feature including photo uploads, resume uploads, role and skill editing, and password validation functionality.\\n\\n*Shift Scheduling Feature\\n  -Added editable shift scheduling in Settings with a time picker, live end-time and break preview, plus database persistence for saving schedule configurations.",
+    tags: ["next.js"],
+    icon: "📝"
+  },
+  {
+    id: 1778918900406,
+    slug: "flowstate-11",
+    date: "May 11, 2026",
+    title: "Flowstate",
+    description: "Today’s work focused on improving Flowstate’s authentication system, password security, and validation workflow.",
+    content: "*Security Tab Password Change\\n  -Added password change functionality in the Security Tab with 3 validation rules: minimum 8 characters, uppercase letter requirement, and special character requirement. Also included real-time checkbox indicators and current password verification before updating.\\n\\n*Secure Signup System\\n  -Built a secure signup process with a real-time password strength meter, validation for 8 characters, uppercase letters, special characters, email “@” checking, progress bar feedback, and checkbox requirement indicators.\\n\\n*Server-Side Validation & Password Protection\\n  -Implemented server-side validation matching frontend rules, added bcrypt password hashing, and blocked duplicate email registrations for secure credential storage.\\n\\n*Secure Login Backend\\n  -Developed the login backend with email lookup, bcrypt password comparison, secure error handling, and proper user data return for session management.",
+    tags: ["next.js"],
+    icon: "📝"
+  },
+  {
+    id: 1778918602862,
+    slug: "flowstate-10",
+    date: "May 9, 2026",
+    title: "Flowstate",
+    description: "Today’s work focused on improving Flowstate’s real-time synchronization, admin controls, and interface consistency.",
+    content: "*Workstream Rename Functionality\\n   -Added functionality to rename workstreams with real-time database updates and instant sidebar synchronization using Socket.IO.\\n\\n*Team Rename Feature (Admin Only)\\n  -Implemented functionality allowing admins to rename teams directly from the Settings tab, with live updates reflected across the sidebar and header.\\n\\n*Real-Time Socket Events\\n  -Added real-time socket events so all team and workstream name changes instantly appear for all members without requiring a page refresh.\\n\\n*Reaction Tooltip UI Cleanup\\n-Updated the reaction tooltip with a white theme, removed the close button, and hid scrollbars for a cleaner and more modern interface.\\n\\n*Custom FlowState Branding\\n  -Replaced all placeholder logos with the official FlowState logo across the navbar, sidebar, and footer for consistent branding.\\n\\n*Sidebar Hover Edit Controls\\n  -Implemented a hover-triggered pencil icon on sidebar workstreams, allowing admins to quickly edit workstream names and members.\\n\\n*Rename Field Validation\\n  -Added a 50-character limit with a live character counter in the rename field to improve input control and user feedback.",
+    tags: ["next.js"],
+    icon: "📝"
+  },
+  {
+    id: 1778918119455,
+    slug: "flowstate-9",
+    date: "May 8, 2026",
+    title: "Flowstate",
+    description: "Today’s work focused on improving Flowstate’s real-time activity tracking and landing page user experience.",
+    content: "*Blocker Count Synchronization Fix\\n  -Resolved the blocker count synchronization issue in Team Activity, ensuring accurate real-time updates whenever blockers are marked as “Resolved.”\\n\\n*Landing Page Redesign\\n  -Redesigned the landing page with interactive FAQ dropdowns, smoother navigation flow, and a more consistent design system applied across all sections for improved usability and visual consistency.",
+    tags: ["next.js"],
+    icon: "📝"
+  },
+  {
+    id: 1778746756780,
+    slug: "tesda-nc-ii-assessment-exam-completion-passed",
+    date: "May 6, 2026",
+    title: "TESDA NC II Assessment / Exam Completion Passed",
+    description: "Successfully passed the TESDA NC II assessment, demonstrating competency in required technical skills.",
+    content: "*Assessment Preparation\\n  -Reviewed required competencies and prepared for the NC II assessment.\\n\\n*Skills Evaluation Readiness\\n  -Practiced hands-on tasks to ensure readiness for the exam.\\n\\n*NC II Passed\\n  -Successfully passed the TESDA NC II assessment, meeting certification standards.",
+    tags: ["NCII CERTIFIED"],
+    icon: "🏅"
+  },
+  {
+    id: 1778746615204,
+    slug: "nc-ii-training-progress-april-21-may-5-2026",
+    date: "April 21, 2026",
+    title: "NC II Training – Progress",
+    description: "Active participation in NC II training sessions and practical activities to strengthen core technical skills.",
+    content: "*Training Participation\\n  -Actively participated in NC II training sessions.\\n\\n*Hands-on Learning Tasks\\n  -Completed guided exercises and applied learned concepts.\\n\\n*Skill Development Progress\\n  -Improved understanding of NC II competencies through continuous practice.",
+    tags: ["NCII"],
+    icon: "📖"
+  },
+  {
+    id: 1778746306164,
+    slug: "flowstate-8",
+    date: "May 2, 2026",
+    title: "Flowstate",
+    description: "System update focused on improving account settings, assignee management, and API request handling.",
+    content: "*Account Management Dropdowns\\n   -Added expandable dropdowns for Delete Account and Change Password.\\n\\n*Assignee & Profile Improvements\\n   -Profile photos now appear in the assignee dropdown. Implemented role-based permissions.\\n\\n*API Request Fix\\n   -Updated API request structure to fix user deletion.\\n\\n*Resume Viewer Enhancement\\n   -Adjusted resume viewer layout to properly display entire document.",
+    tags: ["next.js"],
+    icon: "📝"
+  },
+  {
+    id: 1778669986407,
+    slug: "flowstate-7",
+    date: "April 20, 2026",
+    title: "Flowstate",
+    description: "Enhancing the Flowstate system UI structure and AI Insights dashboard features.",
+    content: "*Floating Action Button Control\\n  -Updated FAB to only appear on Dashboard page.\\n\\n*Blockers UI Design\\n  -Started designing UI for Blockers system.\\n\\n*No Team Message\\n  -Added “No Team” message across all pages when user has no team.",
+    tags: ["next.js"],
+    icon: "📝"
+  },
+  {
+    id: 1778669769792,
+    slug: "flowstate-6",
+    date: "April 17, 2026",
+    title: "Flowstate",
+    description: "Enhancing Flowstate system UI and AI Insights dashboard features.",
+    content: "*Direct Team Switching\\n  -Enabled switching teams directly from sidebar dropdown.\\n\\n*Dynamic Team Feed Update\\n  -Implemented real-time team feed updates.\\n\\n*Invite Code Display\\n  -Added team invite code in chat header with copy button.\\n\\n*Admin Team Deletion\\n  -Allowed admins to delete teams.\\n\\n*Member Leave Team\\n  -Enabled members to leave teams.",
+    tags: ["next.js"],
+    icon: "📝"
+  },
+  {
+    id: 1778669479233,
+    slug: "flowstate-5",
+    date: "April 16, 2026",
+    title: "Flowstate",
+    description: "Enhancing Flowstate system UI structure and AI Insights dashboard features.",
+    content: "*Bug Fixes\\n-Fixed user name update issue.\\n\\n*Team Selection Page\\n-Created team selection page with cards.\\n\\n*Team Feed Tab System\\n-Built workspace with Chat, Members, Activity, Settings tabs.\\n\\n*Members Tab\\n-Displays team members with role badges.\\n\\n*Activity Tab\\n-Shows team activity logs.\\n\\n*Settings Tab\\n-Added Leave Group and Delete Team controls.\\n\\n*Chat Tab\\n-Implemented real-time messaging.",
+    tags: ["next", "js"],
+    icon: "📝"
+  },
+  {
+    id: 1778669164368,
+    slug: "flowstate-4",
+    date: "April 15, 2026",
+    title: "Flowstate",
+    description: "Enhancing Flowstate system UI structure and AI Insights dashboard features.",
+    content: "*First Name & Last Name Update\\n  -Implemented real-time name updates.\\n\\n*Email Change Feature\\n  -Enabled secure email updating with validation.\\n\\n*Password Change Feature\\n  -Added secure password update with verification.\\n\\n*Delete Account Feature\\n  -Built complete account deletion system.",
+    tags: ["next.js"],
+    icon: "📝"
+  },
+  {
+    id: 1778668208441,
+    slug: "flowstate-3",
+    date: "April 14, 2026",
+    title: "Flowstate",
+    description: "Improving Flowstate system UI structure and AI Analytics navigation flow.",
+    content: "*Settings Page UI Setup\\n  -Created Settings page layout with Profile/Security/Preferences tabs.\\n\\n*Team Selection Page\\n  -Built page for team selection before analytics.\\n\\n*AI Analytics Navigation\\n  -Added View AI Analytics button for better navigation.",
+    tags: ["next", "js"],
+    icon: "📝"
+  },
+  {
+    id: 1778667986058,
+    slug: "flowstate-2",
+    date: "April 13, 2026",
+    title: "Flowstate",
+    description: "Enhancing Flowstate system UI structure and AI Insights dashboard features.",
+    content: "*AI Insight UI Setup\\n  -Set up AI Insight section interface.\\n\\n*Custom Date Range Filter\\n  -Added date filtering options.\\n\\n*Dashboard Tabs\\n  -Added navigation tabs for AI Digest, Risk Monitor, Sprint Planner, Security.",
+    tags: ["next.js"],
+    icon: "📝"
+  },
+  {
+    id: 1778667749106,
+    slug: "flowstate-1",
+    date: "April 10, 2026",
+    title: "Flowstate",
+    description: "Improving Flowstate system UI/UX design and initial page structure.",
+    content: "*Layout UI/UX Design\\n  -Created overall layout and UI/UX design for Flowstate.\\n\\n*My Tasks Page Setup\\n  -Set up initial My Tasks page interface.",
+    tags: ["NEXT.JS"],
+    icon: "📝"
+  },
+  {
+    id: 1778667214610,
+    slug: "flowstate",
+    date: "May 12, 2026",
+    title: "Flowstate",
+    description: "Setting up project environment and integrating backend database.",
+    content: "*Project Setup Completed\\n  -Cloned repository and installed dependencies.\\n\\n*MongoDB Atlas Integration\\n  -Connected to MongoDB Atlas.\\n\\n*Data Storage Implementation\\n  -Successfully stored user data.",
+    tags: ["MONGODB", "GITHUB"],
+    icon: "📝"
+  },
+  {
+    id: 1778666912843,
+    slug: "one-page-pitch-creation",
+    date: "April 6, 2026",
+    title: "One-Page Pitch Creation",
+    description: "Planning and presenting a digital solution idea to improve operational efficiency.",
+    content: "*One-Page Pitch Creation\\n  -Created concise pitch for digital solution outlining problem, solution, and benefits.",
+    tags: ["DOCUMENT"],
+    icon: "📝"
+  },
+  {
+    id: 1778666587219,
+    slug: "created-a-design-template-for-the-2026-chevrolet-silverado-1500-vs-2026-toyota-tundra-comparison-page",
+    date: "March 27, 2026",
+    title: "Vehicle Comparison Page Design",
+    description: "Designing a structured layout for a vehicle comparison page.",
+    content: "*Comparison Page Design Template\\n  -Created design template for vehicle comparison page with clean structure.",
+    tags: ["HTML", "CSS"],
+    icon: "🎨"
+  },
+  {
+    id: 1778666081339,
+    slug: "page-creation",
+    date: "March 26, 2026",
+    title: "Page Creation",
+    description: "Reviewing system guidelines and beginning page creation setup.",
+    content: "*SOP Review\\n  -Reviewed page creation phases.\\n\\n*Page Template Setup\\n  -Started setting up initial page template.",
+    tags: ["CSS", "HTML"],
+    icon: "📝"
+  },
+  {
+    id: 1778665826363,
+    slug: "syncsnap-13",
+    date: "March 25, 2026",
+    title: "SyncSnap",
+    description: "Improving SyncSnap notification handling, role-based security, and AI report interface.",
+    content: "*Notification System Improvement\\n  -Fixed Mark All Read functionality.\\n\\n*Role-Based Access Control\\n  -Implemented proper access restrictions for reports.\\n\\n*AI Report UI Design\\n  -Developed initial design for AI-generated report interface.",
+    tags: ["Laravel", "React"],
+    icon: "📝"
+  },
+  {
+    id: 1778665724316,
+    slug: "syncsnap-12",
+    date: "March 24, 2026",
+    title: "SyncSnap",
+    description: "Improving SyncSnap reporting, AI reliability, and permissions.",
+    content: "*Member Report Feature\\n  -Built Member Report view showing team performance.\\n\\n*Multi-Provider AI System\\n  -Configured OpenRouter as backup AI system.\\n\\n*Permission Fixes\\n  -Fixed member access issues and resolved CSRF errors.",
+    tags: ["Laravel", "React"],
+    icon: "📝"
+  },
+  {
+    id: 1778665483540,
+    slug: "base-platform-furfund",
+    date: "March 19, 2026",
+    title: "Base Platform & FurFund",
+    description: "Learning new platforms and starting FurFund prototype.",
+    content: "*Base Platform Learning\\n  -Learned basics of Base platform and set up accounts.\\n\\n*FurFund Prototype\\n  -Built initial prototype of FurFund.",
+    tags: ["Base Platform"],
+    icon: "📝"
+  },
+  {
+    id: 1778665145612,
+    slug: "syncsnap-11",
+    date: "March 16, 2026",
+    title: "SyncSnap",
+    description: "Improving SyncSnap usability and AI report rendering.",
+    content: "*Reports Search Feature\\n  -Implemented workspace search in Reports Index.\\n\\n*Report Parsing Optimization\\n  -Improved parseReportText for cleaner display.",
+    tags: ["Laravel", "React"],
+    icon: "📝"
+  },
+  {
+    id: 1778665042261,
+    slug: "syncsnap-10",
+    date: "March 17, 2026",
+    title: "SyncSnap",
+    description: "Strengthening SyncSnap security and access control.",
+    content: "*IDOR Protection\\n  -Added ownership validation across controllers.\\n\\n*Admin & Member Report Separation\\n  -Restricted reports to admins only.\\n\\n*Notification Count Fix\\n  -Fixed notification count display.",
+    tags: ["Laravel", "React"],
+    icon: "📝"
+  },
+  {
+    id: 1778664817636,
+    slug: "syncsnap-9",
+    date: "March 16, 2026",
+    title: "SyncSnap",
+    description: "Improving SyncSnap stability and AI report generation.",
+    content: "*CSRF Error Fix\\n  -Resolved CSRF token errors.\\n\\n*Enhanced Deadline Reminders\\n  -Added working workspace links to emails.\\n\\n*OpenAI Integration\\n  -Integrated GPT-3.5-turbo for AI reports.",
+    tags: ["Laravel", "React", "AI"],
+    icon: "📝"
+  },
+  {
+    id: 1778664694381,
+    slug: "syncsnap-8",
+    date: "March 13, 2026",
+    title: "SyncSnap",
+    description: "Improving SyncSnap AI report quality and analytics.",
+    content: "*AI Reports Cleanup\\n  -Fixed duplicate paragraph issues.\\n\\n*Blocker Visibility\\n  -Allowed all team members to view blockers.\\n\\n*Date Picker Enhancement\\n  -Added date selector for reports.\\n\\n*Automated Deadline Reminders\\n  -Built system for email reminders.",
+    tags: [],
+    icon: "📝"
+  },
+  {
+    id: 1778664394438,
+    slug: "syncsnap-7",
+    date: "March 12, 2026",
+    title: "SyncSnap",
+    description: "Improving SyncSnap AI integration and reporting.",
+    content: "*OpenRouter API Fix\\n  -Switched to openai/gpt-3.5-turbo.\\n\\n*AI Reports LIVE\\n  -Activated live AI report generation.\\n\\n*Removed Fallback Errors\\n  -Eliminated No summary available fallback.\\n\\n*Notification Navigation Fix\\n  -Fixed View Details navigation.",
+    tags: ["Laravel", "React"],
+    icon: "📝"
+  },
+  {
+    id: 1778664143374,
+    slug: "syncsnap-6",
+    date: "March 10, 2026",
+    title: "SyncSnap",
+    description: "Improving SyncSnap permissions and AI integration.",
+    content: "*Member/Admin Permissions\\n  -Added status update for members.\\n\\n*Gemini API Fix\\n  -Fixed Gemini API key.\\n\\n*Status Tracking\\n  -Improved blocker visibility.",
+    tags: ["Laravel", "React"],
+    icon: "📝"
+  },
+  {
+    id: 1778663665270,
+    slug: "syncsnap-5",
+    date: "March 8, 2026",
+    title: "SyncSnap",
+    description: "Improving SyncSnap AI reporting system.",
+    content: "*AI Reports Working\\n  -Implemented AI reports using Gemini.\\n\\n*Server Error Fixes\\n  -Resolved 500 internal errors.",
+    tags: ["Laravel", "React", "AI"],
+    icon: "📝"
+  },
+  {
+    id: 1778663530718,
+    slug: "syncsnap-4",
+    date: "March 5, 2026",
+    title: "SyncSnap",
+    description: "Improving SyncSnap blocker management and notifications.",
+    content: "*Blocker Status Management\\n  -Implemented tracking with Pending/Processing/Resolved.\\n\\n*Email Notifications\\n  -Fixed admin alert system.\\n\\n*Admin Response Feature\\n  -Added direct response to blockers.\\n\\n*Workspace Search\\n  -Implemented search by title.",
+    tags: ["Laravel", "React"],
+    icon: "📝"
+  },
+  {
+    id: 1778663305326,
+    slug: "syncsnap-3",
+    date: "March 4, 2026",
+    title: "SyncSnap",
+    description: "Improving SyncSnap UI and notification reliability.",
+    content: "*Workspace Cards\\n  -Built separate notification cards per workspace.\\n\\n*Status Controls\\n  -Added status badges with three-dot menu.\\n\\n*Email Notifications\\n  -Resolved email errors.",
+    tags: ["Laravel", "React"],
+    icon: "📝"
+  },
+  {
+    id: 1778662925359,
+    slug: "syncsnap-2",
+    date: "May 2, 2026",
+    title: "SyncSnap",
+    description: "Enhancing gamification features and user feedback.",
+    content: "*Gamification Features\\n  -Daily streaks\\n  -Early bird bonuses (+10)\\n  -Milestone rewards\\n  -Leaderboard rankings\\n\\n*System Feedback\\n  -Success toasts and warning messages.",
+    tags: ["Laravel", "React"],
+    icon: "🎮"
+  },
+  {
+    id: 1778661786367,
+    slug: "syncsnap-1",
+    date: "March 1, 2026",
+    title: "SyncSnap",
+    description: "Development of SyncSnap system improvements.",
+    content: "*Workspace & Standup System\\n  -Improved collaboration features.\\n\\n*Gamification\\n  -Started implementing engagement elements.\\n\\n*Database Setup\\n  -Created required tables.",
+    tags: ["Laravel", "React"],
+    icon: "📝"
+  },
+  {
+    id: 1778661216417,
+    slug: "syncsnap",
+    date: "May 26, 2026",
+    title: "SyncSnap",
+    description: "Research and planning for SyncSnap project.",
+    content: "*Tool Research\\n  -Evaluated different technologies.\\n\\n*System Planning\\n  -Brainstormed features and workflow.\\n\\n*Implementation Strategy\\n  -Identified tech stack options.",
+    tags: [],
+    icon: "📝"
+  },
+  {
+    id: 1778660776113,
+    slug: "research-based",
+    date: "February 25, 2026",
+    title: "Research-Based",
+    description: "Quality assurance testing for Sinag Villas Website.",
+    content: "*QA Testing\\n  -Performed quality assurance checks.\\n\\n*Script Impact Research\\n  -Researched script effects on performance.",
+    tags: ["Research"],
+    icon: "📝"
+  },
+  {
+    id: 1778660382665,
+    slug: "axiom-scrumban-5",
+    date: "May 24, 2026",
+    title: "Axiom Scrumban",
+    description: "System debugging and error resolution.",
+    content: "*System Error Fixes\\n  -Fixed 404 errors\\n  -Solved PostgreSQL JSON issues\\n  -Corrected route conflicts\\n  -Fixed BOM encoding\\n  -Resolved ActivityLog null errors\\n  -Addressed Vue warnings",
+    tags: ["Laravel", "Vue"],
+    icon: "⚙️"
+  },
+  {
+    id: 1778660158033,
+    slug: "axiom-scrumban-4",
+    date: "February 22, 2026",
+    title: "Axiom Scrumban",
+    description: "System functionality and notification improvements.",
+    content: "*Permanent Project Deletion\\n  -Implemented with confirmation prompt.\\n\\n*Gmail SMTP Configuration\\n  -Configured for email notifications.",
+    tags: ["Laravel", "Vue"],
+    icon: "📧"
+  },
+  {
+    id: 1778659899985,
+    slug: "axiom-scrumban-3",
+    date: "February 19, 2026",
+    title: "Axiom Scrumban",
+    description: "Project organization and UI improvements.",
+    content: "*Project Archive System\\n  -Implemented archiving from notifications.\\n\\n*UI Components\\n  -Added responsive grid layout\\n  -Designed color-coded notification cards",
+    tags: ["Laravel", "Vue"],
+    icon: "🎨"
+  },
+  {
+    id: 1778659464290,
+    slug: "axiom-scrumban-2",
+    date: "February 18, 2026",
+    title: "Axiom Scrumban",
+    description: "Notification system enhancement.",
+    content: "*Notification System\\n  -3-day reminders\\n  -Due today alerts\\n  -Overdue alerts\\n  -Project creation alerts",
+    tags: ["Laravel", "Vue"],
+    icon: "🔔"
+  },
+  {
+    id: 1778659064531,
+    slug: "axiom-srumban",
+    date: "February 17, 2026",
+    title: "Axiom Scrumban",
+    description: "Continuous development and workflow enhancement.",
+    content: "*Workflow Enhancement\\n  -Improved task management\\n  -Created flowcharts\\n  -Implemented notification system",
+    tags: ["Laravel", "Vue"],
+    icon: "📊"
+  },
+  {
+    id: 1778658196619,
+    slug: "axiom-scrumban-1",
+    date: "February 16, 2026",
+    title: "Axiom Scrumban",
+    description: "System documentation and core development.",
+    content: "*Documentation\\n  -Features and implementation strategies\\n\\n*Core Pages\\n  -Authentication pages\\n  -Landing pages",
+    tags: ["Laravel", "Vue"],
+    icon: "📄"
+  },
+  {
+    id: 1778657521755,
+    slug: "axiom-scrumban",
+    date: "February 15, 2026",
+    title: "Axiom Scrumban",
+    description: "Page creation for structured content management.",
+    content: "*Page Creation\\n  -Created page for tasks and documentation\\n  -Designed for organized project information",
+    tags: ["Laravel", "Vue"],
+    icon: "📝"
+  },
+  {
+    id: 1778656599037,
+    slug: "learning-laravel-plus-vue",
+    date: "February 5, 2026",
+    title: "Learning Laravel Plus Vue",
+    description: "Learning fundamentals of Laravel and Vue.js.",
+    content: "*Learning Progress\\n  -Exploring Laravel and Vue.js fundamentals\\n  -Building scalable and modern systems",
+    tags: ["Laravel", "Vue"],
+    icon: "📚"
+  },
+  {
+    id: 1778655932302,
+    slug: "laravel-vue-integration",
+    date: "February 5, 2026",
+    title: "Laravel + Vue Integration",
+    description: "Learning how Laravel and Vue.js work together.",
+    content: "*Integration Learning\\n  -Understanding backend and frontend integration\\n  -Building dynamic systems",
+    tags: ["Laravel", "Vue"],
+    icon: "🔗"
+  },
+  {
+    id: 1778655157647,
+    slug: "reading-sui-modules-1-5",
+    date: "February 4, 2026",
+    title: "Reading Sui Modules 1-5",
+    description: "Learning Sui blockchain platform basics.",
+    content: "*Module 1: Sui 101\\n  -Introduction to Sui blockchain\\n\\n*Module 2: Move Language\\n  -Introduction to Move programming\\n\\n*Module 3: Smart Contracts\\n  -Building basic smart contracts\\n\\n*Module 4: DApp Development\\n  -Creating decentralized apps\\n\\n*Module 5: UX Enhancements\\n  -Advanced Move features",
+    tags: ["SUI"],
+    icon: "⛓️"
+  }
+];
 
 // OJT Timeline Data
 const ojtTimeline = [
@@ -159,9 +622,8 @@ const formatDateForDisplay = (year: number, month: number, day: number): string 
 };
 
 export default function LogsPage() {
-  const [logs, setLogs] = useState<ActivityLog[]>([]);
-  const [filteredLogs, setFilteredLogs] = useState<ActivityLog[]>([]);
-  const [showForm, setShowForm] = useState(false);
+  const [logs] = useState<ActivityLog[]>(HARCODED_LOGS);
+  const [filteredLogs, setFilteredLogs] = useState<ActivityLog[]>(HARCODED_LOGS);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedTag, setSelectedTag] = useState("");
   const [selectedMonth, setSelectedMonth] = useState("");
@@ -171,76 +633,12 @@ export default function LogsPage() {
   const [ojtCurrentIndex, setOjtCurrentIndex] = useState(0);
   const [ojtVisibleCards, setOjtVisibleCards] = useState(3);
   const [ojtIsAutoPlaying, setOjtIsAutoPlaying] = useState(true);
-  const [hoveredLogId, setHoveredLogId] = useState<number | null>(null);
-  const [showActionButtons, setShowActionButtons] = useState(false);
   const ojtScrollRef = useRef<HTMLDivElement>(null);
   const ojtAutoPlayRef = useRef<NodeJS.Timeout | null>(null);
   
-  const [selectedImages, setSelectedImages] = useState<File[]>([]);
-  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
-  const [isUploadingImages, setIsUploadingImages] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({});
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  
-  const today = new Date();
-  const defaultDateValue = formatDateForInput(today);
-  const defaultFormattedDate = formatDateForDisplay(today.getFullYear(), today.getMonth() + 1, today.getDate());
-  
   useEffect(() => {
-    loadLogs();
+    updateFilters();
   }, []);
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.ctrlKey && e.shiftKey && (e.key === 'F' || e.key === 'f')) {
-        e.preventDefault();
-        e.stopPropagation();
-        setShowActionButtons(prev => {
-          const newState = !prev;
-          const toast = document.createElement('div');
-          toast.className = `fixed bottom-20 right-4 ${newState ? 'bg-green-500' : 'bg-gray-600'} text-white px-4 py-2 rounded-lg shadow-lg z-50 text-sm`;
-          toast.textContent = newState 
-            ? '🔓 Admin mode: Action buttons visible'
-            : '🔒 Security mode: Action buttons hidden';
-          document.body.appendChild(toast);
-          setTimeout(() => toast.remove(), 2000);
-          return newState;
-        });
-        return;
-      }
-      
-      if ((e.ctrlKey || e.metaKey) && (e.key === 'f' || e.key === 'F') && showActionButtons) {
-        e.preventDefault();
-        e.stopPropagation();
-        setShowForm(true);
-        const toast = document.createElement('div');
-        toast.className = 'fixed bottom-20 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 text-sm';
-        toast.textContent = '📝 Add Activity Log form opened! (Ctrl+F)';
-        document.body.appendChild(toast);
-        setTimeout(() => toast.remove(), 2000);
-        return;
-      }
-      
-      if ((e.ctrlKey || e.metaKey) && (e.key === 'd' || e.key === 'D') && hoveredLogId !== null && showActionButtons) {
-        e.preventDefault();
-        e.stopPropagation();
-        if (confirm('⚠️ Are you sure you want to permanently delete this activity log?')) {
-          deleteLogFromDB(hoveredLogId);
-          loadLogs();
-          const toast = document.createElement('div');
-          toast.className = 'fixed bottom-20 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 text-sm';
-          toast.textContent = '🗑️ Activity log deleted! (Ctrl+D)';
-          document.body.appendChild(toast);
-          setTimeout(() => toast.remove(), 2000);
-          setHoveredLogId(null);
-        }
-        return;
-      }
-    };
-    
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [hoveredLogId, showActionButtons]);
 
   useEffect(() => {
     const updateVisibleCards = () => {
@@ -276,15 +674,9 @@ export default function LogsPage() {
     }
   }, [ojtCurrentIndex]);
 
-  const loadLogs = () => {
-    const loadedLogs = getAllLogsFromDB();
-    setLogs(loadedLogs);
-    setFilteredLogs(loadedLogs);
-  };
-
-  const allTags = [...new Set(logs.flatMap(log => log.tags))];
+  const allTags = [...new Set(HARCODED_LOGS.flatMap(log => log.tags))];
   
-  const months = [...new Set(logs.map(log => {
+  const months = [...new Set(HARCODED_LOGS.map(log => {
     const match = log.date.match(/(\w+) (\d+), (\d+)/);
     if (match) {
       return `${match[1]} ${match[3]}`;
@@ -292,18 +684,8 @@ export default function LogsPage() {
     return '';
   }))];
 
-  const [newLog, setNewLog] = useState({
-    dateValue: defaultDateValue,
-    date: defaultFormattedDate,
-    title: "",
-    description: "",
-    content: "",
-    tags: "",
-    icon: "📝"
-  });
-
-  useEffect(() => {
-    let filtered = [...logs];
+  const updateFilters = () => {
+    let filtered = [...HARCODED_LOGS];
     if (searchTerm) {
       filtered = filtered.filter(log => 
         log.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -325,7 +707,11 @@ export default function LogsPage() {
     }
     setFilteredLogs(filtered);
     setCurrentPage(1);
-  }, [logs, searchTerm, selectedTag, selectedMonth]);
+  };
+
+  useEffect(() => {
+    updateFilters();
+  }, [searchTerm, selectedTag, selectedMonth]);
 
   const totalPages = Math.ceil(filteredLogs.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -354,153 +740,6 @@ export default function LogsPage() {
 
   const toggleOjtAutoPlay = () => {
     setOjtIsAutoPlaying(!ojtIsAutoPlaying);
-  };
-
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const dateValue = e.target.value;
-    if (dateValue) {
-      const [year, month, day] = dateValue.split('-').map(Number);
-      const formattedDate = formatDateForDisplay(year, month, day);
-      setNewLog({...newLog, dateValue, date: formattedDate});
-    }
-  };
-
-  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files || files.length === 0) return;
-
-    const validFiles: File[] = [];
-    const validPreviews: string[] = [];
-
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      if (!file.type.startsWith('image/')) {
-        alert(`${file.name} is not an image file`);
-        continue;
-      }
-      if (file.size > 5 * 1024 * 1024) {
-        alert(`${file.name} is larger than 5MB`);
-        continue;
-      }
-      validFiles.push(file);
-      validPreviews.push(URL.createObjectURL(file));
-    }
-
-    setSelectedImages(prev => [...prev, ...validFiles]);
-    setImagePreviews(prev => [...prev, ...validPreviews]);
-  };
-
-  const removeImage = (index: number) => {
-    URL.revokeObjectURL(imagePreviews[index]);
-    setSelectedImages(prev => prev.filter((_, i) => i !== index));
-    setImagePreviews(prev => prev.filter((_, i) => i !== index));
-  };
-
-  const uploadImages = async (slug: string): Promise<boolean> => {
-    if (selectedImages.length === 0) return true;
-
-    setIsUploadingImages(true);
-    let allSuccess = true;
-
-    for (let i = 0; i < selectedImages.length; i++) {
-      const file = selectedImages[i];
-      setUploadProgress(prev => ({ ...prev, [file.name]: 0 }));
-
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('slug', slug);
-
-      try {
-        const response = await fetch('/api/upload-cloudinary', {
-          method: 'POST',
-          body: formData,
-        });
-
-        const result = await response.json();
-        
-        if (response.ok) {
-          const newImage = {
-            id: result.public_id,
-            url: result.url,
-            filename: file.name,
-            timestamp: new Date().toLocaleString(),
-          };
-          
-          addImageToLog(slug, newImage);
-          setUploadProgress(prev => ({ ...prev, [file.name]: 100 }));
-        } else {
-          throw new Error(result.error);
-        }
-      } catch (error) {
-        console.error(`Error uploading ${file.name}:`, error);
-        setUploadProgress(prev => ({ ...prev, [file.name]: -1 }));
-        allSuccess = false;
-      }
-    }
-
-    setIsUploadingImages(false);
-    setTimeout(() => setUploadProgress({}), 3000);
-    
-    return allSuccess;
-  };
-
-  const handleAddLog = async () => {
-    if (newLog.title && newLog.description) {
-      const newId = Date.now();
-      const slug = generateSlug(newLog.title);
-      const newEntry: ActivityLog = {
-        id: newId,
-        slug: slug,
-        date: newLog.date,
-        title: newLog.title,
-        description: newLog.description,
-        content: newLog.content || `## ${newLog.title}\n\n${newLog.description}`,
-        tags: newLog.tags.split(',').map(tag => tag.trim()),
-        icon: newLog.icon || "📝"
-      };
-      
-      saveLogToDB(newEntry);
-      
-      if (selectedImages.length > 0) {
-        await uploadImages(slug);
-      }
-      
-      loadLogs();
-      
-      imagePreviews.forEach(preview => URL.revokeObjectURL(preview));
-      
-      setNewLog({
-        dateValue: defaultDateValue,
-        date: defaultFormattedDate,
-        title: "",
-        description: "",
-        content: "",
-        tags: "",
-        icon: "📝"
-      });
-      setSelectedImages([]);
-      setImagePreviews([]);
-      setShowForm(false);
-      
-      const toast = document.createElement('div');
-      toast.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
-      toast.textContent = `✅ Activity log added successfully! ${selectedImages.length > 0 ? `(${selectedImages.length} image${selectedImages.length > 1 ? 's' : ''} uploaded)` : ''}`;
-      document.body.appendChild(toast);
-      setTimeout(() => toast.remove(), 3000);
-    }
-  };
-
-  const handleDeleteLog = (id: number, e?: React.MouseEvent) => {
-    if (e) e.preventDefault();
-    if (confirm('⚠️ Are you sure you want to delete this activity log?')) {
-      deleteLogFromDB(id);
-      loadLogs();
-      const toast = document.createElement('div');
-      toast.className = 'fixed bottom-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
-      toast.textContent = '🗑️ Activity log deleted!';
-      document.body.appendChild(toast);
-      setTimeout(() => toast.remove(), 3000);
-    }
   };
 
   const clearFilters = () => {
@@ -582,7 +821,7 @@ export default function LogsPage() {
         {/* Stats Section */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-2">
           <div className="text-center p-3 rounded-lg bg-gray-900/50 border border-gray-800">
-            <p className="text-2xl font-bold text-red-500">{logs.length}</p>
+            <p className="text-2xl font-bold text-red-500">{HARCODED_LOGS.length}</p>
             <p className="text-xs text-gray-500">Total Logs</p>
           </div>
           <div className="text-center p-3 rounded-lg bg-gray-900/50 border border-gray-800">
@@ -661,13 +900,7 @@ export default function LogsPage() {
 
       {/* Activity Logs List */}
       <div className="max-w-4xl mx-auto space-y-4">
-        {currentLogs.length === 0 && !logs.length ? (
-          <div className="text-center py-20">
-            <div className="text-6xl mb-4">📝</div>
-            <h3 className="text-xl font-semibold mb-2 text-white">No activity logs yet</h3>
-            <p className="text-gray-500">Click the + button to add your first activity log!</p>
-          </div>
-        ) : currentLogs.length === 0 && logs.length > 0 ? (
+        {currentLogs.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">🔍</div>
             <h3 className="text-xl font-semibold mb-2 text-white">No logs found</h3>
@@ -676,12 +909,7 @@ export default function LogsPage() {
           </div>
         ) : (
           currentLogs.map((log) => (
-            <div
-              key={log.id}
-              className="relative group"
-              onMouseEnter={() => showActionButtons && setHoveredLogId(log.id)}
-              onMouseLeave={() => setHoveredLogId(null)}
-            >
+            <div key={log.id} className="relative group">
               <Link href={`/logs/${log.slug}`} className="block">
                 <Card className="hover:shadow-md transition-all border-gray-800 hover:border-red-500/50 overflow-hidden cursor-pointer bg-gray-900/80 backdrop-blur-sm">
                   <CardContent className="p-5">
@@ -705,14 +933,6 @@ export default function LogsPage() {
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        {showActionButtons && (
-                          <button 
-                            onClick={(e) => { e.preventDefault(); handleDeleteLog(log.id, e); }} 
-                            className="opacity-0 group-hover:opacity-100 transition-opacity p-2 rounded-full hover:bg-red-900/30 text-red-500 hover:text-red-400"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        )}
                         <div className="w-10 h-10 rounded-full bg-red-500/5 flex items-center justify-center text-red-500 group-hover:bg-red-500 group-hover:text-white transition-all duration-300 group-hover:scale-110">
                           <ChevronRight className="w-5 h-5" />
                         </div>
@@ -867,245 +1087,6 @@ export default function LogsPage() {
         )}
       </div>
 
-      {/* Floating Action Button - Only visible when admin mode is active */}
-      {showActionButtons && (
-        <div className="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-50">
-          {!showForm ? (
-            <button 
-              onClick={() => setShowForm(true)} 
-              className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-r from-red-600 to-red-500 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 flex items-center justify-center group"
-            >
-              <Plus className="w-5 h-5 sm:w-6 sm:h-6 group-hover:rotate-90 transition-transform duration-300" />
-              <span className="absolute right-full mr-3 px-2 py-1 text-xs bg-gray-900 text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap hidden sm:block">
-                Add Activity Log (Ctrl+F)
-              </span>
-            </button>
-          ) : (
-            <>
-              <div 
-                className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 animate-fade-in"
-                onClick={() => setShowForm(false)}
-              />
-              
-              <div className="fixed inset-x-4 bottom-0 sm:inset-auto sm:bottom-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 bg-gray-900 rounded-t-2xl sm:rounded-2xl shadow-2xl border border-red-500/20 w-auto sm:w-[550px] max-h-[90vh] overflow-y-auto z-50 animate-slide-up">
-                <div className="sticky top-0 bg-gray-900/95 backdrop-blur-sm border-b border-red-500/20 p-4 sm:p-5 flex justify-between items-center">
-                  <h3 className="font-bold text-base sm:text-lg text-white">Add Activity Log</h3>
-                  <button onClick={() => setShowForm(false)} className="p-1.5 rounded-full hover:bg-gray-800 transition-colors">
-                    <X className="w-4 h-4 sm:w-5 sm:h-5" />
-                  </button>
-                </div>
-                
-                <div className="p-4 sm:p-5">
-                  <div className="space-y-4 sm:space-y-3">
-                    {/* Date Picker */}
-                    <div className="space-y-1">
-                      <label className="text-xs sm:text-sm font-medium text-gray-400 flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-red-500" />
-                        Date
-                      </label>
-                      <input 
-                        type="date" 
-                        value={newLog.dateValue}
-                        onChange={handleDateChange}
-                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg border border-gray-800 bg-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm text-white" 
-                      />
-                      <p className="text-[10px] text-gray-500 mt-1">
-                        Selected: {newLog.date}
-                      </p>
-                    </div>
-
-                    {/* Icon Picker */}
-                    <div className="space-y-1">
-                      <label className="text-xs sm:text-sm font-medium text-gray-400">Icon (Emoji)</label>
-                      <div className="flex items-center gap-2">
-                        <input 
-                          type="text" 
-                          placeholder="📝" 
-                          value={newLog.icon} 
-                          onChange={(e) => setNewLog({...newLog, icon: e.target.value})} 
-                          className="flex-1 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg border border-gray-800 bg-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm text-white" 
-                          maxLength={2} 
-                        />
-                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-red-500/10 flex items-center justify-center text-2xl">
-                          {newLog.icon || "📝"}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Title */}
-                    <div className="space-y-1">
-                      <label className="text-xs sm:text-sm font-medium text-gray-400">
-                        Title <span className="text-red-500">*</span>
-                      </label>
-                      <input 
-                        type="text" 
-                        placeholder="Enter title" 
-                        value={newLog.title} 
-                        onChange={(e) => setNewLog({...newLog, title: e.target.value})} 
-                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg border border-gray-800 bg-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm text-white" 
-                      />
-                    </div>
-
-                    {/* Description */}
-                    <div className="space-y-1">
-                      <label className="text-xs sm:text-sm font-medium text-gray-400">
-                        Description <span className="text-red-500">*</span>
-                      </label>
-                      <textarea 
-                        placeholder="Enter short description" 
-                        value={newLog.description} 
-                        onChange={(e) => setNewLog({...newLog, description: e.target.value})} 
-                        rows={2} 
-                        className="w-full px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg border border-gray-800 bg-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm resize-none text-white" 
-                      />
-                      <div className="text-right">
-                        <span className="text-[10px] text-gray-500">
-                          {newLog.description.length} / 500 characters
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Full Content */}
-                    <div className="space-y-1">
-                      <label className="text-xs sm:text-sm font-medium text-gray-400">Full Content (Markdown)</label>
-                      <div className="relative">
-                        <textarea 
-                          placeholder="Enter detailed content in markdown... Use ## for headings, - for lists, etc." 
-                          value={newLog.content} 
-                          onChange={(e) => setNewLog({...newLog, content: e.target.value})} 
-                          rows={5} 
-                          className="w-full px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg border border-gray-800 bg-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm resize-y font-mono text-white" 
-                        />
-                        <div className="absolute bottom-2 right-2 text-[10px] text-gray-500">
-                          Markdown supported
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Tags */}
-                    <div className="space-y-1">
-                      <label className="text-xs sm:text-sm font-medium text-gray-400">Tags (comma separated)</label>
-                      <div className="space-y-2">
-                        <input 
-                          type="text" 
-                          placeholder="Learning, Development, Bug Fix" 
-                          value={newLog.tags} 
-                          onChange={(e) => setNewLog({...newLog, tags: e.target.value})} 
-                          className="w-full px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg border border-gray-800 bg-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm text-white" 
-                        />
-                        {newLog.tags && (
-                          <div className="flex flex-wrap gap-1.5">
-                            {newLog.tags.split(',').map((tag, i) => tag.trim() && (
-                              <span key={i} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-500/10 text-red-400 text-xs">
-                                {tag.trim()}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Image Upload Section */}
-                    <div className="space-y-2">
-                      <label className="text-xs sm:text-sm font-medium text-gray-400">Upload Images (Optional)</label>
-                      <div className="flex items-center gap-3">
-                        <input
-                          ref={fileInputRef}
-                          type="file"
-                          accept="image/*"
-                          multiple
-                          onChange={handleImageSelect}
-                          className="hidden"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => fileInputRef.current?.click()}
-                          className="flex items-center gap-2 px-4 py-2 rounded-lg border border-dashed border-red-500/50 hover:border-red-500 hover:bg-red-500/5 transition-all duration-300"
-                        >
-                          <Upload className="w-4 h-4 text-red-500" />
-                          <span className="text-sm text-red-500">Select Images</span>
-                        </button>
-                        <span className="text-xs text-gray-500">
-                          {selectedImages.length} file{selectedImages.length !== 1 ? 's' : ''} selected
-                        </span>
-                      </div>
-
-                      {imagePreviews.length > 0 && (
-                        <div className="grid grid-cols-3 gap-2 mt-3">
-                          {imagePreviews.map((preview, index) => (
-                            <div key={index} className="relative group">
-                              <img
-                                src={preview}
-                                alt={`Preview ${index + 1}`}
-                                className="w-full h-20 object-cover rounded-lg border border-gray-800"
-                              />
-                              <button
-                                type="button"
-                                onClick={() => removeImage(index)}
-                                className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-red-500 text-white flex items-center justify-center hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100"
-                              >
-                                <X className="w-3 h-3" />
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-
-                      {Object.keys(uploadProgress).length > 0 && (
-                        <div className="mt-2 space-y-1.5">
-                          {Object.entries(uploadProgress).map(([filename, progress]) => (
-                            <div key={filename} className="bg-gray-800/20 rounded p-1.5">
-                              <div className="flex justify-between text-xs mb-0.5">
-                                <span className="truncate text-[10px] text-gray-400">{filename}</span>
-                                <span className="text-[10px] text-gray-400">{progress === 100 ? '✓' : progress === -1 ? '✗' : `${progress}%`}</span>
-                              </div>
-                              <div className="h-1 bg-gray-800 rounded-full overflow-hidden">
-                                <div 
-                                  className={`h-full transition-all duration-300 ${
-                                    progress === 100 ? 'bg-red-500' : progress === -1 ? 'bg-red-700' : 'bg-red-500'
-                                  }`}
-                                  style={{ width: `${progress === -1 ? 100 : progress}%` }}
-                                />
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Save Button */}
-                    <button 
-                      onClick={handleAddLog} 
-                      disabled={!newLog.title || !newLog.description || isUploadingImages} 
-                      className="w-full mt-3 sm:mt-4 px-4 py-2.5 sm:py-3 bg-gradient-to-r from-red-600 to-red-500 rounded-lg text-white text-sm sm:text-base font-medium hover:opacity-90 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98]"
-                    >
-                      {isUploadingImages ? (
-                        <>
-                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                          Uploading images...
-                        </>
-                      ) : (
-                        <>
-                          <Save className="w-4 h-4 sm:w-5 sm:h-5" />
-                          Save Activity Log
-                        </>
-                      )}
-                    </button>
-
-                    <button 
-                      onClick={() => setShowForm(false)} 
-                      className="w-full mt-2 px-4 py-2 rounded-lg border border-gray-800 text-gray-500 text-sm font-medium hover:bg-gray-800/50 transition-colors sm:hidden"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </>
-          )}
-        </div>
-      )}
-
       <style jsx>{`
         .hide-scrollbar::-webkit-scrollbar {
           display: none;
@@ -1118,13 +1099,8 @@ export default function LogsPage() {
           from { opacity: 0; transform: translateY(-10px); }
           to { opacity: 1; transform: translateY(0); }
         }
-        @keyframes slide-in-from-bottom-4 {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
         .animate-in { animation: slide-in 0.3s ease-out; }
         .slide-in-from-top-2 { animation: slide-in-top 0.3s ease-out; }
-        .slide-in-from-bottom-4 { animation: slide-in-from-bottom-4 0.3s ease-out; }
         @keyframes fade-in {
           from { opacity: 0; }
           to { opacity: 1; }
@@ -1141,4 +1117,16 @@ export default function LogsPage() {
       `}</style>
     </div>
   );
+}
+
+// ActivityLog interface
+interface ActivityLog {
+  id: number;
+  slug: string;
+  date: string;
+  title: string;
+  description: string;
+  content: string;
+  tags: string[];
+  icon: string;
 }
