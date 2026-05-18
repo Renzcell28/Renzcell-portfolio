@@ -8,6 +8,8 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
+    // Add unoptimized to fix image loading
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',
@@ -40,36 +42,10 @@ const nextConfig: NextConfig = {
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
   trailingSlash: false,
-  output: 'standalone',
-  // Remove these - they are invalid in Next.js 15:
-  // swcMinify: true,
-  // api: { ... }
+  output: 'export', // Change to static export
   
-  async headers() {
-    return [
-      {
-        source: '/api/:path*',
-        headers: [
-          { key: 'Access-Control-Allow-Credentials', value: 'true' },
-          { key: 'Access-Control-Allow-Origin', value: '*' },
-          { key: 'Access-Control-Allow-Methods', value: 'GET,POST,PUT,DELETE,OPTIONS' },
-          { key: 'Access-Control-Allow-Headers', value: 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version' },
-        ],
-      },
-      {
-        source: '/_next/static/:path*',
-        headers: [
-          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
-        ],
-      },
-      {
-        source: '/:path*.{jpg,jpeg,png,gif,svg,webp}',
-        headers: [
-          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
-        ],
-      },
-    ];
-  },
+  // Remove headers since they don't work with static export
+  // async headers() { ... }
 };
 
 export default nextConfig;
