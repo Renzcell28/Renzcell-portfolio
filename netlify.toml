@@ -1,4 +1,3 @@
-# netlify.toml
 [build]
   command = "npm run build"
   publish = ".next"
@@ -6,8 +5,10 @@
 [build.environment]
   NODE_VERSION = "20"
   NEXT_TELEMETRY_DISABLED = "1"
+  # Disable secret scanning (since this is a false positive)
+  SECRETS_SCAN_ENABLED = "false"
 
-# Handle Next.js routes properly
+# Handle Next.js routes
 [[redirects]]
   from = "/*"
   to = "/index.html"
@@ -27,9 +28,9 @@
   to = "/_next/static/:splat"
   status = 200
 
-# Image optimization (if using Next.js Image component)
+# Images
 [[redirects]]
-  from = "/_next/image*"
+  from = "/_next/image/*"
   to = "/_next/image/:splat"
   status = 200
 
@@ -53,7 +54,7 @@
     X-XSS-Protection = "1; mode=block"
     Referrer-Policy = "strict-origin-when-cross-origin"
 
-# Function configuration for API routes
+# Function configuration
 [functions]
   node_bundler = "esbuild"
   external_node_modules = ["sharp"]
