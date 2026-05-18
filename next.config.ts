@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
-    unoptimized: true, // This helps with image loading
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',
@@ -39,7 +39,9 @@ const nextConfig: NextConfig = {
     domains: ['res.cloudinary.com'],
   },
   trailingSlash: false,
-  output: 'standalone', // Change back from 'export' to 'standalone'
+  output: 'standalone',
+  // Add transpilePackages for better CSS handling
+  transpilePackages: ['lucide-react'],
 };
 
 export default nextConfig;
