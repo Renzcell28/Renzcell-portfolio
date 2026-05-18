@@ -5,7 +5,6 @@
 [build.environment]
   NODE_VERSION = "20"
   NEXT_TELEMETRY_DISABLED = "1"
-  # Disable secret scanning (since this is a false positive)
   SECRETS_SCAN_ENABLED = "false"
 
 # Handle Next.js routes
@@ -54,11 +53,11 @@
     X-XSS-Protection = "1; mode=block"
     Referrer-Policy = "strict-origin-when-cross-origin"
 
-# Function configuration
+# Function configuration - CRITICAL: Remove included_files
 [functions]
   node_bundler = "esbuild"
   external_node_modules = ["sharp"]
-  included_files = ["node_modules/**"]
+  # REMOVE this line: included_files = ["node_modules/**"]
 
 [functions."api/*"]
   max_duration = 30
