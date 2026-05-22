@@ -169,12 +169,13 @@ export default function Home() {
                 </div>
               </div>
               
-              {/* Right Side - Profile Image */}
-              <div className="flex-1 flex justify-center mb-6 lg:mb-0 animate-float">
+              {/* Right Side - Profile Image with Floating Icons */}
+              <div className="flex-1 flex justify-center mb-6 lg:mb-0">
                 <div className="relative group">
                   <div className="absolute inset-0 rounded-full bg-gradient-to-r from-red-500/20 to-red-600/20 blur-xl -z-10 animate-spin-slow" />
                   <div className="absolute inset-0 rounded-full bg-red-500/10 blur-2xl -z-10 animate-pulse-slow" />
                   
+                  {/* Main Profile Image */}
                   <div className="relative w-48 h-48 sm:w-56 sm:h-56 md:w-72 md:h-72 lg:w-80 lg:h-80 xl:w-96 xl:h-96 rounded-full overflow-hidden border-4 border-red-500/30 shadow-2xl bg-gradient-to-br from-red-500/20 to-red-600/20 group-hover:scale-105 transition-transform duration-500">
                     <img 
                       src="/renzcell-profile.png"
@@ -183,7 +184,70 @@ export default function Home() {
                     />
                   </div>
                   
-                  <div className="absolute -bottom-2 -right-2 bg-gradient-to-r from-red-600 to-red-500 rounded-full p-1.5 md:p-2 shadow-lg animate-bounce-slow">
+                  {/* Floating Icons - Programming Languages & Tools */}
+                  {/* HTML5 */}
+                  <div className="absolute -top-4 -right-2 md:-top-6 md:-right-4 lg:-top-8 lg:-right-6 w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center shadow-lg animate-float-1 z-20">
+                    <svg className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                    </svg>
+                  </div>
+                  
+                  {/* CSS3 */}
+                  <div className="absolute -top-2 left-0 md:-top-3 md:left-2 lg:-top-4 lg:left-4 w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center shadow-lg animate-float-2 z-20">
+                    <svg className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M4.5 4.5L5.5 17.5L12 19.5L18.5 17.5L19.5 4.5H4.5Z"/>
+                      <path d="M12 17.5L17 16L17.5 10H12V13H14.5L14 15L12 15.5L10 15L9.5 13H7L7.5 16L12 17.5Z" fill="white"/>
+                    </svg>
+                  </div>
+                  
+                  {/* JavaScript */}
+                  <div className="absolute top-1/2 -right-6 md:-right-8 lg:-right-10 transform -translate-y-1/2 w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center shadow-lg animate-float-3 z-20">
+                    <svg className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 text-gray-900" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M4 4H20V20H4V4Z" fill="#F7DF1E"/>
+                      <path d="M13 13H15V17C15 17.5 14.5 18 14 18H13V13Z" fill="black"/>
+                    </svg>
+                  </div>
+                  
+                  {/* React */}
+                  <div className="absolute top-1/2 -left-6 md:-left-8 lg:-left-10 transform -translate-y-1/2 w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full flex items-center justify-center shadow-lg animate-float-4 z-20">
+                    <svg className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
+                      <circle cx="12" cy="12" r="4" fill="white"/>
+                      <path d="M12 4C7.5 4 4 7.5 4 12C4 16.5 7.5 20 12 20C16.5 20 20 16.5 20 12C20 7.5 16.5 4 12 4Z" fill="none" stroke="currentColor" strokeWidth="1.5"/>
+                    </svg>
+                  </div>
+                  
+                  {/* Node.js */}
+                  <div className="absolute -bottom-4 right-2 md:-bottom-6 md:right-4 lg:-bottom-8 lg:right-6 w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center shadow-lg animate-float-5 z-20">
+                    <svg className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                    </svg>
+                  </div>
+                  
+                  {/* PHP */}
+                  <div className="absolute -bottom-3 -left-1 md:-bottom-4 md:-left-2 lg:-bottom-5 lg:-left-3 w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-purple-500 to-purple-700 rounded-full flex items-center justify-center shadow-lg animate-float-6 z-20">
+                    <svg className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" fill="#777BB4"/>
+                      <text x="12" y="17" textAnchor="middle" fill="white" fontSize="10" fontWeight="bold">PHP</text>
+                    </svg>
+                  </div>
+                  
+                  {/* Laravel */}
+                  <div className="absolute -top-3 right-6 md:-top-4 md:right-8 lg:-top-5 lg:right-10 w-7 h-7 md:w-9 md:h-9 lg:w-11 lg:h-11 bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center shadow-lg animate-float-7 z-20">
+                    <svg className="w-3 h-3 md:w-4 md:h-4 lg:w-5 lg:h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M4 2L8 6L12 2L16 6L20 2V22H4V2Z" fill="#FF2D20"/>
+                    </svg>
+                  </div>
+                  
+                  {/* Git */}
+                  <div className="absolute bottom-0 -right-3 md:bottom-1 md:-right-4 lg:bottom-2 lg:-right-5 w-7 h-7 md:w-9 md:h-9 lg:w-11 lg:h-11 bg-gradient-to-br from-orange-600 to-red-600 rounded-full flex items-center justify-center shadow-lg animate-float-8 z-20">
+                    <svg className="w-3 h-3 md:w-4 md:h-4 lg:w-5 lg:h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" fill="#F05032"/>
+                      <path d="M12 6v6l4 2" fill="none" stroke="white" strokeWidth="2"/>
+                    </svg>
+                  </div>
+                  
+                  {/* Bottom Center Badge */}
+                  <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-red-600 to-red-500 rounded-full p-1.5 md:p-2 shadow-lg animate-bounce-slow z-20">
                     <Code2 className="w-4 h-4 md:w-5 md:h-5 text-white" />
                   </div>
                 </div>
@@ -357,24 +421,6 @@ export default function Home() {
                     <div className="w-12 h-0.5 bg-gradient-to-r from-red-500 to-red-600 rounded-full mx-auto lg:mx-0"></div>
                   </div>
                   
-                  <div className="flex items-start gap-3 justify-center lg:justify-start group">
-                    <div className="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center flex-shrink-0 group-hover:bg-red-500/20 transition-all duration-300 group-hover:scale-110">
-                      <svg className="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                      </svg>
-                    </div>
-                    <div>
-                      <p className="text-gray-300 text-sm md:text-base">041-H Coral, Mapandan, Pangasinan</p>
-                      <a href="https://maps.google.com/?q=Mapandan+Pangasinan+Philippines" target="_blank" rel="noopener noreferrer" className="text-red-400/70 text-xs hover:text-red-400 transition-colors inline-flex items-center gap-1 mt-1">
-                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                        </svg>
-                        View on Google Maps
-                      </a>
-                    </div>
-                  </div>
-                  
                   <div className="flex items-center gap-3 justify-center lg:justify-start group">
                     <div className="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center group-hover:bg-red-500/20 transition-all duration-300 group-hover:scale-110">
                       <svg className="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -419,12 +465,22 @@ export default function Home() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                         </svg>
                       </div>
-                      <span className="text-gray-400 text-xs uppercase tracking-wider font-medium">My Location</span>
+                      <span className="text-gray-400 text-xs uppercase tracking-wider font-medium">School Location</span>
                     </div>
                     <div className="rounded-lg overflow-hidden h-48 md:h-56 lg:h-64 border border-red-500/10">
-                      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d123760.73922608666!2d120.383812957762!3d16.040588730497147!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x339165b1d3e6ad5f%3A0xc668c1b5e9f76946!2sMapandan%2C%20Pangasinan!5e0!3m2!1sen!2sph!4v1700000000000!5m2!1sen!2sph" width="100%" height="100%" style={{ border: 0 }} allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" title="Mapandan, Pangasinan Map" className="rounded-lg"></iframe>
+                      <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3853.490433426612!2d120.3960759748455!3d16.03915828463489!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x339165b1d3e6ad5f%3A0xc668c1b5e9f76946!2sUniversidad%20de%20Dagupan!5e0!3m2!1sen!2sph!4v1710000000000!5m2!1sen!2sph" 
+                        width="100%" 
+                        height="100%" 
+                        style={{ border: 0 }} 
+                        allowFullScreen 
+                        loading="lazy" 
+                        referrerPolicy="no-referrer-when-downgrade" 
+                        title="Universidad de Dagupan Map" 
+                        className="rounded-lg">
+                      </iframe>
                     </div>
-                    <p className="text-gray-500 text-[10px] text-center mt-3">Mapandan, Pangasinan, Philippines</p>
+                    <p className="text-gray-500 text-[10px] text-center mt-3">Universidad de Dagupan, Arellano Street, Dagupan City, Pangasinan</p>
                   </div>
                   
                   <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
@@ -440,7 +496,7 @@ export default function Home() {
                       </svg>
                       Call Me
                     </a>
-                    <a href="https://maps.google.com/?q=Mapandan+Pangasinan+Philippines" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 bg-red-500/10 hover:bg-red-500/20 rounded-lg text-red-400 text-sm transition-all duration-300 hover:scale-105 border border-red-500/20">
+                    <a href="https://maps.google.com/?q=Universidad+de+Dagupan+Dagupan+City" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 bg-red-500/10 hover:bg-red-500/20 rounded-lg text-red-400 text-sm transition-all duration-300 hover:scale-105 border border-red-500/20">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                       </svg>
@@ -539,6 +595,56 @@ export default function Home() {
           0%, 100% { transform: translateY(0); }
           50% { transform: translateY(-5px); }
         }
+        
+        /* Floating icon animations with different delays */
+        @keyframes float1 {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-10px) rotate(5deg); }
+        }
+        
+        @keyframes float2 {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-12px) rotate(-5deg); }
+        }
+        
+        @keyframes float3 {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-8px) rotate(8deg); }
+        }
+        
+        @keyframes float4 {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-15px) rotate(-3deg); }
+        }
+        
+        @keyframes float5 {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-10px) rotate(6deg); }
+        }
+        
+        @keyframes float6 {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-7px) rotate(-7deg); }
+        }
+        
+        @keyframes float7 {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-13px) rotate(4deg); }
+        }
+        
+        @keyframes float8 {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-9px) rotate(-4deg); }
+        }
+        
+        .animate-float-1 { animation: float1 3s ease-in-out infinite; }
+        .animate-float-2 { animation: float2 3.5s ease-in-out infinite; }
+        .animate-float-3 { animation: float3 2.8s ease-in-out infinite; }
+        .animate-float-4 { animation: float4 4s ease-in-out infinite; }
+        .animate-float-5 { animation: float5 3.2s ease-in-out infinite; }
+        .animate-float-6 { animation: float6 3.8s ease-in-out infinite; }
+        .animate-float-7 { animation: float7 2.5s ease-in-out infinite; }
+        .animate-float-8 { animation: float8 3.3s ease-in-out infinite; }
         
         .animate-blob {
           animation: blob 7s infinite;
