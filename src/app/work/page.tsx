@@ -225,6 +225,35 @@ The template was built to support scalability, allowing additional vehicle compa
       "Layout & User Experience - Improved visual hierarchy to help users quickly identify key differences between vehicles. Applied responsive design considerations for desktop and mobile viewing. Structured content spacing and alignment for better readability and navigation.",
       "Design Planning - Built a reusable template structure for future vehicle comparison pages. Focused on modern automotive-style UI presentation and organized information flow. Ensured the design supports scalable content expansion and additional comparison categories."
     ]
+  },
+  {
+    id: 5,
+    title: "FURPET: Pet Services Finder System",
+    description: "A web platform for locating pet services with user authentication, listings, and database management. Built as a capstone project to help pet owners easily find and connect with pet service providers.",
+    category: "Web Development",
+    techStack: ["Laravel", "MySQL", "PHP", "JavaScript", "Bootstrap"],
+    image: "/d2462231-eb86-4878-994d-0c7995d367f2.jpg",
+    gallery: [
+      "/d2462231-eb86-4878-994d-0c7995d367f2.jpg"
+    ],
+    fullDetails: `FURPET is a comprehensive web platform designed to help pet owners easily find and connect with pet service providers in their area. The system allows users to search for various pet services including grooming, boarding, veterinary care, walking, and training facilities.
+
+Key features include user authentication with role-based access for pet owners and service providers, service listings with detailed information and ratings, advanced search and filtering capabilities, booking management system, review and rating functionality, and an admin dashboard for platform management.
+
+The platform was built using Laravel for robust backend functionality, MySQL for efficient database management, JavaScript for interactive frontend features, and Bootstrap for responsive design. This capstone project demonstrates full-stack development capabilities and attention to user experience in a specialized service marketplace context.`,
+    projectLink: "",
+    githubLink: "",
+    featured: true,
+    date: "2025",
+    myTasks: [
+      "Full Stack Development - Built the complete FURPET system as a capstone project from concept to deployment.",
+      "Database Design - Designed and implemented MySQL database schema for users, service listings, bookings, and reviews.",
+      "Backend Development - Developed Laravel backend with authentication, authorization, and CRUD operations for all entities.",
+      "Frontend Development - Created responsive UI using Bootstrap and JavaScript for seamless user experience.",
+      "Feature Implementation - Implemented service search, filtering, booking system, rating system, and admin dashboard.",
+      "User Management - Developed role-based access control for pet owners, service providers, and administrators.",
+      "Testing & Deployment - Conducted thorough testing and deployed the application for production use."
+    ]
   }
 ];
 
@@ -371,7 +400,7 @@ export default function WorkPage() {
       <div className="max-w-4xl mx-auto mb-16 space-y-6">
         <h1 className="font-headline font-black text-5xl md:text-6xl tracking-tight">Work Gallery</h1>
         <p className="text-muted-foreground text-xl max-w-2xl">
-          A modular collection of projects, audits, and technical solutions completed during my internship.
+          A modular collection of projects, audits, and technical solutions completed during my internship and academic work.
         </p>
       </div>
 

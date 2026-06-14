@@ -84,6 +84,21 @@ const projectDetails = {
       "Responsive design",
       "Modern automotive-style UI"
     ]
+  },
+  "FURPET": {
+    name: "FURPET: Pet Services Finder System",
+    description: "A comprehensive web platform for locating pet services with user authentication, listings, and database management. Built as a capstone project to help pet owners easily find and connect with pet service providers.",
+    image: "/d2462231-eb86-4878-994d-0c7995d367f2.jpg",
+    techStack: ["Laravel", "MySQL", "PHP", "JavaScript", "Bootstrap"],
+    features: [
+      "User authentication with role-based access (pet owners & service providers)",
+      "Service listings with detailed information and ratings",
+      "Advanced search and filtering capabilities",
+      "Booking management system",
+      "Review and rating functionality",
+      "Admin dashboard for platform management",
+      "Responsive design for all devices"
+    ]
   }
 };
 
@@ -119,7 +134,12 @@ const getProjectFromQuery = (message: string): string | null => {
       "silverado": "2026 Chevrolet Silverado 1500 vs. 2026 Toyota Tundra",
       "tundra": "2026 Chevrolet Silverado 1500 vs. 2026 Toyota Tundra",
       "car comparison": "2026 Chevrolet Silverado 1500 vs. 2026 Toyota Tundra",
-      "vehicle comparison": "2026 Chevrolet Silverado 1500 vs. 2026 Toyota Tundra"
+      "vehicle comparison": "2026 Chevrolet Silverado 1500 vs. 2026 Toyota Tundra",
+      "furpet": "FURPET",
+      "fur pet": "FURPET",
+      "pet services": "FURPET",
+      "pet finder": "FURPET",
+      "capstone": "FURPET"
     };
     
     for (const [key, value] of Object.entries(variations)) {
@@ -134,7 +154,7 @@ const getProjectFromQuery = (message: string): string | null => {
 
 // Welcome message
 const WELCOME_MESSAGE = {
-  text: "🤖 **Hi there!** I'm Renzcell Bot, your AI assistant!\n\nI can help you with:\n• 📁 **Projects** - Type project names like 'SyncSnap' or 'FlowState'\n• 📋 **List all projects** - See everything I've worked on\n• 🛠️ **Skills & Technologies** - Ask about my tech stack\n• 🎓 **Education & Certifications** - Learn about my background\n• 📞 **Contact Information** - How to reach me\n\nWhat would you like to know about Renzcell? ✨",
+  text: "🤖 **Hi there!** I'm Renzcell Bot, your AI assistant!\n\nI can help you with:\n• 📁 **Projects** - Type project names like 'SyncSnap', 'FlowState', or 'FURPET'\n• 📋 **List all projects** - See everything I've worked on\n• 🛠️ **Skills & Technologies** - Ask about my tech stack\n• 🎓 **Education & Certifications** - Learn about my background\n• 📞 **Contact Information** - How to reach me\n\nWhat would you like to know about Renzcell? ✨",
   sender: 'bot' as const
 };
 
@@ -162,11 +182,11 @@ export default function ChatBot() {
     name: "Renzcell Rick V. Loresco",
     education: "BSIT Student at Universidad De Dagupan",
     skills: ["HTML5", "CSS3", "Java", "JavaScript", "PHP", "React Native", "Laravel", "MySQL", "MariaDB", "MongoDB", "PostgreSQL", "Figma", "Canva"],
-    projects: ["Axiom Scrumban", "SyncSnap", "FlowState"],
-    ojt: "OJT at MakerSpace Innohub",
+    projects: ["SyncSnap", "FlowState", "Axiom Scrumban", "FURPET", "Base Platform & FurFund"],
+    ojt: "OJT at MakerSpace Innohub (486 hours in Web Development)",
     certification: "NCII CSS Certified (Passed May 6, 2026)",
-    experience: "Full-stack development, AI integration, real-time applications",
-    interests: "Web development, AI, mobile apps, UI/UX design",
+    experience: "Full-stack development, AI integration, real-time applications, blockchain exploration",
+    interests: "Web development, AI, mobile apps, UI/UX design, blockchain technology",
     contact: "Email: renzcell.loresco.3@gmail.com | Phone: (+63) 966-413-8823",
     location: "041-H Coral, Mapandan, Pangasinan"
   };
@@ -240,7 +260,7 @@ export default function ChatBot() {
     if (lowerMessage.match(/list all projects|all projects|show projects|what projects|projects you have|list projects|available projects/i)) {
       const projectList = Object.keys(projectDetails).map(name => `• **${name}**`).join('\n');
       return {
-        text: `🤖 Here are all the projects I've worked on:\n\n${projectList}\n\nType the name of any project (e.g., "SyncSnap") to see detailed information!`,
+        text: `🤖 Here are all the projects I've worked on:\n\n${projectList}\n\nType the name of any project (e.g., "SyncSnap" or "FURPET") to see detailed information!`,
         isProjectCard: false
       };
     }
@@ -254,11 +274,11 @@ export default function ChatBot() {
     }
     
     if (lowerMessage.match(/about|bio|who is|tell me about|background/i)) {
-      return { text: `🤖 ${knowledgeBase.name} is a ${knowledgeBase.education}. He's passionate about full-stack development and building innovative web applications. ${knowledgeBase.certification} and currently completed OJT at MakerSpace Innohub.`, isProjectCard: false };
+      return { text: `🤖 ${knowledgeBase.name} is a ${knowledgeBase.education}. He's passionate about full-stack development and building innovative web applications. ${knowledgeBase.certification} and completed ${knowledgeBase.ojt}. He has built multiple projects including FURPET (pet services finder), SyncSnap (team collaboration), and FlowState (AI-powered project management).`, isProjectCard: false };
     }
     
     if (lowerMessage.match(/skill|technologies|tech stack|what can you do|programming languages|tools/i)) {
-      return { text: `🤖 ${knowledgeBase.name} is proficient in: ${knowledgeBase.skills.join(', ')}. He specializes in full-stack development using these technologies.`, isProjectCard: false };
+      return { text: `🤖 ${knowledgeBase.name} is proficient in: ${knowledgeBase.skills.join(', ')}. He specializes in full-stack development using Laravel, React, Next.js, and various databases.`, isProjectCard: false };
     }
     
     if (lowerMessage.match(/ojt|internship|training|maker space|makerspace/i)) {
@@ -266,15 +286,15 @@ export default function ChatBot() {
     }
     
     if (lowerMessage.match(/certification|ncii|certified|passed|exam|assessment/i)) {
-      return { text: `🤖 ${knowledgeBase.certification} 🎉 This certification validates his proficiency in computer systems servicing and web development.`, isProjectCard: false };
+      return { text: `🤖 ${knowledgeBase.certification} 🎉 This certification validates his proficiency in computer systems servicing and web development. He also completed multiple cybersecurity and CCNA courses through Cisco Networking Academy.`, isProjectCard: false };
     }
     
     if (lowerMessage.match(/education|school|university|college|study|learn/i)) {
-      return { text: `🤖 ${knowledgeBase.name} is currently pursuing ${knowledgeBase.education}. He's dedicated to continuous learning and staying updated with the latest technologies.`, isProjectCard: false };
+      return { text: `🤖 ${knowledgeBase.name} is currently pursuing ${knowledgeBase.education}. He's dedicated to continuous learning and has completed numerous certifications in web development, cybersecurity, and networking.`, isProjectCard: false };
     }
     
     if (lowerMessage.match(/experience|work|job|career|professional/i)) {
-      return { text: `🤖 ${knowledgeBase.name} has experience in ${knowledgeBase.experience}. His OJT at MakerSpace Innohub provided hands-on experience with real-world projects and team collaboration.`, isProjectCard: false };
+      return { text: `🤖 ${knowledgeBase.name} has experience in ${knowledgeBase.experience}. His OJT at MakerSpace Innohub provided hands-on experience with real-world projects and team collaboration. He also built FURPET as his capstone project.`, isProjectCard: false };
     }
     
     if (lowerMessage.match(/contact|email|phone|reach|connect|get in touch/i)) {
@@ -297,7 +317,11 @@ export default function ChatBot() {
       return { text: "🤖 Thanks for chatting! 👋 Feel free to come back if you have more questions. Have a great day!", isProjectCard: false };
     }
     
-    return { text: "🤖 That's a great question! 💭 I'm happy to help. You can ask me about Renzcell's skills, projects, education, OJT experience, certifications, or contact information.\n\n💡 **Try these commands:**\n• Type a project name like **SyncSnap** or **FlowState**\n• Type **List all projects** to see all projects\n• Ask about **skills**, **education**, or **contact**", isProjectCard: false };
+    if (lowerMessage.match(/capstone|thesis|final project/i)) {
+      return { text: "🤖 The capstone project is **FURPET: Pet Services Finder System**! 🐾 It's a comprehensive web platform for locating pet services with user authentication, listings, and database management. Type **FURPET** to see full details!", isProjectCard: false };
+    }
+    
+    return { text: "🤖 That's a great question! 💭 I'm happy to help. You can ask me about Renzcell's skills, projects, education, OJT experience, certifications, or contact information.\n\n💡 **Try these commands:**\n• Type a project name like **SyncSnap**, **FlowState**, or **FURPET**\n• Type **List all projects** to see all projects\n• Ask about **skills**, **education**, or **contact**", isProjectCard: false };
   };
 
   const handleSendMessage = async () => {
@@ -339,7 +363,7 @@ export default function ChatBot() {
     setMessages([
       {
         id: Date.now().toString(),
-        text: "🤖 Chat cleared! I'm Renzcell Bot, ready to help you again. What would you like to know?\n\n💡 **Try these:**\n• Type **SyncSnap** to see project details\n• Type **List all projects** to see all projects\n• Type **Skills** to see my tech stack",
+        text: "🤖 Chat cleared! I'm Renzcell Bot, ready to help you again. What would you like to know?\n\n💡 **Try these:**\n• Type **SyncSnap**, **FlowState**, or **FURPET** to see project details\n• Type **List all projects** to see all projects\n• Type **Skills** to see my tech stack\n• Type **Capstone** to learn about my final project",
         sender: 'bot',
         timestamp: new Date()
       }
@@ -410,7 +434,7 @@ export default function ChatBot() {
               <span className="text-xs text-white font-semibold">🤖 Renzcell Bot</span>
             </div>
             <p className="text-[11px] text-white/90 mt-1.5 leading-relaxed">
-              Need help? Ask me about projects, skills & more!
+              Ask me about FURPET, SyncSnap, skills & more!
             </p>
             <div className="absolute -bottom-1 right-4 w-2.5 h-2.5 bg-red-500/95 rotate-45 border-r border-b border-red-400/30"></div>
           </div>
@@ -512,7 +536,7 @@ export default function ChatBot() {
                   <span className="w-0.5 h-0.5 bg-red-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
                   <span className="w-0.5 h-0.5 bg-red-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
                 </div>
-                <span className="truncate">🤖 Try: "SyncSnap", "FlowState", or "List all projects"</span>
+                <span className="truncate">🤖 Try: "SyncSnap", "FURPET", "FlowState", or "List all projects"</span>
               </div>
             </div>
           </div>
@@ -590,7 +614,7 @@ export default function ChatBot() {
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyPress={handleKeyPress}
-                    placeholder="Ask me anything... ✨"
+                    placeholder="Ask me about FURPET, SyncSnap, skills... ✨"
                     className="flex-1 px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg border border-gray-800 bg-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm text-white placeholder:text-gray-500"
                   />
                   <button
@@ -606,7 +630,7 @@ export default function ChatBot() {
                   <p className="text-[10px] sm:text-xs text-gray-500 flex items-center gap-1">
                     <span className="animate-wave">🤖</span>
                     <span className="hidden sm:inline">Try: </span>
-                    "SyncSnap", "FlowState", "Projects"
+                    "SyncSnap", "FURPET", "Projects"
                   </p>
                   <button
                     onClick={clearChat}
