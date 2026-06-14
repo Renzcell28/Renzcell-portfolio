@@ -3,13 +3,14 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { Briefcase, BookOpen, Home, LayoutGrid, Sparkles, Target, Brain } from 'lucide-react';
+import { Briefcase, BookOpen, Home, LayoutGrid, Sparkles, Target, Brain, Award } from 'lucide-react';
 
 const NAV_ITEMS = [
   { name: 'Home', href: '/', icon: Home },
   { name: 'Work', href: '/work', icon: Briefcase },
   { name: 'Logs', href: '/logs', icon: BookOpen },
   { name: 'AI Learning Path', href: '/ai-learning', icon: Sparkles },
+  { name: 'Certificate', href: '/certificate', icon: Award },
 ];
 
 export function Navbar() {
