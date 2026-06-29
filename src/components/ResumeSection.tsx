@@ -6,7 +6,7 @@ import { Eye, Download, FileText, Maximize2, Minimize2 } from 'lucide-react';
 
 // Permanent resume data - replace with your actual resume
 const PERMANENT_RESUME = {
-  url: "/resume/Resume LORESCO RENZCELL RICK V. (1).pdf",
+  url: "/resume/LORESCO-RENZCELL-RICK-V-Resume.pdf",
   name: "Resume_Loresco_Renzcell_Rick_V.pdf",
   date: "May 2026"
 };

@@ -129,7 +129,7 @@ export default function Home() {
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 backdrop-blur-sm border border-red-500/20 text-red-500 text-xs font-bold mb-4 md:mb-5 shadow-lg shadow-red-500/10 hover:scale-105 transition-transform duration-300">
                   <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-ping" />
                   <Zap className="w-3 h-3" />
-                  <span>OPEN FOR OJT / INTERNSHIP OPPORTUNITIES</span>
+                  <span>OPEN FOR WORK</span>
                 </div>
                 
                 {/* Name with gradient animation - Red Theme */}
@@ -282,13 +282,19 @@ export default function Home() {
                 </div>
               </div>
               
-              <p className="text-base md:text-lg lg:text-xl text-gray-300 leading-relaxed text-center">
-                Aspiring developer with expertise in{' '}
-                <span className="text-white font-medium">HTML, CSS, Java, JavaScript, and PHP</span>, 
-                specializing in modern frameworks like{' '}
-                <span className="text-white font-medium">React Native and Laravel</span>.
-              </p>
-              
+             <p className="text-base md:text-lg lg:text-xl text-gray-300 leading-relaxed text-center">
+  Fresh <span className="text-white font-medium">Information Technology graduate</span> with experience in{' '}
+  <span className="text-white font-medium">full-stack web development</span> through internship and academic projects.
+  Proficient in{' '}
+  <span className="text-white font-medium">
+    Laravel, Next.js, Node.js, JavaScript, PHP, HTML, CSS, and MySQL
+  </span>
+  , with experience integrating{' '}
+  <span className="text-white font-medium">
+    Gemini AI and OpenRouter AI
+  </span>
+  . Passionate about building responsive, user-friendly web applications and eager to contribute, learn, and grow as a software developer.
+</p>
               <div className="flex justify-center gap-2 my-6">
                 <div className="w-2 h-2 rounded-full bg-red-500/50"></div>
                 <div className="w-2 h-2 rounded-full bg-red-500/70"></div>
